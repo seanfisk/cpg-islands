@@ -91,15 +91,38 @@ Executive Summary
 CpG islands are generally located directly upstream from genes in the genome.
  In order to aide the crucial process of mapping genes onto different genomes,
  we will be creating a tool that will scan a genome for possible CpG islands.
- 
 \end_layout
 
 \begin_layout Section
 Outline
 \end_layout
 
+\begin_layout Enumerate
+We will first create a program that when given a DNA string, it will output
+ likely locations for CpG islands using a sliding window approach.
+\end_layout
+
+\begin_layout Enumerate
+We will then begin designing a user interface to display the information,
+ and load input files.
+\end_layout
+
+\begin_layout Enumerate
+After finishing the design we will code out the graphical user interface,
+ and tie it into the first program that we had created.
+\end_layout
+
+\begin_layout Enumerate
+Iterate upon the completed product, adding new features, algorithms and
+ polishing the program until turn in.
+\end_layout
+
 \begin_layout Section
 Responsibilities
+\end_layout
+
+\begin_layout Enumerate
+
 \end_layout
 
 \end_body
