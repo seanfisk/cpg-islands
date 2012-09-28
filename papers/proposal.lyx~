@@ -77,7 +77,7 @@ Topic
 \end_layout
 
 \begin_layout Standard
-CpG islands are a cluster of nucleotides that are often observed on DNA.
+CpG islands are a cluster of nucleotides that are often observed in DNA.
  We will be researching the importance of CpG islands in a variety of different
  genomes.
  The goal of this project is writing a program in the Python programming
@@ -116,8 +116,8 @@ After finishing the design, we will code the graphical user interface and
 \end_layout
 
 \begin_layout Enumerate
-We will then optimize the program with and add new features to the user
- interface until the final deliverables are due.
+We will then optimize the program and add new features to the user interface
+ until the final deliverables are due.
 \end_layout
 
 \begin_layout Section
