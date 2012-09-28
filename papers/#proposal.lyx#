@@ -65,11 +65,11 @@ CIS 661 Project Proposal: CpG Islands
 \end_layout
 
 \begin_layout Author
-Gray Gwizdz
+Sean Fisk
 \begin_inset Newline newline
 \end_inset
 
-Sean Fisk
+Gray Gwizdz
 \end_layout
 
 \begin_layout Section
@@ -77,13 +77,10 @@ Topic
 \end_layout
 
 \begin_layout Standard
-CpG islands are a cluster of nucleotides that are often observed on DNA.
- We will be researching the importance of CpG islands in a variety of different
+We will be researching the importance of CpG islands in a variety of different
  genomes.
- The goal of this project is writing a program in the Python programming
- language to analyze DNA for CpG islands.
- When provided with a DNA sequence, the program will provide a graphical
- visualization of possible CpG islands.
+ We will be writing a program that when provided with a DNA sequence, will
+ provide a graphical visualization of possible CpG islands.
 \end_layout
 
 \begin_layout Section
@@ -102,22 +99,22 @@ Outline
 
 \begin_layout Enumerate
 We will first create a program that when given a DNA string, it will output
- likely locations for CpG islands in a graphical interface.
+ likely locations for CpG islands using a sliding window approach.
 \end_layout
 
 \begin_layout Enumerate
-After a functional program has been created, a functional user interface
- in needed to load input files, display output, and other useful functions.
+We will then begin designing a user interface to display the information,
+ and load input files.
 \end_layout
 
 \begin_layout Enumerate
-After finishing the design, we will code the graphical user interface and
- link it into the first program that we had created.
+After finishing the design we will code out the graphical user interface,
+ and tie it into the first program that we had created.
 \end_layout
 
 \begin_layout Enumerate
-We will then optimize the program and add new features to the user interface
- until the final deliverables are due.
+Iterate upon the completed product, adding new features, algorithms and
+ polishing the program until turn in.
 \end_layout
 
 \begin_layout Section
@@ -126,11 +123,8 @@ Responsibilities
 
 \begin_layout Standard
 We will be developing using a versioning tool called git.
- New code will be added and distributed through an online repository.
- We plan to develop the project jointly, but each have specific elements
- that we will oversee.
- Sean plans on overseeing the user interface using PySide, and Gray will
- oversee 
+ New code will be grown in an online repository.
+ 
 \end_layout
 
 \end_body
