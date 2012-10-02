@@ -81,7 +81,8 @@ CpG islands are a cluster of nucleotides that are often observed in DNA.
  We will be researching the importance of CpG islands in a variety of different
  genomes.
  The goal of this project is writing a program in the Python programming
- language to analyze DNA for CpG islands.
+ language to analyze DNA for CpG islands using a Hidden Markov model-based
+ approach.
  When provided with a DNA sequence, the program will provide a graphical
  visualization of possible CpG islands within sequence.
 \end_layout
@@ -94,7 +95,6 @@ Executive Summary
 CpG islands are generally located directly upstream from genes in the genome.
  In order to aide the crucial process of mapping genes onto different genomes,
  we will be creating a tool that will scan a genome for possible CpG islands.
- CpG islands can be defined as 
 \end_layout
 
 \begin_layout Section
