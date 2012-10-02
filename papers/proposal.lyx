@@ -3,6 +3,9 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{dtklogos}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -26,7 +29,16 @@
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks true
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry false
 \use_amsmath 1
@@ -65,26 +77,27 @@ CIS 661 Project Proposal: CpG Islands
 \end_layout
 
 \begin_layout Author
-Gray Gwizdz
+Sean Fisk <
+\begin_inset CommandInset href
+LatexCommand href
+target "fiskse@mail.gvsu.edu"
+type "mailto:"
+
+\end_inset
+
+>
 \begin_inset Newline newline
 \end_inset
 
-Sean Fisk
-\end_layout
+Gray Gwizdz <
+\begin_inset CommandInset href
+LatexCommand href
+target "gwizdzg@mail.gvsu.edu"
+type "mailto:"
 
-\begin_layout Section
-Topic
-\end_layout
+\end_inset
 
-\begin_layout Standard
-CpG islands are a cluster of nucleotides that are often observed in DNA.
- We will be researching the importance of CpG islands in a variety of different
- genomes.
- The goal of this project is writing a program in the Python programming
- language to analyze DNA for CpG islands using a Hidden Markov model-based
- approach.
- When provided with a DNA sequence, the program will provide a graphical
- visualization of possible CpG islands within sequence.
+>
 \end_layout
 
 \begin_layout Section
@@ -92,9 +105,22 @@ Executive Summary
 \end_layout
 
 \begin_layout Standard
-CpG islands are generally located directly upstream from genes in the genome.
- In order to aide the crucial process of mapping genes onto different genomes,
- we will be creating a tool that will scan a genome for possible CpG islands.
+CpG islands are areas of a DNA sequence rich in the nucleotides Cytosine
+ and Guanine.
+ These islands are important because they are often observed in the promoter
+ regions of DNA 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "springerlink:10.1007/s00335-009-9222-5"
+
+\end_inset
+
+.
+ The goal of this project to develop a program to analyze and visualize
+ DNA for CpG islands.
+ When provided with a DNA sequence, the program will provide a graphical
+ visualization of CpG islands within sequence.
+ Options to alter the definition of a CpG island will also be available.
 \end_layout
 
 \begin_layout Section
@@ -102,23 +128,163 @@ Outline
 \end_layout
 
 \begin_layout Enumerate
-We will first create a program that when given a DNA string, it will output
- likely locations for CpG islands in a graphical interface.
+Create a command-line application that contains the basic functionality
+ to locate CpG islands using a sliding window approach.
+ This will output locations of the CpG islands in a human-readable format.
 \end_layout
 
 \begin_layout Enumerate
-After a functional program has been created, a functional user interface
- in needed to load input files, display output, and other useful functions.
+Create a basic graphical user interface for using the application.
+ This will include the ability to load files, run the analysis tool, and
+ display the output.
 \end_layout
 
 \begin_layout Enumerate
-After finishing the design, we will code the graphical user interface and
- link it into the first program that we had created.
+Add enhanced visualization capabilities to the graphical user interface.
 \end_layout
 
 \begin_layout Enumerate
-We will then optimize the program and add new features to the user interface
- until the final deliverables are due.g
+Explore location of CpG islands with a Hidden-Markov Model implementation
+ (time permitting).
+ The sliding window algorithm will remain available.
+\end_layout
+
+\begin_layout Enumerate
+Speed optimizations of algorithms (time permitting).
+\end_layout
+
+\begin_layout Section
+Goals
+\end_layout
+
+\begin_layout Standard
+It is our utmost goal to complete this project in a professional manner.
+ We would like to show that we can not only code, but that we can 
+\shape italic
+code well
+\shape default
+.
+ We will therefore be using the following resources:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset CommandInset href
+LatexCommand href
+name "Python"
+target "http://python.org/"
+
+\end_inset
+
+ programming language
+\end_layout
+
+\begin_layout Itemize
+version control (with 
+\begin_inset CommandInset href
+LatexCommand href
+name "git"
+target "http://git-scm.com/"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+professional graphical user interface library (
+\begin_inset CommandInset href
+LatexCommand href
+name "Qt"
+target "http://qt-project.org/"
+
+\end_inset
+
+ through 
+\begin_inset CommandInset href
+LatexCommand href
+name "PySide"
+target "http://www.pyside.org/"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+Test-Driven Development (with 
+\begin_inset CommandInset href
+LatexCommand href
+name "pytest"
+target "http://pytest.org/"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+Presenter First graphical user interface development 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Alles:2006:PFO:1155439.1155482"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+professional documentation generation tools (
+\begin_inset CommandInset href
+LatexCommand href
+name "Sphinx"
+target "http://sphinx.pocoo.org/"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+professional typesetting tools (
+\begin_inset CommandInset href
+LatexCommand href
+name "LyX"
+target "http://www.lyx.org/"
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://latex-project.org/}{
+\backslash
+LaTeX}
+\end_layout
+
+\end_inset
+
+, and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+href{http://www.bibtex.org/}{
+\backslash
+BibTeX}
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Section
@@ -126,23 +292,33 @@ Responsibilities
 \end_layout
 
 \begin_layout Standard
-We will be developing using a versioning tool called git.
- New code will be added and distributed through an online repository.
- We plan to develop the project jointly, but each have specific elements
- that we will oversee.
- Sean plans on overseeing the user interface using PySide, and Gray will
- oversee the development of the DNA comparison program.
-\begin_inset Newline newline
-\end_inset
+The entire project will be owned and developed jointly.
+ However, each team member is assigned certain specialties.
+ Sean will oversee the construction of the user interface.
+ Gray will oversee the development of the core algorithms.
+\end_layout
 
-Our program will be written using a software engineering technique called
- Test-Driven development.
+\begin_layout Standard
+The program will be written with strict adherence to the software engineering
+ technique of Test-Driven Development.
  In order to add new features to the program, a new test case needs to be
- created for the new feature.
+ created for the each feature.
  This test case is added to the any other test cases already written, and
  the entire suite of test cases is run against the program.
  This ensures that no older features break as new code is added, and that
  only code essential to the program is added.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintAll"
+bibfiles "citations"
+options "bibtotoc,plainnat"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
