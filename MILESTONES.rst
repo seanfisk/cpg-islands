@@ -3,7 +3,8 @@
 ========================
 
 2012-10-05
-    Start working.
+    Start researching Biopython.
+    Read Presenter First paper.
 
 2012-10-22
     Test-driven command-line application which correctly finds CpG islands but doesn't necessarily output them in a nice format.
