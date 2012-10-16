@@ -4,3 +4,7 @@
 #
 
 export PYTHONPATH="$PWD"
+
+# fun aliases
+
+alias whatamidoinghere='git status'
