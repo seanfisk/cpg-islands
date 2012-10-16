@@ -1,6 +1,6 @@
-========================
- Milestones For Project
-========================
+============
+ Milestones
+============
 
 2012-10-05
     Start researching Biopython.

@@ -1,3 +1,7 @@
+=======
+ Links
+=======
+
 * `Sean's Python project template <https://github.com/seanfisk/python-project-template/>`_
 * Testing
     * `Python Testing Tools Taxonomy <http://wiki.python.org/moin/PythonTestingToolsTaxonomy>`_
