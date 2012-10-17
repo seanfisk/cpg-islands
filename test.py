@@ -119,7 +119,7 @@ def main(argv=None):
         for runner in test_runners:
             success &= runner.run() == 0
     else:
-        test_runners_dict = OrderedDict([(runner.name, runner) for
+        test_runners_dict = OrderedDict([(runner.name(), runner) for
                                          runner in test_runners])
         check_help = 'What check to run ({0}).'.format(
             ' | '.join(test_runners_dict.iterkeys()))
