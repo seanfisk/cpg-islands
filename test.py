@@ -102,6 +102,8 @@ class StyleGuideRunner(TestRunner):
         super(StyleGuideRunner, self).run()
         pep8_style = pep8.StyleGuide()
         report = pep8_style.check_files(CHECK_FILES)
+        if report.total_errors == 0:
+            print('No style errors')
         return report.total_errors
 
 
