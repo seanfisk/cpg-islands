@@ -7,6 +7,7 @@ import sys
 import argparse
 from cpg_islands import metadata
 
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv
@@ -21,18 +22,18 @@ def main(argv=None):
 {authors}
 URL: <{url}>
 '''.format(
-    title=metadata.nice_title,
-    version=metadata.version,
-    authors='\n'.join(author_strings),
-    url=metadata.url)
-    
+        title=metadata.nice_title,
+        version=metadata.version,
+        authors='\n'.join(author_strings),
+        url=metadata.url)
+
     arg_parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=metadata.description,
         epilog=epilog)
 
     args = arg_parser.parse_args(args=argv[1:])
-    
+
     print(epilog)
 
 if __name__ == '__main__':
