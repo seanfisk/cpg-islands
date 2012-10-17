@@ -1,0 +1,12 @@
+language: python
+python:
+  - "2.7"
+script: python test.py
+# don't need PySide.QtCore yet
+# when we do, uncomment this
+# before_install:
+# - sudo apt-add-repository -y ppa:pyside/ppa
+# - sudo apt-get update -qq
+# - sudo apt-get install -qq python-pyside.qtcore
+# - export PYTHONPATH="$PYTHONPATH:/usr/lib/python2.7/dist-packages/"
+install: pip install --requirement requirements/test.txt --use-mirrors
