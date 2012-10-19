@@ -5,7 +5,8 @@
 * `Sean's Python project template <https://github.com/seanfisk/python-project-template/>`_
 * Testing
     * `Python Testing Tools Taxonomy <http://wiki.python.org/moin/PythonTestingToolsTaxonomy>`_
-    * `Ludibrio <https://github.com/nsigustavo/ludibrio/>`_ - mocking module
+    * `mock <http://www.voidspace.org.uk/python/mock/>`_ - Python
+      mocking library
     * `unittest <http://docs.python.org/library/unittest.html>`_
     * `pytest <http://pytest.org/latest/>`_
 * PySide
