@@ -14,7 +14,11 @@
 * Presenter First
     * `Seminal Paper <http://atomicobject.com/files/PresenterFirstAgile2006.pdf>`_
     * `Resources on AO site <http://atomicobject.com/pages/Presenter+First>`_
-    * `Matt Fletcher: Presenter First with GTK+ and C <http://spin.atomicobject.com/2012/07/27/presenter-first-in-gtk-and-c-updated-for-2012/>`_
+    * `Matt Fletcher: Presenter First with GTK+ and C
+      <http://spin.atomicobject.com/2012/07/27/presenter-first-in-gtk-and-c-updated-for-2012/>`_
+* `Biopython <http://biopython.org/>`_
+    * `Example calculating GC% <http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc18>`_
+    * `SeqFeature <http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc40>`_ -
+      annotating locations in sequences
 * Tools
-    * `Biopython <http://biopython.org/>`_
     * `EMBOSS <http://emboss.sourceforge.net/>`_ - software package for molecular biology
