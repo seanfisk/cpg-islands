@@ -21,5 +21,6 @@
     * `Example calculating GC% <http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc18>`_
     * `SeqFeature <http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc40>`_ -
       annotating locations in sequences
+    * `Entrez - downloading full records <http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc104>`_
 * Tools
     * `EMBOSS <http://emboss.sourceforge.net/>`_ - software package for molecular biology

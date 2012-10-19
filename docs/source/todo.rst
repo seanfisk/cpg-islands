@@ -5,19 +5,31 @@ Todo
 
 .. todo::
 
-   Research BioPython
+   Restructure views (cli, qt, curses).
 
 .. todo::
 
-   Upload documents to readthedocs.org
+   Tasks with shovel.
 
 .. todo::
 
-   Port testing code from Caesar cipher
+   Interfaces with `Abstract Base Classes <http://docs.python.org/library/abc.html>`_
    
 .. todo::
 
-   Construct MVP triads.
+   Add CpG island annotator to the application model.
+
+   .. function:: annotate_cpg_islands(seq, island_size, minimum_gc_ratio)
+
+      Island finder function.
+
+      :param seq: the sequence to annotate
+      :type seq: :class:`Bio.SeqRecord`
+      :param island_size: the number of bases which an island may contain
+      :type island_size: :class:`int`
+      :param minimum_gc_ratio: the ratio of GC to other bases
+      :type minimum_gc_ratio: :class:`float`
+      :return: not sure yet
 
 .. todo::
 
