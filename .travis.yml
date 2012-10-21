@@ -1,9 +1,9 @@
 language: python
 python:
   - "2.7"
-script: python test.py
+script: shovel test_all
 # don't need PySide.QtCore yet
-# when we do, uncomment this
+# if we do, uncomment this
 # before_install:
 # - sudo apt-add-repository -y ppa:pyside/ppa
 # - sudo apt-get update -qq
