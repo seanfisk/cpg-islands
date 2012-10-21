@@ -2,5 +2,5 @@
 """
 
 
-class QtApplicationView(object):
+class ApplicationView(object):
     pass

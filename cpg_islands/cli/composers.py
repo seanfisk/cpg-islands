@@ -1,19 +1,19 @@
-""":mod:`cpg_islands.composers` --- Functions to create MVP triads
+""":mod:`cpg_islands.cli.composers` --- Functions to create CLI MVP triads
 """
 
-from models import ApplicationModel
-from views.cli import CliApplicationView
-from presenters import ApplicationPresenter
+from cpg_islands.models import ApplicationModel
+from cpg_islands.cli.views import ApplicationView
+from cpg_islands.presenters import ApplicationPresenter
 
 
-def create_cli_presenter():
+def create_presenter():
     """Create a presenter with a command-line view.
 
     :return: the created presenter
     :rtype: :class:`ApplicationPresenter`
     """
     model = ApplicationModel()
-    view = CliApplicationView()
+    view = ApplicationView()
     presenter = ApplicationPresenter(model, view)
     presenter.register_for_events()
     model.run()

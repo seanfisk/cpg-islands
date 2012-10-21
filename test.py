@@ -20,7 +20,7 @@ CHECK_FILES = [CODE_DIRECTORY,
                'test.py']
 
 
-class TestRunner(object):
+class MetaTestRunner(object):
     """Abstract test runner base class."""
     __metaclass__ = abc.ABCMeta
 
@@ -55,7 +55,7 @@ class TestRunner(object):
         self.terminal_writer.sep('=', self.title())
 
 
-class UnitTestRunner(TestRunner):
+class UnitTestRunner(MetaTestRunner):
     """Runner for pytest unit tests."""
     def name(self):
         return 'tests'
@@ -83,7 +83,7 @@ class UnitTestRunner(TestRunner):
         return pytest.main(test_args)
 
 
-class StyleGuideRunner(TestRunner):
+class StyleGuideRunner(MetaTestRunner):
     def __init__(self, terminal_writer):
         self.terminal_writer = terminal_writer
 
@@ -110,7 +110,7 @@ class StyleGuideRunner(TestRunner):
 def main(argv=None):
     # for printing separators; idea/code stolen from pytest
     tw = TerminalWriter()
-    test_runners = [runner(tw) for runner in TestRunner.__subclasses__()]
+    test_runners = [runner(tw) for runner in MetaTestRunner.__subclasses__()]
     success = True
 
     if argv is None:

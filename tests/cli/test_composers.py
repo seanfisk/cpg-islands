@@ -1,21 +1,21 @@
 import mock
 
-from cpg_islands.composers import create_cli_presenter
+from cpg_islands.cli.composers import create_presenter
 
 
 class TestComposers:
-    @mock.patch('cpg_islands.composers.ApplicationPresenter',
+    @mock.patch('cpg_islands.cli.composers.ApplicationPresenter',
                 autospec=True, spec_set=True)
-    @mock.patch('cpg_islands.composers.CliApplicationView',
+    @mock.patch('cpg_islands.cli.composers.ApplicationView',
                 autospec=True, spec_set=True)
-    @mock.patch('cpg_islands.composers.ApplicationModel',
+    @mock.patch('cpg_islands.cli.composers.ApplicationModel',
                 autospec=True, spec_set=True)
     def test_create_cli_presenter(self, mock_model, mock_view, mock_presenter):
         model = mock_model.return_value
         mock_view.return_value = mock.sentinel.view
         presenter = mock_presenter.return_value
 
-        retval = create_cli_presenter()
+        retval = create_presenter()
         assert retval == presenter
 
         mock_model.assert_called_once_with()
