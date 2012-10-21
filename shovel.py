@@ -5,26 +5,30 @@
 from __future__ import print_function
 import abc
 import sys
-import argparse
 from collections import OrderedDict
 
+from shovel import task
 from py.io import TerminalWriter
+# have to import these under different names since we have functions
+# with these names
 import pytest
 import pep8
 
+sys.path.append('.')
+
 CODE_DIRECTORY = 'cpg_islands'
 TESTS_DIRECTORY = 'tests'
-CHECK_FILES = [CODE_DIRECTORY,
-               TESTS_DIRECTORY,
-               'setup.py',
-               'test.py']
+CODE_FILES = [CODE_DIRECTORY,
+              TESTS_DIRECTORY,
+              'setup.py',
+              'shovel.py']
 
 
 class MetaTestRunner(object):
     """Abstract test runner base class."""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, terminal_writer):
+    def __init__(self, terminal_writer=TerminalWriter()):
         self.terminal_writer = terminal_writer
 
     @abc.abstractproperty
@@ -72,21 +76,19 @@ class UnitTestRunner(MetaTestRunner):
         super(UnitTestRunner, self).run()
         test_args = []
         # run on multiple processors if possible
-        try:
-            import xdist
-            import multiprocessing
-            num = max(multiprocessing.cpu_count() / 2, 1)
-            test_args += ['-n', str(num)]
-        except ImportError:
-            pass  # oh well
+        # DISABLED FOR NOW
+        # try:
+        #     import xdist
+        #     import multiprocessing
+        #     num = max(multiprocessing.cpu_count() / 2, 1)
+        #     test_args += ['-n', str(num)]
+        # except ImportError:
+        #     pass  # oh well
         test_args += ['--verbose', TESTS_DIRECTORY]
         return pytest.main(test_args)
 
 
 class StyleGuideRunner(MetaTestRunner):
-    def __init__(self, terminal_writer):
-        self.terminal_writer = terminal_writer
-
     def name(self):
         return 'pep8'
 
@@ -101,39 +103,28 @@ class StyleGuideRunner(MetaTestRunner):
         """
         super(StyleGuideRunner, self).run()
         pep8_style = pep8.StyleGuide()
-        report = pep8_style.check_files(CHECK_FILES)
+        report = pep8_style.check_files(CODE_FILES)
         if report.total_errors == 0:
             print('No style errors')
         return report.total_errors
 
 
-def main(argv=None):
-    # for printing separators; idea/code stolen from pytest
-    tw = TerminalWriter()
-    test_runners = [runner(tw) for runner in MetaTestRunner.__subclasses__()]
+@task
+def test():
+    """Run all pytest unit tests."""
+    sys.exit(UnitTestRunner().run())
+
+
+@task
+def style():
+    """Perform a PEP8 style check on the code."""
+    sys.exit(StyleGuideRunner().run())
+
+
+@task
+def test_all():
+    """Perform a style check and run all unit tests."""
     success = True
-
-    if argv is None:
-        argv = sys.argv
-
-    # parse arguments
-    if len(argv) == 1:
-        for runner in test_runners:
-            success &= runner.run() == 0
-    else:
-        test_runners_dict = OrderedDict([(runner.name(), runner) for
-                                         runner in test_runners])
-        check_help = 'What check to run ({0}).'.format(
-            ' | '.join(test_runners_dict.iterkeys()))
-        arg_parser = argparse.ArgumentParser(
-            description='Test runner and style checker')
-        arg_parser.add_argument('check', metavar='CHECK',
-                                choices=test_runners_dict.iterkeys(),
-                                help=check_help)
-        args = arg_parser.parse_args(args=argv[1:])
-        success = test_runners_dict[args.check].run() == 0
-
-    return int(not success)
-
-if __name__ == '__main__':
-    sys.exit(main())
+    for runner in MetaTestRunner.__subclasses__():
+        success &= runner().run() == 0
+    sys.exit(int(not success))
