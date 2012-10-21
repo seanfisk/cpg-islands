@@ -130,6 +130,7 @@ def test_all():
         success &= runner().run() == 0
     sys.exit(int(not success))
 
+
 @task
 def emacs_tags():
     """Generate TAGS file for Emacs with exuberant ctags."""
