@@ -6,6 +6,7 @@ from __future__ import print_function
 import abc
 import sys
 from collections import OrderedDict
+import subprocess
 
 from shovel import task
 from py.io import TerminalWriter
@@ -128,3 +129,12 @@ def test_all():
     for runner in MetaTestRunner.__subclasses__():
         success &= runner().run() == 0
     sys.exit(int(not success))
+
+@task
+def emacs_tags():
+    """Generate TAGS file for Emacs with exuberant ctags."""
+    args = ['ctags',
+            '-e',  # emacs tags
+            '--recurse']
+    args += CODE_FILES
+    subprocess.check_call(args)
