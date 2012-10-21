@@ -55,7 +55,7 @@ setup(name=metadata.title,
       zip_safe=False,  # don't use eggs
       entry_points={
           'console_scripts': [
-              'cpgfinder = cpg_islands.main:main'
+              'cpg_islands = cpg_islands.cli.main:main'
           ],
           # if you have a gui, use this
           # 'gui_scripts': [
