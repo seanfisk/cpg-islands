@@ -4,11 +4,20 @@
 from __future__ import print_function
 import sys
 import argparse
+import abc
 
 from cpg_islands import metadata
 
 
-class ApplicationModel(object):
+class MetaApplicationModel(object):
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def run(self, argv=None):
+        pass
+
+
+class ApplicationModel(MetaApplicationModel):
     def run(self, argv=None):
         if argv is None:
             argv = sys.argv

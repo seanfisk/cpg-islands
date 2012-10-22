@@ -5,10 +5,6 @@ Todo
 
 .. todo::
 
-   Interfaces with `Abstract Base Classes <http://docs.python.org/library/abc.html>`_.
-   
-.. todo::
-
    Add CpG island annotator to the application model.
 
    .. function:: annotate_cpg_islands(seq, island_size, minimum_gc_ratio)
