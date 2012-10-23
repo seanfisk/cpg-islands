@@ -58,6 +58,27 @@ class MetaTestRunner(object):
         self.terminal_writer.sep('=', self.title())
 
 
+class StyleGuideRunner(MetaTestRunner):
+    def name(self):
+        return 'pep8'
+
+    def title(self):
+        return 'PEP8 Style Guide'
+
+    def run(self):
+        """Run PEP8 style guide checker on code and test files.
+
+        :return: the number of errors
+        :rtype: :class:`int`
+        """
+        super(StyleGuideRunner, self).run()
+        pep8_style = pep8.StyleGuide()
+        report = pep8_style.check_files(CODE_FILES)
+        if report.total_errors == 0:
+            print('No style errors')
+            return report.total_errors
+
+
 class UnitTestRunner(MetaTestRunner):
     """Runner for pytest unit tests."""
     def name(self):
@@ -85,27 +106,6 @@ class UnitTestRunner(MetaTestRunner):
         #     pass  # oh well
         test_args += ['--verbose', TESTS_DIRECTORY]
         return pytest.main(test_args)
-
-
-class StyleGuideRunner(MetaTestRunner):
-    def name(self):
-        return 'pep8'
-
-    def title(self):
-        return 'PEP8 Style Guide'
-
-    def run(self):
-        """Run PEP8 style guide checker on code and test files.
-
-        :return: the number of errors
-        :rtype: :class:`int`
-        """
-        super(StyleGuideRunner, self).run()
-        pep8_style = pep8.StyleGuide()
-        report = pep8_style.check_files(CODE_FILES)
-        if report.total_errors == 0:
-            print('No style errors')
-        return report.total_errors
 
 
 def _test_all():
