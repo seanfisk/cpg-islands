@@ -154,6 +154,14 @@ def emacs_tags():
 
 
 @task
+def coverage():
+    """Run tests and show test coverage report."""
+    pytest.main(['--cov', CODE_DIRECTORY,
+                 '--cov-report', 'term-missing',
+                 TESTS_DIRECTORY])
+
+
+@task
 def qt():
     """Run the Qt-based version of the program."""
     from cpg_islands.qt.main import main
