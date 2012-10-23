@@ -1,6 +1,10 @@
 import mock
 
-from cpg_islands.models import ApplicationModel
+from pytest import raises
+from Bio.Seq import Seq
+from Bio.SeqFeature import SeqFeature, FeatureLocation
+
+from cpg_islands.models import ApplicationModel, InvalidIslandSizeError
 
 
 def pytest_funcarg__model(request):
@@ -10,6 +14,17 @@ def pytest_funcarg__model(request):
 def pytest_generate_tests(metafunc):
     if 'helparg' in metafunc.funcargnames:
         metafunc.parametrize('helparg', ['-h', '--help'])
+
+
+def assert_feature_equal(computed_feature, expected_feature, sequence):
+    assert (str(computed_feature.extract(sequence)) ==
+            str(expected_feature.extract(sequence)))
+
+
+def assert_features_equal(computed_features, expected_features, sequence):
+    for computed_feature, expected_feature in zip(computed_features,
+                                                  expected_features):
+        assert_feature_equal(computed_feature, expected_feature, sequence)
 
 
 class TestModels:
@@ -35,3 +50,22 @@ class TestModels:
             assert 'Author:' in out
             assert 'URL:' in out
             mock_exit.assert_called_once_with(0)
+
+    class TestAnnotate:
+        def test_nothing(self, model):
+            with raises(InvalidIslandSizeError):
+                model.annotate_cpg_islands(Seq(''), 0, 0)
+
+        def test_negative_island(self, model):
+            with raises(InvalidIslandSizeError):
+                model.annotate_cpg_islands(Seq(''), -1, 0)
+
+        def test_base(self, model):
+            sequence = Seq('C')
+            computed = model.annotate_cpg_islands(sequence, 1, 1)
+            expected = [SeqFeature(FeatureLocation(0, 1))]
+            assert_features_equal(computed, expected, sequence)
+
+        def test_length(self, model):
+            features = model.annotate_cpg_islands(Seq(''), 1, 1)
+            assert features == []
