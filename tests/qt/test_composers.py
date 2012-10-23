@@ -1,5 +1,6 @@
 import mock
 
+
 # We don't want to require the `PySide' module for testing, since we
 # are not testing our user interface. Just patch the entire module.
 @mock.patch.dict('sys.modules', {'PySide': mock.MagicMock()})
