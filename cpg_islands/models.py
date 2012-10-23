@@ -74,14 +74,14 @@ URL: <{url}>
         :return: list of features
         :rtype: :class:`list` of :class:`Bio.SeqFeature.SeqFeature`
         """
-
         if island_size <= 0:
             raise InvalidIslandSizeError(island_size)
+        minimum_gc_percentage = minimum_gc_ratio * 100
         features = []
         if island_size <= len(seq):
             for start_index in xrange(len(seq) - island_size + 1):
                 end_index = start_index + island_size
-                if GC(seq[start_index:end_index]) > minimum_gc_ratio:
+                if GC(seq[start_index:end_index]) >= minimum_gc_percentage:
                     feature = SeqFeature(
                         FeatureLocation(start_index, end_index))
                     features.append(feature)

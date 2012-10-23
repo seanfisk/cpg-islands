@@ -27,6 +27,17 @@ def assert_features_equal(computed_features, expected_features, sequence):
         assert_feature_equal(computed_feature, expected_feature, sequence)
 
 
+def features(tuples):
+    """Build a list of features from a list of tuples.
+
+    :param tuples: list of tuples
+    :type tuples: :class:`list` of :class:`tuple`
+    :return: list of features
+    :rtype: :class:`list` of :class:`SeqFeature`
+    """
+    return [SeqFeature(FeatureLocation(a, b)) for a, b in tuples]
+
+
 class TestModels:
     class TestRun:
         # capfd argument allows capture of stdout/stderr based on file
@@ -65,11 +76,25 @@ class TestModels:
                 model.annotate_cpg_islands(Seq(''), -1, 0)
 
         def test_base(self, model):
-            sequence = Seq('C')
-            computed = model.annotate_cpg_islands(sequence, 1, 1)
-            expected = [SeqFeature(FeatureLocation(0, 1))]
-            assert_features_equal(computed, expected, sequence)
+            seq = Seq('C')
+            computed = model.annotate_cpg_islands(seq, 1, 1)
+            expected = features([(0, 1)])
+            assert_features_equal(computed, expected, seq)
 
         def test_length(self, model):
-            features = model.annotate_cpg_islands(Seq(''), 1, 1)
-            assert features == []
+            computed = model.annotate_cpg_islands(Seq(''), 1, 1)
+            assert computed == []
+
+        def test_ratio_one(self, model):
+            seq = Seq('ATGCCGATTTTA')
+            computed = model.annotate_cpg_islands(seq, 4, 1)
+            expected = features([(2, 6)])
+            assert_features_equal(computed, expected, seq)
+
+        def test_half(self, model):
+            seq = Seq('ATATGCTAAT')
+            computed = model.annotate_cpg_islands(seq, 4, 0.5)
+            expected = features([(2, 6),
+                                 (3, 7),
+                                 (4, 8)])
+            assert_features_equal(computed, expected, seq)
