@@ -15,8 +15,6 @@ import pep8
 
 sys.path.append('.')
 
-from cpg_islands.qt.main import main as qt_main
-
 CODE_DIRECTORY = 'cpg_islands'
 TESTS_DIRECTORY = 'tests'
 CODE_FILES = [CODE_DIRECTORY,
@@ -158,4 +156,5 @@ def emacs_tags():
 @task
 def qt():
     """Run the Qt-based version of the program."""
-    qt_main([])
+    from cpg_islands.qt.main import main
+    main([])
