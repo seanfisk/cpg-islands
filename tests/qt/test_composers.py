@@ -15,12 +15,11 @@ class TestComposers:
         mock_view.return_value = mock.sentinel.view
         presenter = mock_presenter.return_value
 
-        retval = create_presenter()
+        retval = create_presenter(mock.sentinel.args)
         assert retval == presenter
 
-        mock_model.assert_called_once_with()
         mock_view.assert_called_once_with()
-        expected_model_calls = mock.call().run().call_list()
+        expected_model_calls = mock.call().run(mock.sentinel.args).call_list()
         expected_presenter_calls = mock.call(model, mock.sentinel.view).\
             register_for_events().call_list()
         assert mock_model.mock_calls == expected_model_calls

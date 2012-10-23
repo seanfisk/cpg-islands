@@ -4,4 +4,4 @@ class ApplicationPresenter(object):
         self.view = view
 
     def register_for_events(self):
-        pass
+        self.model.started.append(self.view.start)

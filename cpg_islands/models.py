@@ -7,10 +7,14 @@ import argparse
 import abc
 
 from cpg_islands import metadata
+from cpg_islands.utils import Event
 
 
 class MetaApplicationModel(object):
     __metaclass__ = abc.ABCMeta
+
+    started = Event()
+    """Fired when the application starts."""
 
     @abc.abstractmethod
     def run(self, argv=None):
@@ -18,9 +22,8 @@ class MetaApplicationModel(object):
 
 
 class ApplicationModel(MetaApplicationModel):
-    def run(self, argv=None):
-        if argv is None:
-            argv = sys.argv
+    def run(self, argv):
+        self.started()
 
         author_strings = []
         for name, email in zip(metadata.authors, metadata.emails):
@@ -42,5 +45,3 @@ URL: <{url}>
             epilog=epilog)
 
         args = arg_parser.parse_args(args=argv[1:])
-
-        print(epilog)

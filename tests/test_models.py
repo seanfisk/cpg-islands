@@ -21,9 +21,7 @@ class TestModels:
             model.run(['progname'])
             out, err = capfd.readouterr()
             # some basic tests to check output
-            assert  'CpG Island Finder' in out
-            assert 'Author:' in out
-            assert 'URL:' in out
+            assert out == ''
 
         def test_help(self, model, helparg, capfd):
             with mock.patch('sys.exit') as mock_exit:
@@ -35,3 +33,9 @@ class TestModels:
             assert 'Author:' in out
             assert 'URL:' in out
             mock_exit.assert_called_once_with(0)
+
+        def test_started_called(self, model):
+            started_callback = mock.MagicMock()
+            model.started.append(started_callback)
+            model.run(['progname'])
+            started_callback.assert_called_once_with()

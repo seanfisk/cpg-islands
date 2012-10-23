@@ -6,7 +6,7 @@ from cpg_islands.cli.views import ApplicationView
 from cpg_islands.presenters import ApplicationPresenter
 
 
-def create_presenter():
+def create_presenter(argv):
     """Create a presenter with a command-line view.
 
     :return: the created presenter
@@ -16,5 +16,5 @@ def create_presenter():
     view = ApplicationView()
     presenter = ApplicationPresenter(model, view)
     presenter.register_for_events()
-    model.run()
+    model.run(argv)
     return presenter
