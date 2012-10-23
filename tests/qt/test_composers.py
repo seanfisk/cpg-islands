@@ -1,8 +1,8 @@
 import mock
 
-from cpg_islands.qt.composers import create_presenter
-
-
+# We don't want to require the `PySide' module for testing, since we
+# are not testing our user interface. Just patch the entire module.
+@mock.patch.dict('sys.modules', {'PySide': mock.MagicMock()})
 class TestComposers:
     @mock.patch('cpg_islands.qt.composers.ApplicationPresenter',
                 autospec=True, spec_set=True)
@@ -15,6 +15,7 @@ class TestComposers:
         mock_view.return_value = mock.sentinel.view
         presenter = mock_presenter.return_value
 
+        from cpg_islands.qt.composers import create_presenter
         retval = create_presenter(mock.sentinel.args)
         assert retval == presenter
 
