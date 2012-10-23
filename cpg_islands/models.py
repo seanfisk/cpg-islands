@@ -63,6 +63,18 @@ URL: <{url}>
         args = arg_parser.parse_args(args=argv[1:])
 
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+        """Create a list of CpG island features in a sequence.
+
+        :param seq: the sequence to annotate
+        :type seq: :class:`Bio.Seq.Seq`
+        :param island_size: the number of bases which an island may contain
+        :type island_size: :class:`int`
+        :param minimum_gc_ratio: the ratio of GC to other bases
+        :type minimum_gc_ratio: :class:`float`
+        :return: list of features
+        :rtype: :class:`list` of :class:`Bio.SeqFeature.SeqFeature`
+        """
+
         if island_size <= 0:
             raise InvalidIslandSizeError(island_size)
         features = []
