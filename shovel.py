@@ -110,6 +110,14 @@ class StyleGuideRunner(MetaTestRunner):
         return report.total_errors
 
 
+def _test_all():
+    """Abstraction function which returns a code instead of exiting."""
+    success = True
+    for runner in MetaTestRunner.__subclasses__():
+        success &= runner().run() == 0
+    return int(not success)
+
+
 @task
 def test():
     """Run all pytest unit tests."""
@@ -125,10 +133,16 @@ def style():
 @task
 def test_all():
     """Perform a style check and run all unit tests."""
-    success = True
-    for runner in MetaTestRunner.__subclasses__():
-        success &= runner().run() == 0
-    sys.exit(int(not success))
+    sys.exit(_test_all())
+
+
+@task
+def commit():
+    """Commit only if all the tests pass."""
+    if _test_all() == 0:
+        subprocess.check_call(['git', 'commit'])
+    else:
+        print('\nTests failed, not committing.')
 
 
 @task
