@@ -18,7 +18,7 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-install_requirements = []
+install_requirements = ['biopython']
 
 # see here for more options:
 # <http://packages.python.org/distribute/setuptools.html>
