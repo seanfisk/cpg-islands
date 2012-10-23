@@ -1,8 +1,13 @@
 """:mod:`cpg_islands.views.qt` --- Views based on Q toolkit
 """
 
-from cpg_islands.views import MetaApplicationView
+from PySide import QtGui
+
+from cpg_islands.views import BaseApplicationView
 
 
-class ApplicationView(MetaApplicationView):
-    pass
+class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
+    def start(self):
+        """Show and raise the window."""
+        self.show()
+        self.raise_()

@@ -10,8 +10,6 @@ import subprocess
 
 from shovel import task
 from py.io import TerminalWriter
-# have to import these under different names since we have functions
-# with these names
 import pytest
 import pep8
 
@@ -153,3 +151,10 @@ def emacs_tags():
             '--recurse']
     args += CODE_FILES
     subprocess.check_call(args)
+
+
+@task
+def qt():
+    """Run the Qt-based version of the program."""
+    from cpg_islands.qt.main import main
+    main([])
