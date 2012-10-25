@@ -1,3 +1,5 @@
+from __future__ import division
+
 import mock
 
 from pytest import raises
@@ -16,18 +18,17 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize('helparg', ['-h', '--help'])
 
 
-def assert_feature_equal(computed_feature, expected_feature, sequence):
-    assert (str(computed_feature.extract(sequence)) ==
-            str(expected_feature.extract(sequence)))
+def extract_features(feature_list, sequence):
+    return [str(feature.extract(sequence)) for feature in feature_list]
 
 
 def assert_features_equal(computed_features, expected_features, sequence):
-    for computed_feature, expected_feature in zip(computed_features,
-                                                  expected_features):
-        assert_feature_equal(computed_feature, expected_feature, sequence)
+    computed_features_extracted = extract_features(computed_features, sequence)
+    expected_features_extracted = extract_features(expected_features, sequence)
+    assert computed_features_extracted == expected_features_extracted
 
 
-def features(tuples):
+def make_features(tuples):
     """Build a list of features from a list of tuples.
 
     :param tuples: list of tuples
@@ -78,7 +79,7 @@ class TestModels:
         def test_base(self, model):
             seq = Seq('C')
             computed = model.annotate_cpg_islands(seq, 1, 1)
-            expected = features([(0, 1)])
+            expected = make_features([(0, 1)])
             assert_features_equal(computed, expected, seq)
 
         def test_length(self, model):
@@ -88,13 +89,20 @@ class TestModels:
         def test_ratio_one(self, model):
             seq = Seq('ATGCCGATTTTA')
             computed = model.annotate_cpg_islands(seq, 4, 1)
-            expected = features([(2, 6)])
+            expected = make_features([(2, 6)])
             assert_features_equal(computed, expected, seq)
 
         def test_half(self, model):
             seq = Seq('ATATGCTAAT')
             computed = model.annotate_cpg_islands(seq, 4, 0.5)
-            expected = features([(2, 6),
-                                 (3, 7),
-                                 (4, 8)])
+            expected = make_features([(2, 6),
+                                      (3, 7),
+                                      (4, 8)])
+            assert_features_equal(computed, expected, seq)
+
+        def test_third(self, model):
+            seq = Seq('TTATATGCTAATAT')
+            size = 6
+            computed = model.annotate_cpg_islands(seq, size, 1 / 3)
+            expected = make_features([(i, i + size) for i in xrange(2, 7)])
             assert_features_equal(computed, expected, seq)
