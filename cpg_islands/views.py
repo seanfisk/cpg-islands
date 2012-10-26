@@ -1,8 +1,14 @@
 """:mod:`cpg_islands.views` --- View interfaces
 """
 
+from cpg_islands.utils import Event
+
 
 class BaseApplicationView(object):
+    submitted = Event()
+    """Called when the form is submitted, i.e., submit is clicked by
+    the user."""
+
     def start(self):
         """Start the view."""
         raise NotImplementedError()

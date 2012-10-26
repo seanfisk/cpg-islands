@@ -1,5 +1,6 @@
 from Bio.Seq import Seq
 
+
 class ApplicationPresenter(object):
     def __init__(self, model, view):
         self.model = model
@@ -7,6 +8,7 @@ class ApplicationPresenter(object):
 
     def register_for_events(self):
         self.model.started.append(self.view.start)
+        self.view.submitted.append(self._user_submits)
 
     def _user_submits(self, seq_str, island_size_str, minimum_gc_ratio_str):
         """Called when the user submits the form.
@@ -24,4 +26,6 @@ class ApplicationPresenter(object):
         locations = self.model.annotate_cpg_islands(seq,
                                                     island_size,
                                                     minimum_gc_ratio)
-        self.view.set_locations(locations)
+        location_tuples = [(f.location.start.position,
+                            f.location.end.position) for f in locations]
+        self.view.set_locations(location_tuples)

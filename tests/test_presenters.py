@@ -1,10 +1,11 @@
 from mock import create_autospec, sentinel
+from Bio.Seq import Seq
 
 from cpg_islands.models import MetaApplicationModel
 from cpg_islands.views import BaseApplicationView
 from cpg_islands.presenters import ApplicationPresenter
+from helpers import make_features
 
-from Bio.Seq import Seq
 
 def pytest_funcarg__presenter(request):
     mock_model = create_autospec(MetaApplicationModel, spec_set=True)
@@ -18,12 +19,15 @@ class TestPresenters:
         presenter.register_for_events()
         presenter.model.started.append.assert_called_once_with(
             presenter.view.start)
+        presenter.view.submitted.append.assert_called_once_with(
+            presenter._user_submits)
 
     def test_user_submits_valid_values(self, presenter):
         """When the user clicks submit with valid values, the island
         locations are shown."""
+        feature_tuples = [(0, 5), (1, 6), (3, 8)]
         presenter.model.annotate_cpg_islands.return_value = \
-            sentinel.locations
+            make_features(feature_tuples)
         seq_str = 'atatgcgcatat'
         presenter._user_submits(seq_str, '4', '0.5')
         seq = Seq(seq_str)
@@ -37,4 +41,4 @@ class TestPresenters:
         assert str(annotate_args[0]) == str(seq)
         assert annotate_args[1] == 4
         assert annotate_args[2] == 0.5
-        presenter.view.set_locations.assert_called_once_with(sentinel.locations)
+        presenter.view.set_locations.assert_called_once_with(feature_tuples)

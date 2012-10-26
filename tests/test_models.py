@@ -4,9 +4,9 @@ import mock
 
 from pytest import raises
 from Bio.Seq import Seq
-from Bio.SeqFeature import SeqFeature, FeatureLocation
 
 from cpg_islands.models import ApplicationModel, InvalidIslandSizeError
+from helpers import make_features
 
 
 def pytest_funcarg__model(request):
@@ -26,17 +26,6 @@ def assert_features_equal(computed_features, expected_features, sequence):
     computed_features_extracted = extract_features(computed_features, sequence)
     expected_features_extracted = extract_features(expected_features, sequence)
     assert computed_features_extracted == expected_features_extracted
-
-
-def make_features(tuples):
-    """Build a list of features from a list of tuples.
-
-    :param tuples: list of tuples
-    :type tuples: :class:`list` of :class:`tuple`
-    :return: list of features
-    :rtype: :class:`list` of :class:`SeqFeature`
-    """
-    return [SeqFeature(FeatureLocation(a, b)) for a, b in tuples]
 
 
 class TestModels:

@@ -5,19 +5,17 @@ from PySide import QtGui
 
 from cpg_islands import metadata
 from cpg_islands.views import BaseApplicationView
-from cpg_islands.utils import Event
 
 
 class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
     """Primary application view."""
-    submitted = Event()
 
     def __init__(self, parent=None):
         """Construct a main view.
 
-            :param parent: widget parent
-            :type parent: :class:`QtGui.QWidget`
-            """
+        :param parent: widget parent
+        :type parent: :class:`QtGui.QWidget`
+        """
         super(ApplicationView, self).__init__(parent)
 
         self.setCentralWidget(QtGui.QWidget(self))
@@ -60,41 +58,44 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
     def get_sequence(self):
         """Return the widget's entered text.
 
-            :return: the text
-            :rtype: :class:`str`
-            """
+        :return: the text
+        :rtype: :class:`str`
+        """
         return self.sequence_input.toPlainText()
 
     def get_gc(self):
         """Return the widget's entered GC ratio.
 
-            :return: the key
-            :rtype: :class:`str`
-            """
+        :return: the key
+        :rtype: :class:`str`
+        """
         return self.ratio_input.text()
 
     def get_island(self):
         """Return the widget's entered island size.
 
-            :return: the key
-            :rtype: :class:`str`
-            """
+        :return: the key
+        :rtype: :class:`str`
+        """
         return self.island_input.text()
 
     def set_locations(self, locations):
         """Set encoded text result.
 
-            :param result: the encoded text
-            :type locations: :class:`list` of :class:`tuple`
-            """
-        #self.result_output.setPlainText(result)
+        :param result: the encoded text
+        :type locations: :class:`list` of :class:`tuple`
+        """
+        result_list = []
+        for start, end in locations:
+            result_list.append('{0} {1}'.format(start, end))
+        self.result_output.setPlainText('\n'.join(result_list))
 
     def show_error(self, message):
         """Show the user an error dialog.
 
-            :param message: error message
-            :type message: :class:`str`
-            """
+        :param message: error message
+        :type message: :class:`str`
+        """
         error_dialog = QtGui.QErrorMessage(self)
         error_dialog.showMessage(message)
 
