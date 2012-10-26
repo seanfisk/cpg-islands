@@ -69,12 +69,16 @@ class TestModels:
 
     class TestAnnotate:
         def test_nothing(self, model):
-            with raises(InvalidIslandSizeError):
+            with raises(InvalidIslandSizeError) as error:
                 model.annotate_cpg_islands(Seq(''), 0, 0)
+            # error.value returns the actual exception
+            assert str(error.value) == 'Invalid island size: 0'
 
         def test_negative_island(self, model):
-            with raises(InvalidIslandSizeError):
+            with raises(InvalidIslandSizeError) as error:
                 model.annotate_cpg_islands(Seq(''), -1, 0)
+            # error.value returns the actual exception
+            assert str(error.value) == 'Invalid island size: -1'
 
         def test_base(self, model):
             seq = Seq('C')
