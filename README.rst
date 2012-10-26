@@ -103,6 +103,18 @@ tags file. Then use ido-find-file-in-tag-files_ to find project files.
 .. _ido-find-file-in-tag-files: http://emacswiki.org/emacs/InteractivelyDoThings#toc11
 
 -------
+License
+-------
+
+.. image:: http://www.gnu.org/graphics/gplv3-127x51.png
+   :target: `GNU General Public License version 3`_
+
+CpG Islands is free software licensed under the `GNU General Public
+License version 3`_.
+
+.. _GNU General Public License version 3: http://www.gnu.org/licenses/gpl.html#content
+
+-------
 Credits
 -------
 
