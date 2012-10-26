@@ -3,6 +3,7 @@
 
 from PySide import QtGui
 
+from cpg_islands import metadata
 from cpg_islands.views import BaseApplicationView
 from cpg_islands.utils import Event
 
@@ -62,7 +63,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
             :return: the text
             :rtype: :class:`str`
             """
-        return self.text_input.toPlainText()
+        return self.sequence_input.toPlainText()
 
     def get_gc(self):
         """Return the widget's entered GC ratio.
@@ -70,7 +71,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
             :return: the key
             :rtype: :class:`str`
             """
-        return self.island_input.text()
+        return self.ratio_input.text()
 
     def get_island(self):
         """Return the widget's entered island size.
@@ -86,7 +87,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
             :param result: the encoded text
             :type locations: :class:`list` of :class:`tuple`
             """
-    #self.result_output.setPlainText(result)
+        #self.result_output.setPlainText(result)
 
     def show_error(self, message):
         """Show the user an error dialog.
