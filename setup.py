@@ -54,9 +54,6 @@ setup(name=metadata.title,
       install_requires=install_requirements,
       zip_safe=False,  # don't use eggs
       entry_points={
-          'console_scripts': [
-              'cpg_islands = cpg_islands.cli.main:main'
-          ],
           # if you have a gui, use this
           # 'gui_scripts': [
           #     'my_module_gui = my_module.gui:main'

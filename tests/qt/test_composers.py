@@ -11,7 +11,7 @@ class TestComposers:
                 autospec=True, spec_set=True)
     @mock.patch('cpg_islands.qt.composers.ApplicationModel',
                 autospec=True, spec_set=True)
-    def test_create_cli_presenter(self, mock_model, mock_view, mock_presenter):
+    def test_create_qt_presenter(self, mock_model, mock_view, mock_presenter):
         model = mock_model.return_value
         mock_view.return_value = mock.sentinel.view
         presenter = mock_presenter.return_value
