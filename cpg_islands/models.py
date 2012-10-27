@@ -8,10 +8,13 @@ import abc
 
 from Bio.Seq import Seq
 from Bio.SeqUtils import GC
+from Bio.Alphabet import IUPAC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
 from cpg_islands import metadata
 from cpg_islands.utils import Event
+
+ALPHABET = IUPAC.unambiguous_dna
 
 
 class MetaApplicationModel(object):
@@ -26,6 +29,17 @@ class MetaApplicationModel(object):
 
     @abc.abstractmethod
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+        raise NotImplementedError()
+
+    def sanitize_sequence(self, sequence_str):
+        """Remove all invalid characters from a sequence, and covert
+        all valid characters to uppercase.
+
+        :param sequence_str: the sequence
+        :type sequence_str: :class:`str`
+        :return: the sanitized sequence
+        :rtype: :class:`str`
+        """
         raise NotImplementedError()
 
 
@@ -86,3 +100,11 @@ URL: <{url}>
                     FeatureLocation(start_index, end_index))
                 features.append(feature)
         return features
+
+    def sanitize_sequence(self, sequence_str):
+        sequence_list = []
+        for char in sequence_str:
+            char_upper = char.upper()
+            if char_upper in ALPHABET.letters:
+                sequence_list.append(char_upper)
+        return ''.join(sequence_list)

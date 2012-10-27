@@ -137,3 +137,16 @@ class TestModels:
             computed = model.annotate_cpg_islands(seq, size, 1 / 3)
             expected = make_features([(i, i + size) for i in xrange(2, 7)])
             assert_features_equal(computed, expected, seq)
+
+    class TestSanitize:
+        def test_lower_to_upper(self, model):
+            result = model.sanitize_sequence('agTcgGta')
+            assert result == 'AGTCGGTA'
+
+        def test_remove_invalid(self, model):
+            result = model.sanitize_sequence('A-GT7lTqpG8')
+            assert result == 'AGTTG'
+
+        def test_both(self, model):
+            result = model.sanitize_sequence('gqtualtC*89QATgb')
+            assert result == 'GTATCATG'

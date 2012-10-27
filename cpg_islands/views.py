@@ -9,8 +9,19 @@ class BaseApplicationView(object):
     """Called when the form is submitted, i.e., submit is clicked by
     the user."""
 
+    sequence_changed = Event()
+    """Called when the sequence text is changed."""
+
     def start(self):
         """Start the view."""
+        raise NotImplementedError()
+
+    def set_sequence(self, sequence_str):
+        """Set the sequence text.
+
+        :param sequence_str: the sequence
+        :type sequence_str: :class:`str`
+        """
         raise NotImplementedError()
 
     def set_locations(self, locations):

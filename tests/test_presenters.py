@@ -25,6 +25,8 @@ class TestPresenters:
             presenter.view.start)
         presenter.view.submitted.append.assert_called_once_with(
             presenter._user_submits)
+        presenter.view.sequence_changed.append.assert_called_once_with(
+            presenter._sequence_changed)
 
     def test_user_submits_valid_values(self, presenter):
         """When the user clicks submit with valid values, the island
@@ -88,3 +90,10 @@ class TestPresenters:
         assert annotate_args[1] == 4
         assert annotate_args[2] == 0.5
         presenter.view.set_locations.assert_called_once_with(feature_tuples)
+
+    def test_sequence_changed(self, presenter):
+        presenter.model.sanitize_sequence.return_value = sentinel.sanitized
+        presenter._sequence_changed(sentinel.unsanitized)
+        presenter.model.sanitize_sequence.assert_called_once_with(
+            sentinel.unsanitized)
+        presenter.view.set_sequence(sentinel.sanitized)

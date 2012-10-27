@@ -22,6 +22,7 @@ class ApplicationPresenter(object):
     def register_for_events(self):
         self.model.started.append(self.view.start)
         self.view.submitted.append(self._user_submits)
+        self.view.sequence_changed.append(self._sequence_changed)
 
     def _user_submits(self, seq_str, island_size_str, minimum_gc_ratio_str):
         """Called when the user submits the form.
@@ -56,3 +57,11 @@ class ApplicationPresenter(object):
         location_tuples = [(f.location.start.position,
                             f.location.end.position) for f in locations]
         self.view.set_locations(location_tuples)
+
+    def _sequence_changed(self, sequence_str):
+        """Called when the sequence text is changed to sanitize it.
+
+        :param sequence_str: the sequence text
+        :type sequence_str: :class:`str`
+        """
+        self.view.set_sequence(self.model.sanitize_sequence(sequence_str))

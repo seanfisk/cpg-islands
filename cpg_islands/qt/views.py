@@ -34,6 +34,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         self.layout = QtGui.QFormLayout(self.centralWidget())
         self.sequence_input = QtGui.QPlainTextEdit(self.centralWidget())
         self.sequence_input.setTabChangesFocus(True)
+        self.sequence_input.textChanged.connect(self._sequence_changed)
         self.layout.addRow('Sequence', self.sequence_input)
 
         self.island_size_input = QtGui.QLineEdit(self.centralWidget())
@@ -66,6 +67,11 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
     def about(self):
         """Create and show the about dialog."""
         AboutDialog(self).exec_()
+
+    def set_sequence(self, sequence_str):
+        self.sequence_input.textChanged.disconnect(self._sequence_changed)
+        self.sequence_input.setPlainText(sequence_str)
+        self.sequence_input.textChanged.connect(self._sequence_changed)
 
     def get_sequence(self):
         """Return the widget's entered text.
@@ -118,6 +124,9 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
                            self.get_gc_ratio())
         except ValueError as error:
             self.show_error(str(error))
+
+    def _sequence_changed(self):
+        self.sequence_changed(self.get_sequence())
 
 
 class AboutDialog(QtGui.QDialog):
