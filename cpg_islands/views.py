@@ -20,3 +20,7 @@ class BaseApplicationView(object):
         :type locations: :class:`list` of :class:`tuple`
         """
         raise NotImplementedError()
+
+    def _submit_clicked(self):
+        """Called when user clicks submit."""
+        raise NotImplementedError()

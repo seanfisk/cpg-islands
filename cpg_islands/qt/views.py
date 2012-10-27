@@ -34,13 +34,24 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         self.layout = QtGui.QFormLayout(self.centralWidget())
         self.sequence_input = QtGui.QPlainTextEdit(self.centralWidget())
         self.layout.addRow('Sequence', self.sequence_input)
-        self.ratio_input = QtGui.QLineEdit(self.centralWidget())
-        self.layout.addRow('GC Ratio', self.ratio_input)
-        self.island_input = QtGui.QLineEdit(self.centralWidget())
-        self.layout.addRow('Island Size', self.island_input)
+
+        self.island_size_input = QtGui.QLineEdit(self.centralWidget())
+        self.island_size_validator = QtGui.QIntValidator()
+        self.island_size_validator.setBottom(0)
+        self.island_size_input.setValidator(self.island_size_validator)
+        self.layout.addRow('Island Size', self.island_size_input)
+
+        self.gc_ratio_input = QtGui.QLineEdit(self.centralWidget())
+        self.gc_ratio_validator = QtGui.QDoubleValidator()
+        self.gc_ratio_validator.setBottom(0)
+        self.gc_ratio_validator.setTop(1)
+        self.gc_ratio_input.setValidator(self.gc_ratio_validator)
+        self.layout.addRow('GC Ratio', self.gc_ratio_input)
+
         self.result_output = QtGui.QPlainTextEdit(self.centralWidget())
         self.result_output.setReadOnly(True)
         self.layout.addRow('Result', self.result_output)
+
         self.submit_button = QtGui.QPushButton('Find Islands',
                                                self.centralWidget())
         self.submit_button.clicked.connect(self._submit_clicked)
@@ -63,21 +74,21 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         """
         return self.sequence_input.toPlainText()
 
-    def get_gc(self):
+    def get_gc_ratio(self):
         """Return the widget's entered GC ratio.
 
         :return: the key
         :rtype: :class:`str`
         """
-        return self.ratio_input.text()
+        return self.gc_ratio_input.text()
 
-    def get_island(self):
+    def get_island_size(self):
         """Return the widget's entered island size.
 
         :return: the key
         :rtype: :class:`str`
         """
-        return self.island_input.text()
+        return self.island_size_input.text()
 
     def set_locations(self, locations):
         """Set encoded text result.
@@ -102,8 +113,8 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
     def _submit_clicked(self):
         try:
             self.submitted(self.get_sequence(),
-                           self.get_island(),
-                           self.get_gc())
+                           self.get_island_size(),
+                           self.get_gc_ratio())
         except ValueError as error:
             self.show_error(str(error))
 
