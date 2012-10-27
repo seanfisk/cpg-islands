@@ -64,16 +64,6 @@ class TestPresenters:
         assert (str(exc_info.value) ==
                 'Invalid integer for island size: invalid size')
 
-    def test_user_submits_island_size_less_than_sequence_size(self, presenter):
-        """When the user submits an island size greater than the
-        sequence size, they are shown an error.
-        """
-        with raises(ValueError) as exc_info:
-            presenter._user_submits('ATATGCGC', '9', '0.5')
-        assert ((str(exc_info.value)) ==
-                'Island size (9) must be less than or '
-                'equal to sequence length (8)')
-
     def test_user_submits_invalid_gc_type(self, presenter):
         """When the user submits an invalid type for GC ratio, they
         are shown an error.

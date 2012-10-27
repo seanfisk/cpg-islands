@@ -69,13 +69,17 @@ URL: <{url}>
         if island_size <= 0:
             raise ValueError(
                 'Invalid island size: {0}'.format(island_size))
+        seq_len = len(seq)
+        if island_size > seq_len:
+            raise ValueError(
+                'Island size ({0}) must be less than or '
+                'equal to sequence length ({1})'.format(island_size, seq_len))
         minimum_gc_percentage = minimum_gc_ratio * 100
         features = []
-        if island_size <= len(seq):
-            for start_index in xrange(len(seq) - island_size + 1):
-                end_index = start_index + island_size
-                if GC(seq[start_index:end_index]) >= minimum_gc_percentage:
-                    feature = SeqFeature(
-                        FeatureLocation(start_index, end_index))
-                    features.append(feature)
+        for start_index in xrange(len(seq) - island_size + 1):
+            end_index = start_index + island_size
+            if GC(seq[start_index:end_index]) >= minimum_gc_percentage:
+                feature = SeqFeature(
+                    FeatureLocation(start_index, end_index))
+                features.append(feature)
         return features

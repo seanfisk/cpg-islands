@@ -4,6 +4,7 @@ import mock
 
 from pytest import raises
 from Bio.Seq import Seq
+from Bio.Alphabet import IUPAC
 
 from cpg_islands.models import ApplicationModel
 from helpers import make_features
@@ -57,45 +58,62 @@ class TestModels:
             started_callback.assert_called_once_with()
 
     class TestAnnotate:
-        def test_nothing(self, model):
+        def test_zero_island_size(self, model):
             with raises(ValueError) as exc_info:
-                model.annotate_cpg_islands(Seq(''), 0, 0)
+                model.annotate_cpg_islands(Seq('', IUPAC.unambiguous_dna),
+                                           0, 0)
             # exc_info.value returns the actual exception
             assert str(exc_info.value) == 'Invalid island size: 0'
 
-        def test_negative_island(self, model):
+        def test_empty_sequence(self, model):
             with raises(ValueError) as exc_info:
-                model.annotate_cpg_islands(Seq(''), -1, 0)
-            # exc_info.value returns the actual exception
+                model.annotate_cpg_islands(Seq('', IUPAC.unambiguous_dna),
+                                           1, 0)
+                assert (str(exc_info.value) ==
+                        'Island size (1) must be less than or '
+                        'equal to sequence length (0)')
+
+        def test_negative_island_size(self, model):
+            with raises(ValueError) as exc_info:
+                model.annotate_cpg_islands(Seq('', IUPAC.unambiguous_dna),
+                                           -1, 0)
             assert str(exc_info.value) == 'Invalid island size: -1'
 
-        def test_base(self, model):
-            seq = Seq('C')
+        def test_single_base(self, model):
+            seq = Seq('C', IUPAC.unambiguous_dna)
             computed = model.annotate_cpg_islands(seq, 1, 1)
             expected = make_features([(0, 1)])
             assert_features_equal(computed, expected, seq)
 
-        def test_length(self, model):
-            computed = model.annotate_cpg_islands(Seq(''), 1, 1)
-            assert computed == []
-
         def test_ratio_one(self, model):
-            seq = Seq('ATGCCGATTTTA')
+            seq = Seq('ATGCCGATTTTA', IUPAC.unambiguous_dna)
             computed = model.annotate_cpg_islands(seq, 4, 1)
             expected = make_features([(2, 6)])
             assert_features_equal(computed, expected, seq)
 
-        def test_half(self, model):
-            seq = Seq('ATATGCTAAT')
+        def test_ratio_half(self, model):
+            seq = Seq('ATATGCTAAT', IUPAC.unambiguous_dna)
             computed = model.annotate_cpg_islands(seq, 4, 0.5)
             expected = make_features([(2, 6),
                                       (3, 7),
                                       (4, 8)])
             assert_features_equal(computed, expected, seq)
 
-        def test_third(self, model):
-            seq = Seq('TTATATGCTAATAT')
+        def test_ratio_third(self, model):
+            seq = Seq('TTATATGCTAATAT', IUPAC.unambiguous_dna)
             size = 6
             computed = model.annotate_cpg_islands(seq, size, 1 / 3)
             expected = make_features([(i, i + size) for i in xrange(2, 7)])
             assert_features_equal(computed, expected, seq)
+
+        def test_island_size_less_than_sequence_size(self, model):
+            """When the user submits an island size greater than the
+            sequence size, they are shown an error.
+            """
+            with raises(ValueError) as exc_info:
+                model.annotate_cpg_islands(Seq('ATATGCGC',
+                                               IUPAC.unambiguous_dna),
+                                           9, 0.5)
+            assert ((str(exc_info.value)) ==
+                    'Island size (9) must be less than or '
+                    'equal to sequence length (8)')

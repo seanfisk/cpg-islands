@@ -45,11 +45,6 @@ class ApplicationPresenter(object):
         except ValueError:
             raise ValueError(
                 'Invalid integer for island size: {0}'.format(island_size_str))
-        seq_len = len(seq)
-        if island_size > seq_len:
-            raise ValueError(
-                'Island size ({0}) must be less than or '
-                'equal to sequence length ({1})'.format(island_size, seq_len))
         try:
             minimum_gc_ratio = float(minimum_gc_ratio_str)
         except ValueError:
