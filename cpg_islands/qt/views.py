@@ -33,6 +33,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         # Layout
         self.layout = QtGui.QFormLayout(self.centralWidget())
         self.sequence_input = QtGui.QPlainTextEdit(self.centralWidget())
+        self.sequence_input.setTabChangesFocus(True)
         self.layout.addRow('Sequence', self.sequence_input)
 
         self.island_size_input = QtGui.QLineEdit(self.centralWidget())
