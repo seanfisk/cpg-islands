@@ -74,6 +74,9 @@ URL: <{url}>
             raise ValueError(
                 'Island size ({0}) must be less than or '
                 'equal to sequence length ({1})'.format(island_size, seq_len))
+        if not (0 <= minimum_gc_ratio <= 1):
+            raise ValueError('Invalid GC ratio for ratio between '
+                             'zero and one: {0}'.format(minimum_gc_ratio))
         minimum_gc_percentage = minimum_gc_ratio * 100
         features = []
         for start_index in xrange(len(seq) - island_size + 1):
