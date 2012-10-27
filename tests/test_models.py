@@ -5,7 +5,7 @@ import mock
 from pytest import raises
 from Bio.Seq import Seq
 
-from cpg_islands.models import ApplicationModel, InvalidIslandSizeError
+from cpg_islands.models import ApplicationModel
 from helpers import make_features
 
 
@@ -58,16 +58,16 @@ class TestModels:
 
     class TestAnnotate:
         def test_nothing(self, model):
-            with raises(InvalidIslandSizeError) as error:
+            with raises(ValueError) as exc_info:
                 model.annotate_cpg_islands(Seq(''), 0, 0)
-            # error.value returns the actual exception
-            assert str(error.value) == 'Invalid island size: 0'
+            # exc_info.value returns the actual exception
+            assert str(exc_info.value) == 'Invalid island size: 0'
 
         def test_negative_island(self, model):
-            with raises(InvalidIslandSizeError) as error:
+            with raises(ValueError) as exc_info:
                 model.annotate_cpg_islands(Seq(''), -1, 0)
-            # error.value returns the actual exception
-            assert str(error.value) == 'Invalid island size: -1'
+            # exc_info.value returns the actual exception
+            assert str(exc_info.value) == 'Invalid island size: -1'
 
         def test_base(self, model):
             seq = Seq('C')

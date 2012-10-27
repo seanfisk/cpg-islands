@@ -14,14 +14,6 @@ from cpg_islands import metadata
 from cpg_islands.utils import Event
 
 
-class InvalidIslandSizeError(Exception):
-    def __init__(self, island_size):
-        self.island_size = island_size
-
-    def __str__(self):
-        return 'Invalid island size: {0}'.format(self.island_size)
-
-
 class MetaApplicationModel(object):
     __metaclass__ = abc.ABCMeta
 
@@ -75,7 +67,8 @@ URL: <{url}>
         :rtype: :class:`list` of :class:`Bio.SeqFeature.SeqFeature`
         """
         if island_size <= 0:
-            raise InvalidIslandSizeError(island_size)
+            raise ValueError(
+                'Invalid island size: {0}'.format(island_size))
         minimum_gc_percentage = minimum_gc_ratio * 100
         features = []
         if island_size <= len(seq):

@@ -100,7 +100,12 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         error_dialog.showMessage(message)
 
     def _submit_clicked(self):
-        self.submitted(self.get_sequence(), self.get_island(), self.get_gc())
+        try:
+            self.submitted(self.get_sequence(),
+                           self.get_island(),
+                           self.get_gc())
+        except ValueError as error:
+            self.show_error(str(error))
 
 
 class AboutDialog(QtGui.QDialog):
