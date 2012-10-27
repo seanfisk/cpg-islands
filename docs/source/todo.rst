@@ -5,11 +5,19 @@ Todo
 
 .. todo::
 
-   Limit the Sequence box to only ACGT and maybe S
+   Improve/make docstrings consistent.      
+
+.. todo::
+
+   Ensure that ``python setup.py install`` is working.
 
 .. todo::
 
    Load sequence from file (genbank first, then fasta)
+
+.. todo::
+
+   Limit the Sequence box to only ACGT and maybe S
 
 .. todo::
 
@@ -18,3 +26,11 @@ Todo
 .. todo::
 
    Entrez database search (new MVP triad)
+
+.. todo::
+
+   Distribution with pyinstaller.
+
+.. todo::
+
+   Make documentation organization nicer.
