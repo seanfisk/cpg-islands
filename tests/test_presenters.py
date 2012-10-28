@@ -18,6 +18,8 @@ def pytest_funcarg__presenter(request):
 
 class TestPresenters:
     def test_register_for_events(self, presenter):
+        """When the application starts, the presenter registers for
+        events fired by the view and the model."""
         presenter.register_for_events()
         presenter.model.started.append.assert_called_once_with(
             presenter.view.start)
@@ -47,8 +49,7 @@ class TestPresenters:
 
     def test_user_submits_invalid_sequence(self, presenter):
         """When the user submits a sequence that does not contain
-        valid bases, they are shown an error.
-        """
+        valid bases, they are shown an error."""
         with raises(AlphabetError) as exc_info:
             presenter._user_submits('ABCD', '3', '0.5')
         assert str(exc_info.value) == '''Sequence letters not within alphabet:
@@ -57,8 +58,7 @@ class TestPresenters:
 
     def test_user_submits_invalid_island_size_type(self, presenter):
         """When the user submits an invalid type of island size, they
-        are shown an error.
-        """
+        are shown an error."""
         with raises(ValueError) as exc_info:
             presenter._user_submits('ATATGCGC', 'invalid size', '0.5')
         assert (str(exc_info.value) ==
@@ -74,8 +74,7 @@ class TestPresenters:
 
     def test_user_submits_lowercase_seqence(self, presenter):
         """When the user submits a sequence with lowercase letters,
-        these should be gracefully handled.
-        """
+        these should be gracefully handled."""
         feature_tuples = [(0, 5), (1, 6), (3, 8)]
         presenter.model.annotate_cpg_islands.return_value = \
             make_features(feature_tuples)
