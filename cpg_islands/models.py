@@ -28,6 +28,10 @@ class MetaApplicationModel(object):
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
         raise NotImplementedError()
 
+    @abc.abstractmethod
+    def load_file(self, file_path):
+        raise NotImplementedError()
+
 
 class ApplicationModel(MetaApplicationModel):
     def run(self, argv):
@@ -86,3 +90,13 @@ URL: <{url}>
                     FeatureLocation(start_index, end_index))
                 features.append(feature)
         return features
+
+    def load_file(self, file_path):
+        """Load a sequence file and return the contents.
+
+        :param file_path: the path to the sequence file
+        :type file_path: :class:`str`
+        :return: the sequence text
+        :rtype: :class:`str`
+        """
+        pass

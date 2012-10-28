@@ -22,6 +22,7 @@ class ApplicationPresenter(object):
     def register_for_events(self):
         self.model.started.append(self.view.start)
         self.view.submitted.append(self._user_submits)
+        self.view.file_loaded.append(self._file_loaded)
 
     def _user_submits(self, seq_str, island_size_str, minimum_gc_ratio_str):
         """Called when the user submits the form.
@@ -56,3 +57,11 @@ class ApplicationPresenter(object):
         location_tuples = [(f.location.start.position,
                             f.location.end.position) for f in locations]
         self.view.set_locations(location_tuples)
+
+    def _file_loaded(self, file_path):
+        """Called when the user loads a file.
+
+        :param file_path: the path to the file
+        :type file_path: :class:`str`
+        """
+        self.view.set_sequence(self.model.load_file(file_path))

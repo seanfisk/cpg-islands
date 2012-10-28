@@ -75,6 +75,14 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         """
         return self.sequence_input.toPlainText()
 
+    def set_sequence(self, sequence_str):
+        """Set the sequence text.
+
+        :param sequence_str: the sequence in string form
+        :type sequence_str: :class:`str`
+        """
+        self.sequence_input.setPlainText(sequence_str)
+
     def get_gc_ratio(self):
         """Return the widget's entered GC ratio.
 

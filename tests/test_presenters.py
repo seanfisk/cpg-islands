@@ -25,6 +25,8 @@ class TestPresenters:
             presenter.view.start)
         presenter.view.submitted.append.assert_called_once_with(
             presenter._user_submits)
+        presenter.view.file_loaded.append.assert_called_once_with(
+            presenter._file_loaded)
 
     def test_user_submits_valid_values(self, presenter):
         """When the user clicks submit with valid values, the island
@@ -88,3 +90,10 @@ class TestPresenters:
         assert annotate_args[1] == 4
         assert annotate_args[2] == 0.5
         presenter.view.set_locations.assert_called_once_with(feature_tuples)
+
+    def test_user_loads_file(self, presenter):
+        presenter.model.load_file.return_value = sentinel.file_contents
+        presenter._file_loaded(sentinel.file_path)
+        presenter.model.load_file.assert_called_once_with(sentinel.file_path)
+        presenter.view.set_sequence.assert_called_once_with(
+            sentinel.file_contents)
