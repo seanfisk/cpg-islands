@@ -22,11 +22,11 @@ class MetaApplicationModel(object):
 
     @abc.abstractmethod
     def run(self, argv=None):
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
-        pass
+        raise NotImplementedError()
 
 
 class ApplicationModel(MetaApplicationModel):
