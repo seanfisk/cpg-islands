@@ -9,10 +9,6 @@ Todo
 
 .. todo::
 
-   Limit the Sequence box to only ACGT and maybe S
-
-.. todo::
-
    Sean - Improve/make docstrings consistent.      
 
 .. todo::
@@ -34,3 +30,12 @@ Todo
 .. todo::
 
    Make documentation organization nicer.
+
+.. todo::
+
+   Perform "client-side" validation for the Sequence box:
+
+   * Prevent from typing unwanted characters
+   * Prevent invalid pastes - **rejected on the basis that some
+     cleanup of the sequence might be needed**
+
