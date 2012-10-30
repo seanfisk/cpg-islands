@@ -5,14 +5,6 @@ Todo
 
 .. todo::
 
-   Sean - Ensure that ``python setup.py install`` is working.
-
-.. todo::
-
-   Gray - Add Read the Docs URL into metadata
-
-.. todo::
-
    Both - Load sequence from file (genbank first, then fasta)
 
 .. todo::
