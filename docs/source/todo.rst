@@ -22,7 +22,11 @@ Todo
    * list of CpG islands on the left
    * big picture view of sequence on the top right
    * detailed view of sequence on the bottom right
-   
+
+.. todo::
+
+   Remove **Show this message again** from the error boxes.
+
 .. todo::
 
    Entrez database search (new MVP triad)
@@ -38,4 +42,3 @@ Todo
    * Prevent from typing unwanted characters
    * Prevent invalid pastes - **rejected on the basis that some
      cleanup of the sequence might be needed**
-
