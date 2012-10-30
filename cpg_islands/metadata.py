@@ -16,3 +16,4 @@ organization_domain = 'cis.gvsu.edu'
 license = 'GPLv3'
 copyright = '2012 ' + authors_string
 url = 'https://github.com/seanfisk/cpg-islands'
+documentation_url = 'https://cpg-islands.readthedocs.org/'

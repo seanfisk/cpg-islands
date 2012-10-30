@@ -139,6 +139,11 @@ class AboutDialog(QtGui.QDialog):
                                             metadata.copyright, self)
         self.layout.addWidget(self.copyright_label)
         self.url_label = QtGui.QLabel(
-            '<a href="{0}">{0}</a>'.format(metadata.url), self)
+            'Source: <a href="{0}">{0}</a>'.format(metadata.url), self)
         self.url_label.setOpenExternalLinks(True)
         self.layout.addWidget(self.url_label)
+        self.documentation_label = QtGui.QLabel(
+            'Documentation: <a href="{0}">{0}</a>'.format(
+            metadata.documentation_url), self)
+        self.documentation_label.setOpenExternalLinks(True)
+        self.layout.addWidget(self.documentation_label)
