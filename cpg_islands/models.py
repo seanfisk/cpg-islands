@@ -7,6 +7,7 @@ import argparse
 import abc
 
 from Bio.Seq import Seq
+from Bio import SeqIO
 from Bio.SeqUtils import GC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
@@ -99,4 +100,5 @@ URL: <{url}>
         :return: the sequence text
         :rtype: :class:`str`
         """
-        pass
+        seq_record = SeqIO.read(file_path, 'genbank')
+        return str(seq_record.seq)

@@ -23,6 +23,8 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         # Menu
         self.menu_bar = QtGui.QMenuBar()
         self.file_menu = self.menu_bar.addMenu('&File')
+        self.file_action = self.file_menu.addAction('&Load File')
+        self.file_action.triggered.connect(self.load_file)
         self.quit_action = self.file_menu.addAction('&Quit')
         self.quit_action.triggered.connect(self.close)
         self.help_menu = self.menu_bar.addMenu('&Help')
@@ -66,6 +68,14 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
     def about(self):
         """Create and show the about dialog."""
         AboutDialog(self).exec_()
+
+    def load_file(self):
+        """Create and show the file dialog."""
+        file_name = QtGui.QFileDialog.getOpenFileName(
+            self,
+            caption='Load GenBank File...',
+            filter='GenBank Sequence File (*.gb)')
+        self.file_loaded(file_name[0])
 
     def get_sequence(self):
         """Return the widget's entered text.

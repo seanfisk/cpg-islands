@@ -137,3 +137,10 @@ class TestModels:
             computed = model.annotate_cpg_islands(seq, size, 1 / 3)
             expected = make_features([(i, i + size) for i in xrange(2, 7)])
             assert_features_equal(computed, expected, seq)
+
+    class TestLoadFile:
+        def test_load_jx500709_1(self, model):
+            file_name = 'tests/fixtures/JX500709.1.gb'
+            computed = model.load_file(file_name)
+            expected = open('tests/fixtures/JX500709.1.flattened').read()
+            assert computed == expected
