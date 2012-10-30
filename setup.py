@@ -54,9 +54,8 @@ setup(name=metadata.title,
       install_requires=install_requirements,
       zip_safe=False,  # don't use eggs
       entry_points={
-          # if you have a gui, use this
-          # 'gui_scripts': [
-          #     'my_module_gui = my_module.gui:main'
-          # ]
+          'gui_scripts': [
+              'cpg_islands = cpg_islands.qt.main:main'
+          ]
       }
       )
