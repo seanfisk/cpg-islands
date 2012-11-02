@@ -32,6 +32,10 @@ class BaseApplicationView(object):
         """
         raise NotImplementedError()
 
-    def _submit_clicked(self):
-        """Called when user clicks submit."""
+    def show_error(self, message):
+        """Show the user an error dialog.
+
+        :param message: error message
+        :type message: :class:`str`
+        """
         raise NotImplementedError()
