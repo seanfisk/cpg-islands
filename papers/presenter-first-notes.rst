@@ -4,6 +4,8 @@ Model
     Business logic.
     
     Holds no reference to presenter.
+    
+    Is responsible for communication between MVP triads (using events).
 
 View
     A portion of the interface of the application - what the user sees and interacts with.
