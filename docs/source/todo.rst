@@ -5,23 +5,11 @@ Todo
 
 .. todo::
 
-   Both - Load sequence from file (genbank first, then fasta)
-
-.. todo::
-
    Sean - Improve/make docstrings consistent.      
 
 .. todo::
 
    Sean - Distribution with pyinstaller.
-   
-.. todo::
-
-   Gray - New user interface view:
-
-   * list of CpG islands on the left
-   * big picture view of sequence on the top right
-   * detailed view of sequence on the bottom right
 
 .. todo::
 
@@ -29,11 +17,38 @@ Todo
 
 .. todo::
 
+   Sean - Create new MVP triads:
+
+   * Application{Model,View,Presenter}
+   * SequenceInput{Model,View,Presenter}
+   * Results{Model,View,Presenter}
+
+    Initially, these will be implemented as different
+    windows. Specifically, the ResultsView will have to be a modal dialog.
+
+.. todo::
+
+   Gray - ResultsView:
+
+   * list of CpG islands on the left
+   * big picture view of sequence on the top right
+   * detailed view of sequence on the bottom right
+
+.. todo::
+
+   Dock the SequenceInputView and ResultsView into the ApplicationView.
+     
+.. todo::
+
    Entrez database search (new MVP triad)
 
 .. todo::
 
    Make documentation organization nicer.
+
+.. todo::
+
+   Load fasta sequence from file
 
 .. todo::
 
