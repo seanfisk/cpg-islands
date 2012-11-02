@@ -2,18 +2,6 @@ from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC, _verify_alphabet
 
 
-class AlphabetError(ValueError):
-    """Error raised when invalid bases are present."""
-    def __init__(self, sequence_str, alphabet_letters):
-        self.sequence_str = sequence_str
-        self.alphabet_letters = alphabet_letters
-
-    def __str__(self):
-        return '''Sequence letters not within alphabet:
-  Alphabet: {0}
-  Sequence: {1}'''.format(self.alphabet_letters, self.sequence_str)
-
-
 class ApplicationPresenter(object):
     def __init__(self, model, view):
         self.model = model
@@ -22,6 +10,7 @@ class ApplicationPresenter(object):
     def register_for_events(self):
         self.model.started.append(self.view.start)
         self.view.submitted.append(self._user_submits)
+        self.view.file_loaded.append(self._file_loaded)
 
     def _user_submits(self, seq_str, island_size_str, minimum_gc_ratio_str):
         """Called when the user submits the form.
@@ -39,20 +28,37 @@ class ApplicationPresenter(object):
         # is marked as private. However, there are no other documented
         # ways to verify the sequence.
         if not _verify_alphabet(seq):
-            raise AlphabetError(str(seq), seq.alphabet.letters)
+            self.view.show_error(
+                '''Sequence letters not within alphabet:
+  Alphabet: {0}
+  Sequence: {1}'''.format(seq.alphabet.letters, str(seq)))
+            return
         try:
             island_size = int(island_size_str)
         except ValueError:
-            raise ValueError(
+            self.view.show_error(
                 'Invalid integer for island size: {0}'.format(island_size_str))
+            return
         try:
             minimum_gc_ratio = float(minimum_gc_ratio_str)
         except ValueError:
-            raise ValueError(
+            self.view.show_error(
                 'Invalid ratio for GC: {0}'.format(minimum_gc_ratio_str))
+            return
         locations = self.model.annotate_cpg_islands(seq,
                                                     island_size,
                                                     minimum_gc_ratio)
         location_tuples = [(f.location.start.position,
                             f.location.end.position) for f in locations]
         self.view.set_locations(location_tuples)
+
+    def _file_loaded(self, file_path):
+        """Called when the user loads a file.
+
+        :param file_path: the path to the file
+        :type file_path: :class:`str`
+        """
+        try:
+            self.view.set_sequence(self.model.load_file(file_path))
+        except ValueError as error:
+            self.view.show_error('Sequence parsing error: {0}'.format(error))

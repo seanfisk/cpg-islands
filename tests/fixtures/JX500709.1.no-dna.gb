@@ -1,0 +1,19 @@
+LOCUS       JX500709                9221 bp    RNA     linear   VRL 23-OCT-2012
+DEFINITION  HIV-1 isolate 09RU4457 from Russia, partial genome.
+ACCESSION   JX500709
+VERSION     JX500709.1  GI:409181659
+KEYWORDS    .
+SOURCE      Human immunodeficiency virus 1 (HIV-1)
+  ORGANISM  Human immunodeficiency virus 1
+            Viruses; Retro-transcribing viruses; Retroviridae;
+            Orthoretrovirinae; Lentivirus; Primate lentivirus group.
+REFERENCE   1  (bases 1 to 9221)
+  AUTHORS   Baryshev,P.B., Gashnikova,N.M. and Bogachev,V.V.
+  TITLE     Genetic analysis of nearly full-length genome sequences of HIV-1,
+            circulating in Russia
+  JOURNAL   Unpublished
+REFERENCE   2  (bases 1 to 9221)
+  AUTHORS   Baryshev,P.B., Gashnikova,N.M. and Bogachev,V.V.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (17-AUG-2012) State Research Center of Virology and
+            Biotechnology VECTOR, Koltsovo, Novosibirsk 630559, Russia

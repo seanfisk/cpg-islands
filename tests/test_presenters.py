@@ -1,11 +1,11 @@
-from mock import create_autospec, sentinel
+from mock import create_autospec, sentinel, call
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
 from pytest import raises
 
 from cpg_islands.models import MetaApplicationModel
 from cpg_islands.views import BaseApplicationView
-from cpg_islands.presenters import ApplicationPresenter, AlphabetError
+from cpg_islands.presenters import ApplicationPresenter
 from helpers import make_features
 
 
@@ -25,6 +25,8 @@ class TestPresenters:
             presenter.view.start)
         presenter.view.submitted.append.assert_called_once_with(
             presenter._user_submits)
+        presenter.view.file_loaded.append.assert_called_once_with(
+            presenter._file_loaded)
 
     def test_user_submits_valid_values(self, presenter):
         """When the user clicks submit with valid values, the island
@@ -50,27 +52,25 @@ class TestPresenters:
     def test_user_submits_invalid_sequence(self, presenter):
         """When the user submits a sequence that does not contain
         valid bases, they are shown an error."""
-        with raises(AlphabetError) as exc_info:
-            presenter._user_submits('ABCD', '3', '0.5')
-        assert str(exc_info.value) == '''Sequence letters not within alphabet:
+        presenter._user_submits('ABCD', '3', '0.5')
+        presenter.view.show_error.assert_called_once_with(
+            '''Sequence letters not within alphabet:
   Alphabet: GATC
-  Sequence: ABCD'''
+  Sequence: ABCD''')
 
     def test_user_submits_invalid_island_size_type(self, presenter):
         """When the user submits an invalid type of island size, they
         are shown an error."""
-        with raises(ValueError) as exc_info:
-            presenter._user_submits('ATATGCGC', 'invalid size', '0.5')
-        assert (str(exc_info.value) ==
-                'Invalid integer for island size: invalid size')
+        presenter._user_submits('ATATGCGC', 'invalid size', '0.5')
+        presenter.view.show_error.assert_called_once_with(
+            'Invalid integer for island size: invalid size')
 
     def test_user_submits_invalid_gc_type(self, presenter):
         """When the user submits an invalid type for GC ratio, they
         are shown an error.
         """
-        with raises(ValueError) as exc_info:
-            presenter._user_submits('ATATGCGC', '3', 'invalid gc')
-        assert (str(exc_info.value) == 'Invalid ratio for GC: invalid gc')
+        presenter._user_submits('ATATGCGC', '3', 'invalid gc')
+        presenter.view.show_error('Invalid ratio for GC: invalid gc')
 
     def test_user_submits_lowercase_seqence(self, presenter):
         """When the user submits a sequence with lowercase letters,
@@ -88,3 +88,19 @@ class TestPresenters:
         assert annotate_args[1] == 4
         assert annotate_args[2] == 0.5
         presenter.view.set_locations.assert_called_once_with(feature_tuples)
+
+    def test_user_loads_file(self, presenter):
+        presenter.model.load_file.return_value = sentinel.file_contents
+        presenter._file_loaded(sentinel.file_path)
+        presenter.model.load_file.assert_called_once_with(sentinel.file_path)
+        presenter.view.set_sequence.assert_called_once_with(
+            sentinel.file_contents)
+
+    def test_user_loads_file_invalid_sequence(self, presenter):
+        presenter.model.load_file.side_effect = ValueError(
+            'this is a fake message')
+        presenter._file_loaded(sentinel.file_path)
+        assert (presenter.model.mock_calls ==
+                [call.load_file(sentinel.file_path)])
+        assert presenter.view.mock_calls == [call.show_error(
+            'Sequence parsing error: this is a fake message')]

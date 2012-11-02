@@ -23,6 +23,8 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         # Menu
         self.menu_bar = QtGui.QMenuBar()
         self.file_menu = self.menu_bar.addMenu('&File')
+        self.file_action = self.file_menu.addAction('&Load File')
+        self.file_action.triggered.connect(self.load_file)
         self.quit_action = self.file_menu.addAction('&Quit')
         self.quit_action.triggered.connect(self.close)
         self.help_menu = self.menu_bar.addMenu('&Help')
@@ -67,6 +69,14 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         """Create and show the about dialog."""
         AboutDialog(self).exec_()
 
+    def load_file(self):
+        """Create and show the file dialog."""
+        file_name = QtGui.QFileDialog.getOpenFileName(
+            self,
+            caption='Load GenBank File...',
+            filter='GenBank Sequence File (*.gb)')
+        self.file_loaded(file_name[0])
+
     def get_sequence(self):
         """Return the widget's entered text.
 
@@ -74,6 +84,14 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         :rtype: :class:`str`
         """
         return self.sequence_input.toPlainText()
+
+    def set_sequence(self, sequence_str):
+        """Set the sequence text.
+
+        :param sequence_str: the sequence in string form
+        :type sequence_str: :class:`str`
+        """
+        self.sequence_input.setPlainText(sequence_str)
 
     def get_gc_ratio(self):
         """Return the widget's entered GC ratio.

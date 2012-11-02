@@ -7,6 +7,7 @@ import argparse
 import abc
 
 from Bio.Seq import Seq
+from Bio import SeqIO
 from Bio.SeqUtils import GC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
@@ -26,6 +27,10 @@ class MetaApplicationModel(object):
 
     @abc.abstractmethod
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def load_file(self, file_path):
         raise NotImplementedError()
 
 
@@ -86,3 +91,14 @@ URL: <{url}>
                     FeatureLocation(start_index, end_index))
                 features.append(feature)
         return features
+
+    def load_file(self, file_path):
+        """Load a sequence file and return the contents.
+
+        :param file_path: the path to the sequence file
+        :type file_path: :class:`str`
+        :return: the sequence text
+        :rtype: :class:`str`
+        """
+        seq_record = SeqIO.read(file_path, 'genbank')
+        return str(seq_record.seq)

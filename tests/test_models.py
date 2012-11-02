@@ -7,7 +7,7 @@ from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
 
 from cpg_islands.models import ApplicationModel
-from helpers import make_features
+from helpers import make_features, fixture_file, read_fixture_file
 
 
 def pytest_funcarg__model(request):
@@ -137,3 +137,27 @@ class TestModels:
             computed = model.annotate_cpg_islands(seq, size, 1 / 3)
             expected = make_features([(i, i + size) for i in xrange(2, 7)])
             assert_features_equal(computed, expected, seq)
+
+    class TestLoadFile:
+        def test_load_jx500709_1(self, model):
+            computed = model.load_file(fixture_file('JX500709.1.gb'))
+            expected = read_fixture_file('JX500709.1.flattened')
+            assert computed == expected
+
+        def test_load_genbank_no_dna(self, model):
+            with raises(ValueError) as exc_info:
+                model.load_file(fixture_file('JX500709.1.no-dna.gb'))
+                assert (str(exc_info.value) ==
+                        'Premature end of line during sequence data')
+
+        def test_load_genbank_empty(self, model):
+            with raises(ValueError) as exc_info:
+                model.load_file(fixture_file('empty.gb'))
+                assert (str(exc_info.value) ==
+                        'No records found in handle')
+
+        def test_load_genbank_two_records(self, model):
+            with raises(ValueError) as exc_info:
+                model.load_file(fixture_file('U49845.1-and-JX500709.1.gb'))
+                assert (str(exc_info.value) ==
+                        'More than one record found in handle')
