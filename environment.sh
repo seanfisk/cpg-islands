@@ -6,3 +6,4 @@
 # fun aliases
 
 alias whatamidoinghere='git status'
+alias runthefuckingtests='shovel test_all'
