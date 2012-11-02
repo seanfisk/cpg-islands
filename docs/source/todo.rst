@@ -9,10 +9,6 @@ Todo
 
 .. todo::
 
-   Sean - Distribution with pyinstaller.
-
-.. todo::
-
    Remove **Show this message again** from the error boxes.
 
 .. todo::
@@ -28,6 +24,12 @@ Todo
 
 .. todo::
 
+   In mock tests, switch from using ``assert_called_once_with()`` to
+   testing *all* mock calls with ``mock_calls``. This will ensure that
+   expected functions are called and unexpected functions are *not* called.
+    
+.. todo::
+
    Gray - ResultsView:
 
    * list of CpG islands on the left
@@ -41,6 +43,10 @@ Todo
 .. todo::
 
    Entrez database search (new MVP triad)
+
+.. todo::
+
+   Sean - Distribution with pyinstaller.
 
 .. todo::
 
