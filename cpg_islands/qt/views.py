@@ -126,8 +126,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         :param message: error message
         :type message: :class:`str`
         """
-        error_dialog = QtGui.QErrorMessage(self)
-        error_dialog.showMessage(message)
+        QtGui.QMessageBox.critical(self, metadata.nice_title, message)
 
     def _submit_clicked(self):
         try:

@@ -9,10 +9,6 @@ Todo
 
 .. todo::
 
-   Remove **Show this message again** from the error boxes.
-
-.. todo::
-
    Sean - Create new MVP triads:
 
    * Application{Model,View,Presenter}
