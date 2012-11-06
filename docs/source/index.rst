@@ -14,6 +14,7 @@ Contents:
    todo
    links
    milestones
+   cpg_islands
 
 Indices and tables
 ==================

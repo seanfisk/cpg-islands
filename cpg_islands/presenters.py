@@ -4,6 +4,13 @@ from Bio.Alphabet import IUPAC, _verify_alphabet
 
 class ApplicationPresenter(object):
     def __init__(self, model, view):
+        """Constructor.
+
+        :param model: application model
+        :type model: :class:`MetaApplicationModel`
+        :param view: application view
+        :type view: :class:`MetaApplicationView`
+        """
         self.model = model
         self.view = view
         self.model.started.append(self.view.start)
@@ -12,6 +19,13 @@ class ApplicationPresenter(object):
 
 class SequenceInputPresenter(object):
     def __init__(self, model, view):
+        """Constructor.
+
+        :param model: sequence input model
+        :type model: :class:`MetaSequenceInputModel`
+        :param view: sequence input view
+        :type view: :class:`MetaSequenceInputView`
+        """
         self.model = model
         self.view = view
         self.model.file_loaded.append(self.view.set_sequence)
@@ -68,11 +82,23 @@ class SequenceInputPresenter(object):
 
 class ResultsPresenter(object):
     def __init__(self, model, view):
+        """Constructor.
+
+        :param model: results model
+        :type model: :class:`MetaResultsModel`
+        :param view: results view
+        :type view: :class:`MetaResultsView`
+        """
         self.model = model
         self.view = view
         self.model.locations_computed.append(self._locations_computed)
 
     def _locations_computed(self, feature_locations):
+        """Called after locations have been computed.
+
+        :param feature_locations: locations of features
+        :type feature_locations: :class:`list` of :class:`tuple`
+        """
         location_tuples = [(
             f.location.start.position, f.location.end.position)
             for f in feature_locations]
