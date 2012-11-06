@@ -6,11 +6,17 @@ class ApplicationPresenter(object):
     def __init__(self, model, view):
         self.model = model
         self.view = view
-
-    def register_for_events(self):
         self.model.started.append(self.view.start)
+        self.view.file_load_requested.append(self.model.load_file)
+
+
+class SequenceInputPresenter(object):
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+        self.model.file_loaded.append(self.view.set_sequence)
         self.view.submitted.append(self._user_submits)
-        self.view.file_loaded.append(self._file_loaded)
+        self.model.error_raised.append(self.view.show_error)
 
     def _user_submits(self, seq_str, island_size_str, minimum_gc_ratio_str):
         """Called when the user submits the form.
@@ -45,12 +51,8 @@ class ApplicationPresenter(object):
             self.view.show_error(
                 'Invalid ratio for GC: {0}'.format(minimum_gc_ratio_str))
             return
-        locations = self.model.annotate_cpg_islands(seq,
-                                                    island_size,
-                                                    minimum_gc_ratio)
-        location_tuples = [(f.location.start.position,
-                            f.location.end.position) for f in locations]
-        self.view.set_locations(location_tuples)
+        self.model.annotate_cpg_islands(
+            seq, island_size, minimum_gc_ratio)
 
     def _file_loaded(self, file_path):
         """Called when the user loads a file.
@@ -62,3 +64,14 @@ class ApplicationPresenter(object):
             self.view.set_sequence(self.model.load_file(file_path))
         except ValueError as error:
             self.view.show_error('Sequence parsing error: {0}'.format(error))
+
+class ResultsPresenter(object):
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+        self.model.locations_computed.append(self._locations_computed)
+
+    def _locations_computed(self, feature_locations):
+        location_tuples = [(f.location.start.position,
+                            f.location.end.position) for f in feature_locations]
+        self.view.set_locations(location_tuples)

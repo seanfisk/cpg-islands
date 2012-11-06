@@ -7,7 +7,7 @@ import sys
 from PySide import QtGui
 
 from cpg_islands import metadata
-from cpg_islands.qt.composers import create_presenter
+from cpg_islands.qt.composers import create_application_presenter
 
 
 def main(argv=None):
@@ -20,7 +20,7 @@ def main(argv=None):
     app.setApplicationName(metadata.nice_title)
     app.setApplicationVersion(metadata.version)
 
-    presenter = create_presenter(argv)
+    presenter = create_application_presenter(argv)
 
     return app.exec_()
 

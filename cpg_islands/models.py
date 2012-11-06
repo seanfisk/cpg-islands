@@ -4,7 +4,7 @@
 from __future__ import print_function
 import sys
 import argparse
-import abc
+from abc import ABCMeta, abstractmethod
 
 from Bio.Seq import Seq
 from Bio import SeqIO
@@ -16,21 +16,45 @@ from cpg_islands.utils import Event
 
 
 class MetaApplicationModel(object):
-    __metaclass__ = abc.ABCMeta
+    __metaclass__ = ABCMeta
 
     started = Event()
     """Fired when the application starts."""
 
-    @abc.abstractmethod
+    def __init__(self, sequence_input_model):
+        self.sequence_input_model = sequence_input_model
+
+    @abstractmethod
     def run(self, argv=None):
         raise NotImplementedError()
 
-    @abc.abstractmethod
+    @abstractmethod
+    def load_file(self, file_path):
+        self.sequence_input_model.load_file(file_path)
+
+
+class MetaSequenceInputModel(object):
+    __metaclass__ = ABCMeta
+
+    file_loaded = Event()
+    error_raised = Event()
+
+    def __init__(self, results_model):
+        self.results_model = results_model
+
+    @abstractmethod
+    def load_file(self, file_path):
+        raise NotImplementedError()
+
+    @abstractmethod
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
         raise NotImplementedError()
 
-    @abc.abstractmethod
-    def load_file(self, file_path):
+class MetaResultsModel(object):
+    locations_computed = Event()
+
+    @abstractmethod
+    def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
         raise NotImplementedError()
 
 
@@ -59,6 +83,32 @@ URL: <{url}>
 
         args = arg_parser.parse_args(args=argv[1:])
 
+    def load_file(self, file_path):
+        self.sequence_input_model.load_file(file_path)
+
+
+class SequenceInputModel(MetaSequenceInputModel):
+    def load_file(self, file_path):
+        """Load a sequence file and return the contents.
+
+        :param file_path: the path to the sequence file
+        :type file_path: :class:`str`
+        :return: the sequence text
+        :rtype: :class:`str`
+        """
+        try:
+            seq_record = SeqIO.read(file_path, 'genbank')
+        except ValueError as error:
+            self.error_raised(str(error))
+            return
+        self.file_loaded(str(seq_record.seq))
+
+    def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+        self.results_model.annotate_cpg_islands(
+            seq, island_size, minimum_gc_ratio)
+
+
+class ResultsModel(MetaResultsModel):
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
         """Create a list of CpG island features in a sequence.
 
@@ -90,15 +140,4 @@ URL: <{url}>
                 feature = SeqFeature(
                     FeatureLocation(start_index, end_index))
                 features.append(feature)
-        return features
-
-    def load_file(self, file_path):
-        """Load a sequence file and return the contents.
-
-        :param file_path: the path to the sequence file
-        :type file_path: :class:`str`
-        :return: the sequence text
-        :rtype: :class:`str`
-        """
-        seq_record = SeqIO.read(file_path, 'genbank')
-        return str(seq_record.seq)
+        self.locations_computed(features)
