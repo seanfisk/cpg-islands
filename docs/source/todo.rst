@@ -42,11 +42,31 @@ Todo
 
 .. todo::
 
+   New algorithm.
+
+.. todo::
+
+   Measure speed of algorithm.
+
+.. todo::
+
+   Have mutiple algorithm options available.
+
+.. todo::
+
    Sean - Distribution with pyinstaller.
 
 .. todo::
 
    Make documentation organization nicer.
+
+.. todo::
+
+   Tabbed interface for sequence files.
+
+.. todo::
+
+   Analysis run history.
 
 .. todo::
 
