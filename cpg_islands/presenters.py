@@ -65,6 +65,7 @@ class SequenceInputPresenter(object):
         except ValueError as error:
             self.view.show_error('Sequence parsing error: {0}'.format(error))
 
+
 class ResultsPresenter(object):
     def __init__(self, model, view):
         self.model = model
@@ -72,6 +73,7 @@ class ResultsPresenter(object):
         self.model.locations_computed.append(self._locations_computed)
 
     def _locations_computed(self, feature_locations):
-        location_tuples = [(f.location.start.position,
-                            f.location.end.position) for f in feature_locations]
+        location_tuples = [(
+            f.location.start.position, f.location.end.position)
+            for f in feature_locations]
         self.view.set_locations(location_tuples)

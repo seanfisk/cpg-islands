@@ -39,7 +39,6 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         self.layout.addWidget(results_view)
         self.setCentralWidget(self.central_widget)
 
-
     def start(self):
         """Show and raise the window."""
         self.show()
@@ -56,6 +55,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
             caption='Load GenBank File...',
             filter='GenBank Sequence File (*.gb)')
         self.file_load_requested(file_name[0])
+
 
 class AboutDialog(QtGui.QDialog):
     """Shows information about the program."""
@@ -84,6 +84,7 @@ class AboutDialog(QtGui.QDialog):
             metadata.documentation_url), self)
         self.documentation_label.setOpenExternalLinks(True)
         self.layout.addWidget(self.documentation_label)
+
 
 class SequenceInputView(QtGui.QWidget, BaseSequenceInputView):
     def __init__(self, parent=None):

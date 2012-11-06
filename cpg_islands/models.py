@@ -50,6 +50,7 @@ class MetaSequenceInputModel(object):
     def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
         raise NotImplementedError()
 
+
 class MetaResultsModel(object):
     locations_computed = Event()
 
