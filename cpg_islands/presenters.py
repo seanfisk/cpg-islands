@@ -2,14 +2,14 @@ from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC, _verify_alphabet
 
 
-class ApplicationPresenter(object):
+class AppPresenter(object):
     def __init__(self, model, view):
         """Constructor.
 
         :param model: application model
-        :type model: :class:`MetaApplicationModel`
+        :type model: :class:`MetaAppModel`
         :param view: application view
-        :type view: :class:`MetaApplicationView`
+        :type view: :class:`MetaAppView`
         """
         self.model = model
         self.view = view
@@ -17,18 +17,18 @@ class ApplicationPresenter(object):
         self.view.file_load_requested.append(self.model.load_file)
 
 
-class SequenceInputPresenter(object):
+class SeqInputPresenter(object):
     def __init__(self, model, view):
         """Constructor.
 
         :param model: sequence input model
-        :type model: :class:`MetaSequenceInputModel`
+        :type model: :class:`MetaSeqInputModel`
         :param view: sequence input view
-        :type view: :class:`MetaSequenceInputView`
+        :type view: :class:`MetaSeqInputView`
         """
         self.model = model
         self.view = view
-        self.model.file_loaded.append(self.view.set_sequence)
+        self.model.file_loaded.append(self.view.set_seq)
         self.view.submitted.append(self._user_submits)
         self.model.error_raised.append(self.view.show_error)
 
@@ -75,7 +75,7 @@ class SequenceInputPresenter(object):
         :type file_path: :class:`str`
         """
         try:
-            self.view.set_sequence(self.model.load_file(file_path))
+            self.view.set_seq(self.model.load_file(file_path))
         except ValueError as error:
             self.view.show_error('Sequence parsing error: {0}'.format(error))
 

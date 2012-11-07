@@ -4,22 +4,22 @@
 from PySide import QtGui
 
 from cpg_islands import metadata
-from cpg_islands.views import (BaseApplicationView,
-                               BaseSequenceInputView,
+from cpg_islands.views import (BaseAppView,
+                               BaseSeqInputView,
                                BaseResultsView)
 
 
-class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
-    def __init__(self, sequence_input_view, results_view, parent=None):
+class AppView(QtGui.QMainWindow, BaseAppView):
+    def __init__(self, seq_input_view, results_view, parent=None):
         """Initialize the main application view with docked
         SeqenceInputView and ResultsView.
 
-        :param sequence_input_view: the input view
-        :type sequence_input_view: :class:`BaseSequenceInputView`
+        :param seqe_input_view: the input view
+        :type seq_input_view: :class:`BaseSeqInputView`
         :param results_view: the results view
         :type results_view: :class:`BaseResultsView`
         """
-        super(ApplicationView, self).__init__(parent)
+        super(AppView, self).__init__(parent)
 
         # Menu
         self.menu_bar = QtGui.QMenuBar()
@@ -36,7 +36,7 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         # Main
         self.central_widget = QtGui.QWidget(self)
         self.layout = QtGui.QHBoxLayout(self.central_widget)
-        self.layout.addWidget(sequence_input_view)
+        self.layout.addWidget(seq_input_view)
         self.layout.addWidget(results_view)
         self.setCentralWidget(self.central_widget)
 
@@ -57,14 +57,14 @@ class ApplicationView(QtGui.QMainWindow, BaseApplicationView):
         self.file_load_requested(file_name[0])
 
 
-class SequenceInputView(QtGui.QWidget, BaseSequenceInputView):
+class SeqInputView(QtGui.QWidget, BaseSeqInputView):
     def __init__(self, parent=None):
-        super(SequenceInputView, self).__init__(parent)
+        super(SeqInputView, self).__init__(parent)
 
         self.layout = QtGui.QFormLayout(self)
-        self.sequence_input = QtGui.QPlainTextEdit(self)
-        self.sequence_input.setTabChangesFocus(True)
-        self.layout.addRow('Sequence', self.sequence_input)
+        self.seq_input = QtGui.QPlainTextEdit(self)
+        self.seq_input.setTabChangesFocus(True)
+        self.layout.addRow('Sequence', self.seq_input)
 
         self.island_size_input = QtGui.QLineEdit(self)
         self.island_size_validator = QtGui.QIntValidator()
@@ -83,21 +83,21 @@ class SequenceInputView(QtGui.QWidget, BaseSequenceInputView):
         self.submit_button.clicked.connect(self._submit_clicked)
         self.layout.addRow(self.submit_button)
 
-    def _get_sequence(self):
+    def _get_seq(self):
         """Return the widget's entered text.
 
         :return: the text
         :rtype: :class:`str`
         """
-        return self.sequence_input.toPlainText()
+        return self.seq_input.toPlainText()
 
-    def set_sequence(self, sequence_str):
+    def set_seq(self, seq_str):
         """Set the sequence text.
 
-        :param sequence_str: the sequence in string form
-        :type sequence_str: :class:`str`
+        :param seq_str: the sequence in string form
+        :type seq_str: :class:`str`
         """
-        self.sequence_input.setPlainText(sequence_str)
+        self.seq_input.setPlainText(seq_str)
 
     def _get_gc_ratio(self):
         """Return the widget's entered GC ratio.
@@ -125,7 +125,7 @@ class SequenceInputView(QtGui.QWidget, BaseSequenceInputView):
 
     def _submit_clicked(self):
         try:
-            self.submitted(self._get_sequence(),
+            self.submitted(self._get_seq(),
                            self._get_island_size(),
                            self._get_gc_ratio())
         except ValueError as error:

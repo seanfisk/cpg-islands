@@ -1,34 +1,32 @@
 """:mod:`cpg_islands.qt.composers` --- Functions to create Qt MVP triads
 """
 
-from cpg_islands.models import (ApplicationModel,
-                                SequenceInputModel,
+from cpg_islands.models import (AppModel,
+                                SeqInputModel,
                                 ResultsModel)
-from cpg_islands.qt.views import (ApplicationView,
-                                  SequenceInputView,
+from cpg_islands.qt.views import (AppView,
+                                  SeqInputView,
                                   ResultsView)
-from cpg_islands.presenters import (ApplicationPresenter,
-                                    SequenceInputPresenter,
+from cpg_islands.presenters import (AppPresenter,
+                                    SeqInputPresenter,
                                     ResultsPresenter)
 
 
-def create_application_presenter(argv):
+def create_app_presenter(argv):
     """Create a presenter with a Qt view.
 
     :return: the created presenter
-    :rtype: :class:`ApplicationPresenter`
+    :rtype: :class:`AppPresenter`
     """
     results_model = ResultsModel()
     results_view = ResultsView()
     results_presenter = ResultsPresenter(results_model, results_view)
-    sequence_input_model = SequenceInputModel(results_model)
-    sequence_input_view = SequenceInputView()
-    sequence_input_presenter = SequenceInputPresenter(sequence_input_model,
-                                                      sequence_input_view)
-    application_model = ApplicationModel(sequence_input_model)
-    application_view = ApplicationView(sequence_input_view, results_view)
+    seq_input_model = SeqInputModel(results_model)
+    seq_input_view = SeqInputView()
+    seq_input_presenter = SeqInputPresenter(seq_input_model, seq_input_view)
+    app_model = AppModel(seq_input_model)
+    app_view = AppView(seq_input_view, results_view)
 
-    application_presenter = ApplicationPresenter(application_model,
-                                                 application_view)
-    application_model.run(argv)
-    return application_presenter
+    app_presenter = AppPresenter(app_model, app_view)
+    app_model.run(argv)
+    return app_presenter

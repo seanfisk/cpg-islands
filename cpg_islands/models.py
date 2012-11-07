@@ -15,7 +15,7 @@ from cpg_islands import metadata
 from cpg_islands.utils import Event
 
 
-class MetaApplicationModel(object):
+class MetaAppModel(object):
     """Overlying application model interface."""
     __metaclass__ = ABCMeta
 
@@ -32,14 +32,14 @@ class MetaApplicationModel(object):
 
     @abstractmethod
     def load_file(self, file_path):
-        """Direct pass-through to :func:`MetaSequenceInputModel.load_file()`.
+        """Direct pass-through to :func:`MetaSeqInputModel.load_file()`.
         :param file_path: the path to the sequence file
         :type file_path: :class:`str`
         """
         raise NotImplementedError()
 
 
-class MetaSequenceInputModel(object):
+class MetaSeqInputModel(object):
     __metaclass__ = ABCMeta
 
     file_loaded = Event()
@@ -110,13 +110,13 @@ class MetaResultsModel(object):
         raise NotImplementedError()
 
 
-class ApplicationModel(MetaApplicationModel):
-    def __init__(self, sequence_input_model):
+class AppModel(MetaAppModel):
+    def __init__(self, seq_input_model):
         """Constructor.
 
-        :param type: :class:`MetaSequenceInputModel`
+        :param type: :class:`MetaSeqInputModel`
         """
-        self.sequence_input_model = sequence_input_model
+        self.seq_input_model = seq_input_model
 
     def run(self, argv):
         self.started()
@@ -143,10 +143,10 @@ URL: <{url}>
         args = arg_parser.parse_args(args=argv[1:])
 
     def load_file(self, file_path):
-        self.sequence_input_model.load_file(file_path)
+        self.seq_input_model.load_file(file_path)
 
 
-class SequenceInputModel(MetaSequenceInputModel):
+class SeqInputModel(MetaSeqInputModel):
     def __init__(self, results_model):
         """Constructor.
 

@@ -4,7 +4,7 @@
 from cpg_islands.utils import Event
 
 
-class BaseApplicationView(object):
+class BaseAppView(object):
     file_load_requested = Event()
     """Called when the user requests to load a file. Callbacks should
     look like:
@@ -20,7 +20,7 @@ class BaseApplicationView(object):
         raise NotImplementedError()
 
 
-class BaseSequenceInputView(object):
+class BaseSeqInputView(object):
     submitted = Event()
     """Called when the form is submitted, i.e., submit is clicked by
     the user. Callbacks should look like:
@@ -35,11 +35,11 @@ class BaseSequenceInputView(object):
         :type minimum_gc_ratio_str: :class:`str`
     """
 
-    def set_sequence(self, sequence_str):
+    def set_seq(self, seq_str):
         """Set the sequence text.
 
-        :param sequence_str: the sequence in string form
-        :type sequence_str: :class:`str`
+        :param seq_str: the sequence in string form
+        :type seq_str: :class:`str`
         """
         raise NotImplementedError()
 
