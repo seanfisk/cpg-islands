@@ -34,6 +34,10 @@ Todo
 
 .. todo::
 
+   Syntax check: consider adding pyflakes to pep8 or using flake8.
+     
+.. todo::
+
    Dock the SequenceInputView and ResultsView into the ApplicationView.
      
 .. todo::
