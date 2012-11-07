@@ -87,7 +87,7 @@ class TestSeqInputPresenter:
             assert presenter.view.mock_calls == []
 
     class TestLoadFile:
-        def test_user_loads_files_valid_sequence(self, presenter):
+        def test_valid_sequence(self, presenter):
             presenter.model.load_file.return_value = sentinel.file_contents
             presenter._file_loaded(sentinel.file_path)
             assert (presenter.model.mock_calls ==
@@ -95,7 +95,7 @@ class TestSeqInputPresenter:
             assert (presenter.view.mock_calls ==
                     [call.set_seq(sentinel.file_contents)])
 
-        def test_user_loads_file_invalid_sequence(self, presenter):
+        def test_invalid_sequence(self, presenter):
             presenter.model.load_file.side_effect = ValueError(
                 'this is a fake message')
             presenter._file_loaded(sentinel.file_path)
