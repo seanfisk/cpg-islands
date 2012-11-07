@@ -13,6 +13,7 @@ Contents:
 
    todo
    links
+   abbreviations
    milestones
    cpg_islands
 
