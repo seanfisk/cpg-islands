@@ -13,6 +13,8 @@ class AppPresenter(object):
         """
         self.model = model
         self.view = view
+
+    def register_for_events(self):
         self.model.started.append(self.view.start)
         self.view.file_load_requested.append(self.model.load_file)
 
@@ -28,6 +30,8 @@ class SeqInputPresenter(object):
         """
         self.model = model
         self.view = view
+
+    def register_for_events(self):
         self.model.file_loaded.append(self.view.set_seq)
         self.view.submitted.append(self._user_submits)
         self.model.error_raised.append(self.view.show_error)
@@ -91,6 +95,8 @@ class ResultsPresenter(object):
         """
         self.model = model
         self.view = view
+
+    def register_for_events(self):
         self.model.locations_computed.append(self._locations_computed)
 
     def _locations_computed(self, feature_locations):

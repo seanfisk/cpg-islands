@@ -28,5 +28,7 @@ def create_app_presenter(argv):
     app_view = AppView(seq_input_view, results_view)
 
     app_presenter = AppPresenter(app_model, app_view)
+    for presenter in [results_presenter, seq_input_presenter, app_presenter]:
+        presenter.register_for_events()
     app_model.run(argv)
     return app_presenter
