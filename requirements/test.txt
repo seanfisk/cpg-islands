@@ -1,6 +1,8 @@
 --requirement base.txt
 
-mock
-pytest
+# specify minimums for mock and pytest because of this:
+# <http://pytest.org/latest/changelog.html#changes-between-2-3-2-and-2-3-3>
+mock >= 1.0.1
+pytest >= 2.3.3
 pep8
 shovel
