@@ -8,6 +8,7 @@ from Bio.Alphabet import IUPAC
 from cpg_islands.models import ResultsModel
 from tests.helpers import make_features
 
+
 def extract_features(feature_list, sequence):
     return [str(feature.extract(sequence)) for feature in feature_list]
 
@@ -21,6 +22,7 @@ def assert_features_equal(computed_features, expected_features, sequence):
 @pytest.fixture
 def model():
     return ResultsModel()
+
 
 class TestResultsModel:
     class TestAnnotate:

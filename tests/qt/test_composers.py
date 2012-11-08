@@ -7,6 +7,7 @@ from cpg_islands.views import (BaseAppView,
                                BaseSeqInputView,
                                BaseResultsView)
 
+
 # We don't want to require the `PySide' module for testing, since we
 # are not testing our user interface. Just patch the entire module.
 @patch.dict('sys.modules', {'PySide': MagicMock()})
@@ -63,8 +64,8 @@ class TestComposers:
         assert (mock_seq_input_view.mock_calls == [call()])
         assert (mock_seq_input_pres.mock_calls ==
                 call(sentinel.seq_input_model,
-                     sentinel.seq_input_view
-                 ).register_for_events().call_list())
+                     sentinel.seq_input_view)
+                .register_for_events().call_list())
         assert (mock_results_model.mock_calls == [call()])
         assert (mock_results_view.mock_calls == [call()])
         assert (mock_results_pres.mock_calls ==

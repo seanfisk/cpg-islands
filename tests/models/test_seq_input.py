@@ -4,10 +4,12 @@ from mock import create_autospec, MagicMock, call
 from cpg_islands.models import SeqInputModel, MetaResultsModel
 from tests.helpers import fixture_file, read_fixture_file
 
+
 @pytest.fixture
 def model():
     mock_results_model = create_autospec(MetaResultsModel, spec_set=True)
     return SeqInputModel(mock_results_model)
+
 
 class TestSeqInputModel:
     # fix all of these, they don't raise errors anymore

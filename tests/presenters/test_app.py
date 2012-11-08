@@ -5,11 +5,13 @@ from cpg_islands.models import MetaAppModel
 from cpg_islands.views import BaseAppView
 from cpg_islands.presenters import AppPresenter
 
+
 @pytest.fixture
 def presenter():
     mock_model = create_autospec(MetaAppModel, spec_set=True)
     mock_view = create_autospec(BaseAppView, spec_set=True)
     return AppPresenter(mock_model, mock_view)
+
 
 class TestApplicationPresenter:
     def test_register_for_events(self, presenter):

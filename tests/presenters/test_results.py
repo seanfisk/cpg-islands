@@ -6,6 +6,7 @@ from cpg_islands.views import BaseResultsView
 from cpg_islands.presenters import ResultsPresenter
 from tests.helpers import make_features
 
+
 @pytest.fixture
 def presenter():
     mock_model = create_autospec(MetaResultsModel, spec_set=True)

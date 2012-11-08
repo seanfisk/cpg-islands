@@ -3,6 +3,7 @@ from mock import create_autospec, call, sentinel, MagicMock, patch
 
 from cpg_islands.models import AppModel, MetaSeqInputModel
 
+
 @pytest.fixture
 def model():
     mock_seq_input_model = create_autospec(MetaSeqInputModel, spec_st=True)
