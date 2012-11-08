@@ -6,7 +6,6 @@ from cpg_islands.models import (MetaAppModel,
 from cpg_islands.views import (BaseAppView,
                                BaseSeqInputView,
                                BaseResultsView)
-from cpg_islands.qt.composers import create_app_presenter
 
 # We don't want to require the `PySide' module for testing, since we
 # are not testing our user interface. Just patch the entire module.
@@ -48,6 +47,7 @@ class TestComposers:
         # seq_input_pres = mock_seq_input_pres.return_value
         # results_pres = mock_results_pres.return_value
 
+        from cpg_islands.qt.composers import create_app_presenter
         retval = create_app_presenter(sentinel.argv)
         assert retval == app_pres
 
