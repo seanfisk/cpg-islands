@@ -17,7 +17,7 @@ class TestSeqInputModel:
         def test_load_jx500709_1(self, model):
             file_loaded_callback = MagicMock()
             model.file_loaded.append(file_loaded_callback)
-            computed = model.load_file(fixture_file('JX500709.1.gb'))
+            model.load_file(fixture_file('JX500709.1.gb'))
             assert (file_loaded_callback.mock_calls ==
                     [call(read_fixture_file('JX500709.1.flattened'))])
 

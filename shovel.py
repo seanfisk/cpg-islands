@@ -3,7 +3,6 @@
 from __future__ import print_function
 import abc
 import sys
-from collections import OrderedDict
 import subprocess
 
 from shovel import task
@@ -127,6 +126,7 @@ def lint():
     complexity metrics on the code.
     """
     sys.exit(LintRunner().run())
+
 
 @task
 def test_all():

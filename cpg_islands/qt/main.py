@@ -20,7 +20,10 @@ def main(argv=None):
     app.setApplicationName(metadata.nice_title)
     app.setApplicationVersion(metadata.version)
 
-    presenter = create_app_presenter(argv)
+    # We assign to presenter so that references aren't
+    # dropped. Shouldn't happen, but bad things have happened in the
+    # past. NOQA tells flake8 to ignore the line when syntax checking.
+    presenter = create_app_presenter(argv)  # NOQA
 
     return app.exec_()
 

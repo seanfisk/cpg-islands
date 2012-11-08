@@ -2,11 +2,9 @@
 """
 
 from __future__ import print_function
-import sys
 import argparse
 from abc import ABCMeta, abstractmethod
 
-from Bio.Seq import Seq
 from Bio import SeqIO
 from Bio.SeqUtils import GC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
@@ -140,7 +138,7 @@ URL: <{url}>
             description=metadata.description,
             epilog=epilog)
 
-        args = arg_parser.parse_args(args=argv[1:])
+        arg_parser.parse_args(args=argv[1:])
 
     def load_file(self, file_path):
         self.seq_input_model.load_file(file_path)
