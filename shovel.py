@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Test runner and style checker
 
 from __future__ import print_function
