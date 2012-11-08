@@ -5,6 +5,10 @@ Todo
 
 .. todo::
 
+   Remove some redundancy in valid algorithm tests in ``test_results.py``.
+   
+.. todo::
+
    Add a version argument to command-line ala selexec.
     
 .. todo::
