@@ -5,7 +5,7 @@ Todo
 
 .. todo::
 
-   Sean - Improve/make docstrings consistent.      
+   Sean - Improve/make docstrings consistent.
 
 .. todo::
 
@@ -22,7 +22,12 @@ Todo
 
    In mock tests, switch from using ``assert_called_once_with()`` to
    testing *all* mock calls with ``mock_calls``. This will ensure that
-   expected functions are called and unexpected functions are *not* called.
+   expected functions are called and unexpected functions are *not*
+   called.
+
+.. todo::
+
+   Add a version argument to command-line ala selexec.
     
 .. todo::
 
