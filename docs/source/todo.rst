@@ -5,28 +5,6 @@ Todo
 
 .. todo::
 
-   Sean - Improve/make docstrings consistent.
-
-.. todo::
-
-   Sean - Create new MVP triads:
-
-   * Application{Model,View,Presenter}
-   * SequenceInput{Model,View,Presenter}
-   * Results{Model,View,Presenter}
-
-    Initially, these will be implemented as different
-    windows. Specifically, the ResultsView will have to be a modal dialog.
-
-.. todo::
-
-   In mock tests, switch from using ``assert_called_once_with()`` to
-   testing *all* mock calls with ``mock_calls``. This will ensure that
-   expected functions are called and unexpected functions are *not*
-   called.
-
-.. todo::
-
    Add a version argument to command-line ala selexec.
     
 .. todo::
@@ -37,10 +15,6 @@ Todo
    * big picture view of sequence on the top right
    * detailed view of sequence on the bottom right
 
-.. todo::
-
-   Syntax check: consider adding pyflakes to pep8 or using flake8.
-     
 .. todo::
 
    Dock the SequenceInputView and ResultsView into the ApplicationView.
