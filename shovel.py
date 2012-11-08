@@ -9,7 +9,6 @@ import subprocess
 from shovel import task
 from py.io import TerminalWriter
 import pytest
-import pep8
 
 sys.path.append('.')
 
@@ -56,25 +55,27 @@ class MetaTestRunner(object):
         self.terminal_writer.sep('=', self.title())
 
 
-class StyleGuideRunner(MetaTestRunner):
+class LintRunner(MetaTestRunner):
     def name(self):
-        return 'pep8'
+        return 'flake8'
 
     def title(self):
-        return 'PEP8 Style Guide'
+        return 'Flake8: PyFlakes, PEP8, and McCabe complexity'
 
     def run(self):
-        """Run PEP8 style guide checker on code and test files.
+        """Run flake8 on code and test files.
 
         :return: the number of errors
         :rtype: :class:`int`
         """
-        super(StyleGuideRunner, self).run()
-        pep8_style = pep8.StyleGuide()
-        report = pep8_style.check_files(CODE_FILES)
-        if report.total_errors == 0:
+        super(LintRunner, self).run()
+        # Flake8 doesn't have an easy way to run checks using a Python
+        # function, so just fork off another process to do it.
+        retcode = subprocess.call(['flake8', '--max-complexity=10'] +
+                                  CODE_FILES)
+        if retcode == 0:
             print('No style errors')
-            return report.total_errors
+        return retcode
 
 
 class UnitTestRunner(MetaTestRunner):
@@ -121,10 +122,11 @@ def test():
 
 
 @task
-def style():
-    """Perform a PEP8 style check on the code."""
-    sys.exit(StyleGuideRunner().run())
-
+def lint():
+    """Perform PEP8 style check, run PyFlakes, and run McCabe
+    complexity metrics on the code.
+    """
+    sys.exit(LintRunner().run())
 
 @task
 def test_all():
