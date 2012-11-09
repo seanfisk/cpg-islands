@@ -9,10 +9,6 @@ Todo
    
 .. todo::
 
-   Add a version argument to command-line ala selexec.
-    
-.. todo::
-
    Gray - ResultsView:
 
    * list of CpG islands on the left
@@ -66,3 +62,12 @@ Todo
    * Prevent from typing unwanted characters
    * Prevent invalid pastes - **rejected on the basis that some
      cleanup of the sequence might be needed**
+
+.. todo::
+
+   Currently the graphics portion of the application is initialized
+   before command-line arguments are parsed. This causes focus to
+   "flash" momentarily (at least on OS X) while a windowing
+   environment is created then destroyed. This is obvious when passing
+   a --help or --version argument that shouldn't use any
+   graphics. This is annoying, but low priority.

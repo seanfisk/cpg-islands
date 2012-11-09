@@ -1,6 +1,7 @@
 import pytest
 from mock import create_autospec, call, sentinel, MagicMock, patch
 
+from cpg_islands import metadata
 from cpg_islands.models import AppModel, MetaSeqInputModel
 
 
@@ -12,6 +13,10 @@ def model():
 
 @pytest.fixture(params=['-h', '--help'])
 def helparg(request):
+    return request.param
+
+@pytest.fixture(params=['-V', '--version'])
+def versionarg(request):
     return request.param
 
 
@@ -40,6 +45,15 @@ class TestAppModel:
             assert 'URL:' in out
             assert mock_exit.mock_calls == [call(0)]
             assert model.seq_input_model.mock_calls == []
+
+        def test_version(self, model, versionarg, capfd):
+            with patch('sys.exit') as mock_exit:
+                model.run(['progname', versionarg])
+                out, err = capfd.readouterr()
+                # some basic tests to check output
+                assert err == '{0} {1}\n'.format(metadata.nice_title,
+                                                 metadata.version)
+                assert mock_exit.mock_calls == [call(0)]
 
         def test_started_called(self, model):
             started_callback = MagicMock()

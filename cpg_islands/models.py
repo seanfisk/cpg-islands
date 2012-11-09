@@ -122,14 +122,14 @@ class AppModel(MetaAppModel):
         author_strings = []
         for name, email in zip(metadata.authors, metadata.emails):
             author_strings.append('Author: {0} <{1}>'.format(name, email))
-
-        epilog = '''{title} {version}
+        version_str = '{0} {1}'.format(metadata.nice_title, metadata.version)
+        epilog = '''{version_str}
 
 {authors}
 URL: <{url}>
 '''.format(
             title=metadata.nice_title,
-            version=metadata.version,
+            version_str=version_str,
             authors='\n'.join(author_strings),
             url=metadata.url)
 
@@ -137,6 +137,8 @@ URL: <{url}>
             formatter_class=argparse.RawDescriptionHelpFormatter,
             description=metadata.description,
             epilog=epilog)
+        arg_parser.add_argument('--version', '-V',
+                                action='version', version=version_str)
 
         arg_parser.parse_args(args=argv[1:])
 
