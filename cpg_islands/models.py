@@ -22,6 +22,17 @@ class MetaAppModel(object):
     .. function:: callback()
     """
 
+    locations_computed = Event()
+    """Fired when locations have been computed. Callbacks should look like:
+
+    .. function:: callback()
+    """
+
+    @abstractmethod
+    def register_for_events(self):
+        """Register for events fired by other models."""
+        raise NotImplementedError()
+
     @abstractmethod
     def run(self, argv=None):
         """Called when the application starts."""
@@ -137,12 +148,17 @@ class MetaResultsModel(object):
 
 
 class AppModel(MetaAppModel):
-    def __init__(self, seq_input_model):
+    def __init__(self, seq_input_model, results_model):
         """Constructor.
 
         :param type: :class:`MetaSeqInputModel`
+        :param type: :class:`MetaResultsModel`
         """
         self.seq_input_model = seq_input_model
+        self.results_model = results_model
+
+    def register_for_events(self):
+        self.results_model.locations_computed.append(self._locations_computed)
 
     def run(self, argv):
         author_strings = []
@@ -172,6 +188,12 @@ URL: <{url}>
 
     def load_file(self, file_path):
         self.seq_input_model.load_file(file_path)
+
+    def _locations_computed(self, features):
+        """Pass-through locations computed event to
+        presenter. Features argument is discarded.
+        """
+        self.locations_computed()
 
 
 class SeqInputModel(MetaSeqInputModel):

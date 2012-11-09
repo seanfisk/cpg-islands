@@ -22,14 +22,15 @@ def create_app_presenter(argv):
     results_view = ResultsView()
     seq_input_model = SeqInputModel(results_model)
     seq_input_view = SeqInputView()
-    app_model = AppModel(seq_input_model)
+    app_model = AppModel(seq_input_model, results_model)
     app_view = AppView(seq_input_view, results_view)
 
     seq_input_presenter = SeqInputPresenter(seq_input_model, seq_input_view)
     results_presenter = ResultsPresenter(results_model, results_view)
     app_presenter = AppPresenter(app_model, app_view)
 
-    for presenter in [results_presenter, seq_input_presenter, app_presenter]:
+    for presenter in [app_model, results_presenter,
+                      seq_input_presenter, app_presenter]:
         presenter.register_for_events()
     app_model.run(argv)
 

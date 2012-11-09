@@ -15,9 +15,9 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         SeqenceInputView and ResultsView.
 
         :param seqe_input_view: the input view
-        :type seq_input_view: :class:`BaseSeqInputView`
+        :type seq_input_view: :class:`SeqInputView`
         :param results_view: the results view
-        :type results_view: :class:`BaseResultsView`
+        :type results_view: :class:`ResultsView`
         """
         super(AppView, self).__init__(parent)
 
@@ -34,15 +34,17 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         self.setMenuBar(self.menu_bar)
 
         # Main
-        self.central_widget = QtGui.QWidget(self)
-        self.layout = QtGui.QHBoxLayout(self.central_widget)
-        self.layout.addWidget(seq_input_view)
-        self.layout.addWidget(results_view)
-        self.setCentralWidget(self.central_widget)
+        self.input_results_tab_widget = QtGui.QTabWidget(self)
+        self.input_results_tab_widget.addTab(seq_input_view, '&Sequence Input')
+        self.input_results_tab_widget.addTab(results_view, '&Results')
+        self.setCentralWidget(self.input_results_tab_widget)
 
     def start(self):
         self.show()
         self.raise_()
+
+    def show_results(self):
+        self.input_results_tab_widget.setCurrentIndex(1)
 
     def _about(self):
         """Create and show the about dialog."""
