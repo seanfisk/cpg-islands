@@ -129,7 +129,8 @@ CpG Islands makes use of the following libraries/tools/services:
 - pytest_ test framework
 - mock_ for creating mock objects
 - coverage.py_ and pytest-cov_ for test coverage statistics
-- pep8_ for enforced PEP8 compliance
+- flake8_ as a lint tool: enforced PEP8_ compliance, running PyFlakes_ and `McCabe
+  complexity check`_
 - Travis-CI_ for continuous integration
 - Sphinx_ and docutils_ for documentation generation
 - `Read the Docs`_ for documentation hosting
@@ -142,5 +143,8 @@ CpG Islands makes use of the following libraries/tools/services:
 .. _docutils: http://docutils.sourceforge.net/
 .. _coverage.py: http://nedbatchelder.com/code/coverage/
 .. _pytest-cov: http://pypi.python.org/pypi/pytest-cov
-.. _pep8: https://github.com/jcrocholl/pep8/
+.. _flake8: http://pypi.python.org/pypi/flake8
+.. _PEP8: https://github.com/jcrocholl/pep8/
+.. _PyFlakes: http://pypi.python.org/pypi/pyflakes
+.. _McCabe complexity check: http://nedbatchelder.com/blog/200803/python_code_complexity_microtool.html
 .. _shovel: https://github.com/seomoz/shovel
