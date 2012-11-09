@@ -15,6 +15,7 @@ def model():
 def helparg(request):
     return request.param
 
+
 @pytest.fixture(params=['-V', '--version'])
 def versionarg(request):
     return request.param
