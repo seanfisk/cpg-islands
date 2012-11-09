@@ -1,0 +1,15 @@
+# -*- mode: python -*-
+# SCons build file
+
+# Template originally downloaded from:
+# <http://www.oxfordjournals.org/our_journals/bioinformatics/for_authors/bioinfo01.zip>
+
+import os
+
+env = Environment()
+
+# Look in standard directory ~/texmf for .sty files
+env['ENV']['TEXMFHOME'] = os.path.join(os.environ['HOME'], 'texmf')
+
+final_paper_pdf = env.PDF('document.tex')
+Default(final_paper_pdf)
