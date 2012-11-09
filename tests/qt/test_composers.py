@@ -53,7 +53,9 @@ class TestComposers:
         assert retval == app_pres
 
         assert (mock_app_model.mock_calls ==
-                call(sentinel.seq_input_model).run(sentinel.argv).call_list())
+                [call(sentinel.seq_input_model, sentinel.results_model),
+                 call().register_for_events(),
+                 call().run(sentinel.argv)])
         assert (mock_app_view.mock_calls ==
                 [call(sentinel.seq_input_view, sentinel.results_view)])
         assert (mock_app_pres.mock_calls ==

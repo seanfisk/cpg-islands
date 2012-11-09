@@ -19,6 +19,10 @@ class BaseAppView(object):
         """Start the view."""
         raise NotImplementedError()
 
+    def show_results(self):
+        """Show the results view."""
+        raise NotImplementedError()
+
 
 class BaseSeqInputView(object):
     submitted = Event()

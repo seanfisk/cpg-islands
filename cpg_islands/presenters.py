@@ -17,6 +17,7 @@ class AppPresenter(object):
     def register_for_events(self):
         self.model.started.append(self.view.start)
         self.view.file_load_requested.append(self.model.load_file)
+        self.model.locations_computed.append(self.view.show_results)
 
 
 class SeqInputPresenter(object):

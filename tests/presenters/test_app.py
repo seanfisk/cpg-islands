@@ -17,7 +17,8 @@ class TestApplicationPresenter:
     def test_register_for_events(self, presenter):
         presenter.register_for_events()
         assert (presenter.model.mock_calls ==
-                [call.started.append(presenter.view.start)])
+                [call.started.append(presenter.view.start),
+                 call.locations_computed.append(presenter.view.show_results)])
         assert (presenter.view.mock_calls ==
                 [call.file_load_requested.append(
                     presenter.model.load_file)])
