@@ -19,10 +19,18 @@ class TestSeqInputPresenter:
     def test_register_for_events(self, presenter):
         presenter.register_for_events()
         assert (presenter.model.mock_calls ==
-                [call.file_loaded.append(presenter.view.set_seq),
+                [call.island_definition_defaults_set.append(
+                    presenter._island_definition_defaults_set),
+                 call.file_loaded.append(presenter.view.set_seq),
                  call.error_raised.append(presenter.view.show_error)])
         assert (presenter.view.mock_calls ==
                 [call.submitted.append(presenter._user_submits)])
+
+    def test_island_defintion_defaults_set(self, presenter):
+        presenter._island_definition_defaults_set(343, 0.65)
+        assert (presenter.view.mock_calls ==
+                [call.set_island_size('343'),
+                 call.set_gc_ratio('0.65')])
 
     class TestUserSubmits:
         def test_valid_values(self, presenter):

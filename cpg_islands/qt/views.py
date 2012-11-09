@@ -107,6 +107,9 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         """
         return self.gc_ratio_input.text()
 
+    def set_gc_ratio(self, gc_ratio):
+        self.gc_ratio_input.setText(gc_ratio)
+
     def _get_island_size(self):
         """Return the widget's entered island size.
 
@@ -114,6 +117,9 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         :rtype: :class:`str`
         """
         return self.island_size_input.text()
+
+    def set_island_size(self, island_size):
+        self.island_size_input.setText(island_size)
 
     def show_error(self, message):
         """Show the user an error dialog.

@@ -12,6 +12,12 @@ def model():
 
 
 class TestSeqInputModel:
+    def test_set_island_definition_defaults(self, model):
+        callback = MagicMock()
+        model.island_definition_defaults_set.append(callback)
+        model.set_island_definition_defaults()
+        assert callback.mock_calls == [call(200, 0.6)]
+
     # fix all of these, they don't raise errors anymore
     class TestLoadFile:
         def test_load_jx500709_1(self, model):

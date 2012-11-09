@@ -33,15 +33,19 @@ class TestAppModel:
             out, err = capfd.readouterr()
             # some basic tests to check output
             assert out == ''
-            assert model.seq_input_model.mock_calls == []
+            assert (model.seq_input_model.mock_calls ==
+                    [call.set_island_definition_defaults()])
 
         def test_help(self, model, helparg, capfd):
             with patch('sys.exit') as mock_exit:
-                model.run(['progname', helparg])
+                mock_exit.side_effect = Exception(
+                    'fake exception to stop execution')
+                with pytest.raises(Exception):
+                    model.run(['progname', helparg])
             out, err = capfd.readouterr()
             # some basic tests to check output
             assert 'usage' in out
-            assert  'CpG Island Finder' in out
+            assert 'CpG Island Finder' in out
             assert 'Author:' in out
             assert 'URL:' in out
             assert mock_exit.mock_calls == [call(0)]
@@ -49,19 +53,36 @@ class TestAppModel:
 
         def test_version(self, model, versionarg, capfd):
             with patch('sys.exit') as mock_exit:
-                model.run(['progname', versionarg])
-                out, err = capfd.readouterr()
-                # some basic tests to check output
-                assert err == '{0} {1}\n'.format(metadata.nice_title,
-                                                 metadata.version)
-                assert mock_exit.mock_calls == [call(0)]
+                mock_exit.side_effect = Exception(
+                    'fake exception to stop execution')
+                with pytest.raises(Exception):
+                    model.run(['progname', versionarg])
+            out, err = capfd.readouterr()
+            # some basic tests to check output
+            assert err == '{0} {1}\n'.format(metadata.nice_title,
+                                             metadata.version)
+            assert mock_exit.mock_calls == [call(0)]
+            assert model.seq_input_model.mock_calls == []
 
-        def test_started_called(self, model):
+        def test_started_and_defaults_set_called_after_exit(
+                self, model, helparg):
+            started_callback = MagicMock()
+            model.started.append(started_callback)
+            with patch('sys.exit') as mock_exit:
+                mock_exit.side_effect = Exception(
+                    'fake exception to stop execution')
+                with pytest.raises(Exception):
+                    model.run(['progname', helparg])
+            assert model.seq_input_model.mock_calls == []
+            assert started_callback.mock_calls == []
+
+        def test_started_and_defaults_set_called(self, model):
             started_callback = MagicMock()
             model.started.append(started_callback)
             model.run(['progname'])
             assert started_callback.mock_calls == [call()]
-            assert model.seq_input_model.mock_calls == []
+            assert (model.seq_input_model.mock_calls ==
+                    [call.set_island_definition_defaults()])
 
     def test_load_file(self, model):
         model.load_file(sentinel.file_path)

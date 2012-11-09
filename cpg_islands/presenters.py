@@ -32,9 +32,22 @@ class SeqInputPresenter(object):
         self.view = view
 
     def register_for_events(self):
+        self.model.island_definition_defaults_set.append(
+            self._island_definition_defaults_set)
         self.model.file_loaded.append(self.view.set_seq)
         self.view.submitted.append(self._user_submits)
         self.model.error_raised.append(self.view.show_error)
+
+    def _island_definition_defaults_set(self, island_size, minimum_gc_ratio):
+        """Called when island definition defaults are set.
+
+        :param island_size: number of bases in the island
+        :type island_size: :class:`int`
+        :param minimum_gc_ratio: minimum ratio of Guanine/Cytosine
+        :type minimum_gc_ratio: :class:`float`
+        """
+        self.view.set_island_size(str(island_size))
+        self.view.set_gc_ratio(str(minimum_gc_ratio))
 
     def _user_submits(self, seq_str, island_size_str, minimum_gc_ratio_str):
         """Called when the user submits the form.

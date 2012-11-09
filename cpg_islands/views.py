@@ -43,6 +43,22 @@ class BaseSeqInputView(object):
         """
         raise NotImplementedError()
 
+    def set_island_size(self, island_size_str):
+        """Set the size of the CpG island.
+
+        :param island_size: number of bases in the island as a string
+        :type island_size: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_gc_ratio(self, gc_ratio):
+        """Set minimum GC ratio.
+
+        :param gc_ratio: the ratio of Guanine/Cytosine as a string
+        :type gc_ratio: :class:`str`
+        """
+        raise NotImplementedError()
+
     def show_error(self, message):
         """Show the user an error dialog.
 

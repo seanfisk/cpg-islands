@@ -1,7 +1,6 @@
 """:mod:`cpg_islands.models` --- Application models
 """
 
-from __future__ import print_function
 import argparse
 from abc import ABCMeta, abstractmethod
 
@@ -49,6 +48,7 @@ class MetaSeqInputModel(object):
         :param file_contents: contents of the loaded file
         :type file_contents: :class:`str`
     """
+
     error_raised = Event()
     """Fired when an error occurs. Callbacks should look like:
 
@@ -57,6 +57,25 @@ class MetaSeqInputModel(object):
         :param error_message: the error message
         :type error_message: :class:`str`
     """
+
+    island_definition_defaults_set = Event()
+    """Fired when default island definitions are set. Callbacks should
+    look like:
+
+    .. function:: callback(island_size, gc_ratio)
+
+        :param island_size: number of bases in the island
+        :type island_size: :class:`int`
+        :param gc_ratio: minimum ratio of Guanine/Cytosine
+        :type gc_ratio: :class:`float`
+    """
+
+    @abstractmethod
+    def set_island_definition_defaults():
+        """Set the default island definitions of an island size of 200
+        and a GC ratio of 60%.
+        """
+        raise NotImplementedError()
 
     @abstractmethod
     def load_file(self, file_path):
@@ -117,8 +136,6 @@ class AppModel(MetaAppModel):
         self.seq_input_model = seq_input_model
 
     def run(self, argv):
-        self.started()
-
         author_strings = []
         for name, email in zip(metadata.authors, metadata.emails):
             author_strings.append('Author: {0} <{1}>'.format(name, email))
@@ -139,8 +156,10 @@ URL: <{url}>
             epilog=epilog)
         arg_parser.add_argument('--version', '-V',
                                 action='version', version=version_str)
-
         arg_parser.parse_args(args=argv[1:])
+
+        self.seq_input_model.set_island_definition_defaults()
+        self.started()
 
     def load_file(self, file_path):
         self.seq_input_model.load_file(file_path)
@@ -153,6 +172,9 @@ class SeqInputModel(MetaSeqInputModel):
         :param type: :class:`MetaResultsModel`
         """
         self.results_model = results_model
+
+    def set_island_definition_defaults(self):
+        self.island_definition_defaults_set(200, 0.6)
 
     def load_file(self, file_path):
         try:
