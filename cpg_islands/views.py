@@ -25,14 +25,14 @@ class BaseSeqInputView(object):
     """Called when the form is submitted, i.e., submit is clicked by
     the user. Callbacks should look like:
 
-    .. function:: callback(seq_str, island_size_str, minimum_gc_ratio_str)
+    .. function:: callback(seq_str, island_size_str, min_gc_ratio_str)
 
         :param seq_str: the sequence as a string
         :type seq_str: :class:`str`
         :param island_size_str: number of bases which an island may contain
         :type island_size_str: :class:`str`
-        :param minimum_gc_ratio_str: the ratio of GC to other bases
-        :type minimum_gc_ratio_str: :class:`str`
+        :param min_gc_ratio_str: the ratio of GC to other bases
+        :type min_gc_ratio_str: :class:`str`
     """
 
     def set_seq(self, seq_str):
@@ -51,11 +51,11 @@ class BaseSeqInputView(object):
         """
         raise NotImplementedError()
 
-    def set_gc_ratio(self, gc_ratio):
+    def set_min_gc_ratio(self, min_gc_ratio):
         """Set minimum GC ratio.
 
-        :param gc_ratio: the ratio of Guanine/Cytosine as a string
-        :type gc_ratio: :class:`str`
+        :param min_gc_ratio: the ratio of Guanine/Cytosine as a string
+        :type min_gc_ratio: :class:`str`
         """
         raise NotImplementedError()
 

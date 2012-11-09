@@ -30,7 +30,7 @@ class TestSeqInputPresenter:
         presenter._island_definition_defaults_set(343, 0.65)
         assert (presenter.view.mock_calls ==
                 [call.set_island_size('343'),
-                 call.set_gc_ratio('0.65')])
+                 call.set_min_gc_ratio('0.65')])
 
     class TestUserSubmits:
         def test_valid_values(self, presenter):

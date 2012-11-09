@@ -62,12 +62,12 @@ class MetaSeqInputModel(object):
     """Fired when default island definitions are set. Callbacks should
     look like:
 
-    .. function:: callback(island_size, gc_ratio)
+    .. function:: callback(island_size, min_gc_ratio)
 
         :param island_size: number of bases in the island
         :type island_size: :class:`int`
-        :param gc_ratio: minimum ratio of Guanine/Cytosine
-        :type gc_ratio: :class:`float`
+        :param min_gc_ratio: minimum ratio of Guanine/Cytosine
+        :type min_gc_ratio: :class:`float`
     """
 
     @abstractmethod
@@ -87,7 +87,7 @@ class MetaSeqInputModel(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
         """Direct pass-through to
         :func:`MetaResultsModel.annotate_cpg_islands()`.
 
@@ -95,8 +95,8 @@ class MetaSeqInputModel(object):
         :type seq: :class:`Bio.Seq.Seq`
         :param island_size: the number of bases which an island may contain
         :type island_size: :class:`int`
-        :param minimum_gc_ratio: the ratio of GC to other bases
-        :type minimum_gc_ratio: :class:`float`
+        :param min_gc_ratio: the ratio of GC to other bases
+        :type min_gc_ratio: :class:`float`
         :raise: :exc:`ValueError` when parameters are invalid
         """
         raise NotImplementedError()
@@ -113,15 +113,15 @@ class MetaResultsModel(object):
     """
 
     @abstractmethod
-    def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
         """Create a list of CpG island features in a sequence.
 
         :param seq: the sequence to annotate
         :type seq: :class:`Bio.Seq.Seq`
         :param island_size: the number of bases which an island may contain
         :type island_size: :class:`int`
-        :param minimum_gc_ratio: the ratio of GC to other bases
-        :type minimum_gc_ratio: :class:`float`
+        :param min_gc_ratio: the ratio of GC to other bases
+        :type min_gc_ratio: :class:`float`
         :raise: :exc:`ValueError` when parameters are invalid
         """
         raise NotImplementedError()
@@ -184,13 +184,13 @@ class SeqInputModel(MetaSeqInputModel):
             return
         self.file_loaded(str(seq_record.seq))
 
-    def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
         self.results_model.annotate_cpg_islands(
-            seq, island_size, minimum_gc_ratio)
+            seq, island_size, min_gc_ratio)
 
 
 class ResultsModel(MetaResultsModel):
-    def annotate_cpg_islands(self, seq, island_size, minimum_gc_ratio):
+    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
         if island_size <= 0:
             raise ValueError(
                 'Invalid island size: {0}'.format(island_size))
@@ -199,10 +199,10 @@ class ResultsModel(MetaResultsModel):
             raise ValueError(
                 'Island size ({0}) must be less than or '
                 'equal to sequence length ({1})'.format(island_size, seq_len))
-        if not (0 <= minimum_gc_ratio <= 1):
+        if not (0 <= min_gc_ratio <= 1):
             raise ValueError('Invalid GC ratio for ratio between '
-                             'zero and one: {0}'.format(minimum_gc_ratio))
-        minimum_gc_percentage = minimum_gc_ratio * 100
+                             'zero and one: {0}'.format(min_gc_ratio))
+        minimum_gc_percentage = min_gc_ratio * 100
         features = []
         for start_index in xrange(len(seq) - island_size + 1):
             end_index = start_index + island_size

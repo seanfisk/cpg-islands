@@ -13,6 +13,8 @@ The following abbreviations are used consistently throughout the application (or
 +-------------------------------+------------+
 |cytosine-phosphodiester-guanine|cpg         |
 +-------------------------------+------------+
+|minimum                        |min         |
++-------------------------------+------------+
 |guanine-cytosine               |gc          |
 +-------------------------------+------------+
 |presenter                      |pres        |

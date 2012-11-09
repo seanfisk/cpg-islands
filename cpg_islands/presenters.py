@@ -38,26 +38,26 @@ class SeqInputPresenter(object):
         self.view.submitted.append(self._user_submits)
         self.model.error_raised.append(self.view.show_error)
 
-    def _island_definition_defaults_set(self, island_size, minimum_gc_ratio):
+    def _island_definition_defaults_set(self, island_size, min_gc_ratio):
         """Called when island definition defaults are set.
 
         :param island_size: number of bases in the island
         :type island_size: :class:`int`
-        :param minimum_gc_ratio: minimum ratio of Guanine/Cytosine
-        :type minimum_gc_ratio: :class:`float`
+        :param min_gc_ratio: minimum ratio of Guanine/Cytosine
+        :type min_gc_ratio: :class:`float`
         """
         self.view.set_island_size(str(island_size))
-        self.view.set_gc_ratio(str(minimum_gc_ratio))
+        self.view.set_min_gc_ratio(str(min_gc_ratio))
 
-    def _user_submits(self, seq_str, island_size_str, minimum_gc_ratio_str):
+    def _user_submits(self, seq_str, island_size_str, min_gc_ratio_str):
         """Called when the user submits the form.
 
         :param seq_str: the sequence as a string
         :type seq_str: :class:`str`
         :param island_size_str: number of bases which an island may contain
         :type island_size_str: :class:`str`
-        :param minimum_gc_ratio_str: the ratio of GC to other bases
-        :type minimum_gc_ratio_str: :class:`str`
+        :param min_gc_ratio_str: the ratio of GC to other bases
+        :type min_gc_ratio_str: :class:`str`
         """
         seq_mixed_case = Seq(seq_str, IUPAC.unambiguous_dna)
         seq = seq_mixed_case.upper()
@@ -77,13 +77,13 @@ class SeqInputPresenter(object):
                 'Invalid integer for island size: {0}'.format(island_size_str))
             return
         try:
-            minimum_gc_ratio = float(minimum_gc_ratio_str)
+            min_gc_ratio = float(min_gc_ratio_str)
         except ValueError:
             self.view.show_error(
-                'Invalid ratio for GC: {0}'.format(minimum_gc_ratio_str))
+                'Invalid ratio for GC: {0}'.format(min_gc_ratio_str))
             return
         self.model.annotate_cpg_islands(
-            seq, island_size, minimum_gc_ratio)
+            seq, island_size, min_gc_ratio)
 
     def _file_loaded(self, file_path):
         """Called when the user loads a file.

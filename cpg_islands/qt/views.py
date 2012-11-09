@@ -72,12 +72,12 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         self.island_size_input.setValidator(self.island_size_validator)
         self.layout.addRow('Island Size', self.island_size_input)
 
-        self.gc_ratio_input = QtGui.QLineEdit(self)
-        self.gc_ratio_validator = QtGui.QDoubleValidator()
-        self.gc_ratio_validator.setBottom(0)
-        self.gc_ratio_validator.setTop(1)
-        self.gc_ratio_input.setValidator(self.gc_ratio_validator)
-        self.layout.addRow('GC Ratio', self.gc_ratio_input)
+        self.min_gc_ratio_input = QtGui.QLineEdit(self)
+        self.min_gc_ratio_validator = QtGui.QDoubleValidator()
+        self.min_gc_ratio_validator.setBottom(0)
+        self.min_gc_ratio_validator.setTop(1)
+        self.min_gc_ratio_input.setValidator(self.min_gc_ratio_validator)
+        self.layout.addRow('GC Ratio', self.min_gc_ratio_input)
 
         self.submit_button = QtGui.QPushButton('Find Islands', self)
         self.submit_button.clicked.connect(self._submit_clicked)
@@ -99,16 +99,16 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         """
         self.seq_input.setPlainText(seq_str)
 
-    def _get_gc_ratio(self):
+    def _get_min_gc_ratio(self):
         """Return the widget's entered GC ratio.
 
         :return: the key
         :rtype: :class:`str`
         """
-        return self.gc_ratio_input.text()
+        return self.min_gc_ratio_input.text()
 
-    def set_gc_ratio(self, gc_ratio):
-        self.gc_ratio_input.setText(gc_ratio)
+    def set_min_gc_ratio(self, min_gc_ratio):
+        self.min_gc_ratio_input.setText(min_gc_ratio)
 
     def _get_island_size(self):
         """Return the widget's entered island size.
@@ -133,7 +133,7 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         try:
             self.submitted(self._get_seq(),
                            self._get_island_size(),
-                           self._get_gc_ratio())
+                           self._get_min_gc_ratio())
         except ValueError as error:
             self.show_error(str(error))
 
