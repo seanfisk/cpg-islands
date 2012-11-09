@@ -69,10 +69,20 @@ class BaseSeqInputView(object):
 
 
 class BaseResultsView(object):
+    feature_selected = Event()
+
     def set_locations(self, locations):
         """Set the CpG island locations.
 
         :param locations: CpG island locations
         :type locations: :class:`list` of :class:`tuple`
+        """
+        raise NotImplementedError()
+
+    def set_local_seq(self, local_seq):
+        """Set the local sequence string.
+
+        :param local_seq: DNA sequence of feature
+        :type local_seq: :class:`str`
         """
         raise NotImplementedError()

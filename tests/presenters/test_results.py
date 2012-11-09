@@ -1,4 +1,4 @@
-from mock import create_autospec, call
+from mock import create_autospec, call, sentinel
 import pytest
 
 from cpg_islands.models import MetaResultsModel
@@ -21,7 +21,9 @@ class TestResultPresenter:
         assert (presenter.model.mock_calls ==
                 [call.locations_computed.append(
                     presenter._locations_computed)])
-        assert presenter.view.mock_calls == []
+        assert (presenter.view.mock_calls ==
+                [call.feature_selected.append(
+                    presenter._get_local_seq)])
 
     def test_locations_computed(self, presenter):
         feature_tuples = [(0, 5), (1, 6), (3, 8)]
@@ -30,3 +32,11 @@ class TestResultPresenter:
         assert (presenter.view.mock_calls ==
                 [call.set_locations(feature_tuples)])
         assert presenter.model.mock_calls == []
+
+    def test_get_local_seq(self, presenter):
+        presenter.model.get_local_seq.return_value = sentinel.local_seq_str
+        presenter._get_local_seq(sentinel.index)
+        assert (presenter.model.mock_calls ==
+                [call.get_local_seq(sentinel.index)])
+        assert (presenter.view.mock_calls ==
+                [call.set_local_seq(sentinel.local_seq_str)])

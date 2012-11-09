@@ -4,6 +4,7 @@ import pytest
 from mock import MagicMock
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
+from Bio.SeqFeature import SeqFeature, FeatureLocation
 
 from cpg_islands.models import ResultsModel
 from tests.helpers import make_features
@@ -131,3 +132,29 @@ class TestResultsModel:
                 args[0],
                 make_features([(i, i + size) for i in xrange(2, 7)]),
                 seq)
+
+        def test_seq_set(self, model):
+            seq = Seq('TTATATGCTAATAT', IUPAC.unambiguous_dna)
+            model.annotate_cpg_islands(seq, 6, 1 / 3)
+            assert model._seq == seq
+
+        def test_features_set(self, model):
+            seq = Seq('ATATGCTAAT', IUPAC.unambiguous_dna)
+            model.annotate_cpg_islands(seq, 4, 0.5)
+            assert_features_equal(
+                model._features,
+                make_features([(2, 6), (3, 7), (4, 8)]),
+                seq)
+
+    class TestGetLocalSeq:
+        def test_get_one(self, model):
+            model._seq = Seq('GCTT', IUPAC.unambiguous_dna)
+            model._features = [SeqFeature(FeatureLocation(0, 1))]
+            computed = model.get_local_seq(0)
+            assert computed == 'G'
+
+    class TestGetGlobalSeq:
+        def test_get_one(self, model):
+            model._seq = Seq('GCTT', IUPAC.unambiguous_dna)
+            computed = model.get_global_seq()
+            assert computed == 'GCTT'
