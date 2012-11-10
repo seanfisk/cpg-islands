@@ -8,6 +8,7 @@ import subprocess
 from shovel import task
 from py.io import TerminalWriter
 import pytest
+from pyfiglet import Figlet
 
 sys.path.append('.')
 
@@ -131,7 +132,13 @@ def lint():
 @task
 def test_all():
     """Perform a style check and run all unit tests."""
-    sys.exit(_test_all())
+    retcode = _test_all()
+    if retcode == 0:
+        text = 'PASSED'
+    else:
+        text = 'FAILED'
+    print(Figlet(font='starwars').renderText(text))
+    sys.exit(retcode)
 
 
 @task
