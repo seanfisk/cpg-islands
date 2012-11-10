@@ -146,7 +146,7 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
 
         self.hbox = QtGui.QHBoxLayout(self)
         self.cpg_list = QtGui.QListWidget(self)
-        self.cpg_list.itemActivated.connect(self._item_activated)
+        self.cpg_list.currentRowChanged.connect(self._feature_selected)
         self.cpg_list.setFrameShape(QtGui.QFrame.StyledPanel)
         self.scene = QtGui.QGraphicsScene()
         self.global_seq = AutoZoomGraphicsView(self.scene)
@@ -175,9 +175,11 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         for index, (start, end) in enumerate(locations):
             self.cpg_list.insertItem(index, str(start) + ', ' + str(end))
 
-    def _item_activated(self, item):
-        index = self.cpg_list.indexFromItem(item).row()
-        self.feature_selected(index)
+    def _feature_selected(self, current_row):
+        # According to the Qt docs, "If there is no current item, the
+        # currentRow is -1." Handle this case.
+        if current_row >= 0:
+            self.feature_selected(current_row)
 
     def set_local_seq(self, local_seq):
         self.local_seq.setPlainText(local_seq)
