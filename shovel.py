@@ -103,7 +103,7 @@ class UnitTestRunner(MetaTestRunner):
         #     test_args += ['-n', str(num)]
         # except ImportError:
         #     pass  # oh well
-        test_args += ['--verbose', TESTS_DIRECTORY]
+        test_args.append(TESTS_DIRECTORY)
         return pytest.main(test_args)
 
 
