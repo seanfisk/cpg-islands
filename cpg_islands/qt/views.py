@@ -147,11 +147,9 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
 
         self.layout = QtGui.QVBoxLayout(self)
 
-        self.hbox = QtGui.QHBoxLayout(self)
-        self.cpg_list = QtGui.QListWidget(self)
-        self.cpg_list.itemActivated.connect(self._item_activated)
-        self.cpg_list.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.scene = QtGui.QGraphicsScene()
+        self.islands_list = QtGui.QListWidget(self)
+        self.islands_list.currentRowChanged.connect(self._island_selected)
+        self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
         self.global_seq = QtGui.QTextEdit(self)
         self.global_seq.setReadOnly(True)
 
@@ -164,65 +162,33 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.sequences.setSizes([100, 100])
 
         self.holder = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.holder.addWidget(self.cpg_list)
+        self.holder.addWidget(self.islands_list)
         self.holder.addWidget(self.sequences)
         self.holder.setSizes([100, 490])
 
-        #self.hbox.addWidget(self.holder)
         self.layout.addWidget(self.holder)
 
-    def set_locations(self, locations):
-        """Set list widget with features.
+    def set_islands(self, islands):
+        """Set the list of islands.
 
-        :param locations: the list of features
-        :type locations: :class:`list` of :class:`tuple`
+        :param islands: the list of islands
+        :type islands: :class:`list` of :class:`tuple`
         """
-        self.cpg_list.clear()
-        for index, (start, end) in enumerate(locations):
-            self.cpg_list.insertItem(index, str(start) + ', ' + str(end))
+        self.islands_list.clear()
+        for start, end in islands:
+            self.islands_list.addItem('{0}, {1}'.format(start, end))
 
-    def _feature_selected(self, current_row):
+    def _island_selected(self, current_row):
         # According to the Qt docs, "If there is no current item, the
         # currentRow is -1." Handle this case.
         if current_row >= 0:
-            self.feature_selected(current_row)
+            self.island_selected(current_row)
 
-    def _item_activated(self, item):
-        """Set encoded text result.
+    def set_local_seq(self, seq_str):
+        self.local_seq.setPlainText(seq_str)
 
-        :param item: the selected item
-        :type item: :class:`QtGui.QListWidgetItem`
-        """
-        index = self.cpg_list.indexFromItem(item).row()
-        self.feature_selected(index)
-        self.global_highlight()
-
-    def set_local_seq(self, local_seq):
-        """Set local sequence text value.
-
-        :param local_seq: the selected local sequence
-        :type local_seq: :class:`str`
-        """
-        self.local_seq.setPlainText(local_seq)
-
-    def set_global_seq(self, global_seq):
-        """Set global sequence text value.
-
-        :param global_seq: the global sequence
-        :type global_seq: :class:`str`
-        """
-        self.global_seq.setPlainText(global_seq)
-
-
-class AutoZoomGraphicsView(QtGui.QGraphicsView):
-    """Graphics view class which auto-resizes the scene."""
-    def resizeEvent(self, event):
-        """Automatically resize the graphics view to fit the scene.
-
-            :param event: the resize event
-            :type event: :class:`PySide.QtGui.QResizeEvent`
-            """
-        self.fitInView(self.sceneRect(), QtCore.Qt.KeepAspectRatio)
+    def set_global_seq(self, seq_str):
+        self.global_seq.setText(seq_str)
 
 
 class AboutDialog(QtGui.QDialog):

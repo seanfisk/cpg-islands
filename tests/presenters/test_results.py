@@ -1,5 +1,3 @@
-from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 from mock import create_autospec, call, sentinel
 import pytest
 
@@ -20,27 +18,27 @@ def presenter():
 class TestResultPresenter:
     def test_register_for_events(self, presenter):
         presenter.register_for_events()
+        assert (presenter.model.mock_calls ==
+                [call.islands_computed.append(
+                    presenter._islands_computed)])
         assert (presenter.view.mock_calls ==
-                [call.global_highlight.append(
-                    presenter._get_seq), call.feature_selected.append(
-                        presenter._get_feature)])
+                [call.island_selected.append(presenter._island_selected)])
 
-    def test_locations_computed(self, presenter):
-        feature_tuples = [(0, 5), (1, 6), (3, 8)]
-        feature_locations = make_features(feature_tuples)
-        presenter._locations_computed(feature_locations)
+    def test_islands_computed(self, presenter):
+        island_tuples = [(0, 5), (1, 6), (3, 8)]
+        islands = make_features(island_tuples)
+        presenter._islands_computed(islands)
         assert (presenter.view.mock_calls ==
-                [call.set_locations(feature_tuples)])
-
+                [call.set_islands(island_tuples)])
         assert presenter.model.mock_calls == []
 
-    def test_get_feature(self, presenter):
-        sentinel.feature = make_features([(0, 1)])
-        presenter.model.get_seq.return_value = Seq('GCGC',
-                                                   IUPAC.unambiguous_dna)
-        presenter.model.get_feature.return_value = sentinel.feature[0]
-        presenter._get_feature(sentinel.index)
+    def test_island_selected(self, presenter):
+        presenter.model.get_global_seq.return_value = sentinel.global_seq
+        presenter.model.get_local_seq.return_value = sentinel.local_seq
+        presenter._island_selected(sentinel.island_index)
         assert (presenter.model.mock_calls ==
-                [call.get_feature(sentinel.index), call.get_seq()])
+                [call.get_global_seq(),
+                 call.get_local_seq(sentinel.island_index)])
         assert (presenter.view.mock_calls ==
-                [call.set_local_seq('G')])
+                [call.set_global_seq(sentinel.global_seq),
+                 call.set_local_seq(sentinel.local_seq)])

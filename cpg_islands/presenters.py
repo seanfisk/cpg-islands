@@ -16,8 +16,8 @@ class AppPresenter(object):
 
     def register_for_events(self):
         self.model.started.append(self.view.start)
+        self.model.islands_computed.append(self.view.show_results)
         self.view.file_load_requested.append(self.model.load_file)
-        self.model.locations_computed.append(self.view.show_results)
 
 
 class SeqInputPresenter(object):
@@ -36,8 +36,8 @@ class SeqInputPresenter(object):
         self.model.island_definition_defaults_set.append(
             self._island_definition_defaults_set)
         self.model.file_loaded.append(self.view.set_seq)
-        self.view.submitted.append(self._user_submits)
         self.model.error_raised.append(self.view.show_error)
+        self.view.submitted.append(self._user_submits)
 
     def _island_definition_defaults_set(self, island_size, min_gc_ratio):
         """Called when island definition defaults are set.
@@ -83,8 +83,7 @@ class SeqInputPresenter(object):
             self.view.show_error(
                 'Invalid ratio for GC: {0}'.format(min_gc_ratio_str))
             return
-        self.model.annotate_cpg_islands(
-            seq, island_size, min_gc_ratio)
+        self.model.compute_islands(seq, island_size, min_gc_ratio)
 
     def _file_loaded(self, file_path):
         """Called when the user loads a file.
@@ -111,35 +110,25 @@ class ResultsPresenter(object):
         self.view = view
 
     def register_for_events(self):
-        self.model.locations_computed.append(self._locations_computed)
-        self.view.global_highlight.append(self._get_seq)
-        self.view.feature_selected.append(self._get_feature)
+        self.model.islands_computed.append(self._islands_computed)
+        self.view.island_selected.append(self._island_selected)
 
-    def _locations_computed(self, feature_locations):
-        """Called after locations have been computed.
+    def _islands_computed(self, islands):
+        """Called after island locations have been computed.
 
-        :param feature_locations: locations of features
-        :type feature_locations: :class:`list` of :class:`tuple`
+        :param features: list of island locations
+        :type features: :class:`list` of :class:`tuple`
         """
-        location_tuples = [(
+        island_tuples = [(
             f.location.start.position, f.location.end.position)
-            for f in feature_locations]
-        self.view.set_locations(location_tuples)
+            for f in islands]
+        self.view.set_islands(island_tuples)
 
-    def _get_feature(self, feature_index):
-        """Called to get the sequence based on the feature index
+    def _island_selected(self, island_index):
+        """Called when the selected island is changed.
 
-        :param feature_index: index of the requested feature
-        :type feature_locations: :class:`str`
+        :param island_index: index of the requested island
+        :type island_index: :class:`int`
         """
-        feature = self.model.get_feature(feature_index)
-        seq = self.model.get_seq()
-        self.view.set_local_seq(str(feature.extract(seq)))
-
-    def _get_seq(self):
-        """Called to get the sequence based on the feature index
-
-            :param feature_index: index of the requested feature
-            :type feature_locations: :class:`str`
-            """
-        self.view.set_global_seq(self.model.get_seq())
+        self.view.set_global_seq(self.model.get_global_seq())
+        self.view.set_local_seq(self.model.get_local_seq(island_index))

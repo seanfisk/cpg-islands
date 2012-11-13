@@ -73,30 +73,28 @@ class BaseSeqInputView(object):
 
 
 class BaseResultsView(object):
+    island_selected = Event()
 
-    feature_selected = Event()
-    global_highlight = Event()
-
-    def set_locations(self, locations):
+    def set_islands(self, islands):
         """Set the CpG island locations.
 
-        :param locations: CpG island locations
-        :type locations: :class:`list` of :class:`tuple`
+        :param islands: CpG island locations
+        :type islands: :class:`list` of :class:`tuple`
         """
         raise NotImplementedError()
 
-    def set_local_seq(self, local_seq):
+    def set_local_seq(self, seq_str):
         """Set the local sequence string.
 
-        :param local_seq: DNA sequence of feature
-        :type local_seq: :class:`str`
+        :param seq_str: DNA sequence of feature
+        :type seq_str: :class:`str`
         """
         raise NotImplementedError()
 
-    def set_global_seq(self, local_seq):
+    def set_global_seq(self, seq_str):
         """Set the global sequence string.
 
-        :param local_seq: DNA sequence of feature
-        :type local_seq: :class:`str`
+        :param seq_str: DNA sequence of feature
+        :type seq_str: :class:`str`
         """
         raise NotImplementedError()

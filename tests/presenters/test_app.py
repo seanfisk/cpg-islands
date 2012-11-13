@@ -18,7 +18,7 @@ class TestApplicationPresenter:
         presenter.register_for_events()
         assert (presenter.model.mock_calls ==
                 [call.started.append(presenter.view.start),
-                 call.locations_computed.append(presenter.view.show_results)])
+                 call.islands_computed.append(presenter.view.show_results)])
         assert (presenter.view.mock_calls ==
                 [call.file_load_requested.append(
                     presenter.model.load_file)])

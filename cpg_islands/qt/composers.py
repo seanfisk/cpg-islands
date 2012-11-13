@@ -22,7 +22,7 @@ def create_app_presenter(argv):
     results_view = ResultsView()
     seq_input_model = SeqInputModel(results_model)
     seq_input_view = SeqInputView()
-    app_model = AppModel(seq_input_model, results_model)
+    app_model = AppModel(seq_input_model)
     app_view = AppView(seq_input_view, results_view)
 
     seq_input_presenter = SeqInputPresenter(seq_input_model, seq_input_view)

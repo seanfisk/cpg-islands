@@ -1,7 +1,7 @@
 # Test runner and style checker
 
 from __future__ import print_function
-import abc
+from abc import ABCMeta, abstractmethod, abstractproperty
 import sys
 import subprocess
 
@@ -22,44 +22,33 @@ CODE_FILES = [CODE_DIRECTORY,
 
 class MetaTestRunner(object):
     """Abstract test runner base class."""
-    __metaclass__ = abc.ABCMeta
+    __metaclass__ = ABCMeta
 
     def __init__(self, terminal_writer=TerminalWriter()):
         self.terminal_writer = terminal_writer
 
-    @abc.abstractproperty
+    @abstractproperty
     def name(self):
-        """Return the lowercase name of the test runner.
+        """Return the proper name of the test runner.
 
         :return: the name
-        :rtype: :class:`str`
-        """
-        return ''
-
-    @abc.abstractproperty
-    def title(self):
-        """Return the proper title of the test runner.
-
-        :return: the title
         :type: :class:`str`
         """
         return ''
 
-    @abc.abstractmethod
+    @abstractmethod
     def run(self):
         """Run the test runner.
 
         :return: number of errors, or exit code (0 is success, >1 is failure)
         :rtype: :class:`int`
         """
-        self.terminal_writer.sep('=', self.title())
+        self.terminal_writer.sep('=', self.name)
 
 
 class LintRunner(MetaTestRunner):
+    @property
     def name(self):
-        return 'flake8'
-
-    def title(self):
         return 'Flake8: PyFlakes, PEP8, and McCabe complexity'
 
     def run(self):
@@ -80,10 +69,8 @@ class LintRunner(MetaTestRunner):
 
 class UnitTestRunner(MetaTestRunner):
     """Runner for pytest unit tests."""
+    @property
     def name(self):
-        return 'tests'
-
-    def title(self):
         return 'Pytest Unit Tests'
 
     def run(self):
