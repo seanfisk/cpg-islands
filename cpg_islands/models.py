@@ -5,10 +5,8 @@ import argparse
 from abc import ABCMeta, abstractmethod
 
 from Bio import SeqIO
-from Bio.SeqUtils import GC
-from Bio.SeqFeature import SeqFeature, FeatureLocation
 
-from cpg_islands import metadata
+from cpg_islands import metadata, algorithms
 from cpg_islands.utils import Event
 
 
@@ -22,10 +20,12 @@ class MetaAppModel(object):
     .. function:: callback()
     """
 
-    locations_computed = Event()
-    """Fired when locations have been computed. Callbacks should look like:
+    islands_computed = Event()
+    """Fired when island locations have been computed. Callbacks
+    should look like:
 
     .. function:: callback()
+
     """
 
     @abstractmethod
@@ -41,6 +41,7 @@ class MetaAppModel(object):
     @abstractmethod
     def load_file(self, file_path):
         """Direct pass-through to :func:`MetaSeqInputModel.load_file()`.
+
         :param file_path: the path to the sequence file
         :type file_path: :class:`str`
         """
@@ -81,6 +82,14 @@ class MetaSeqInputModel(object):
         :type min_gc_ratio: :class:`float`
     """
 
+    islands_computed = Event()
+    """Fired when island locations have been computed. Callbacks
+    should look like:
+
+    .. function:: callback()
+
+    """
+
     @abstractmethod
     def set_island_definition_defaults():
         """Set the default island definitions of an island size of 200
@@ -98,11 +107,10 @@ class MetaSeqInputModel(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
-        """Direct pass-through to
-        :func:`MetaResultsModel.annotate_cpg_islands()`.
+    def compute_islands(self, seq, island_size, min_gc_ratio):
+        """Create a list of CpG island features in a sequence.
 
-        :param seq: the sequence to annotate
+        :param seq: the sequence to analyze
         :type seq: :class:`Bio.Seq.Seq`
         :param island_size: the number of bases which an island may contain
         :type island_size: :class:`int`
@@ -114,32 +122,39 @@ class MetaSeqInputModel(object):
 
 
 class MetaResultsModel(object):
-    locations_computed = Event()
-    """Fired when locations have been computed. Callbacks should look like:
+    islands_computed = Event()
+    """Fired when island locations have been computed. Callbacks
+    should look like:
 
-    .. function:: callback(locations)
+    .. function:: callback(islands)
 
-        :param locations: list of island locations
-        :type locations: :class:`list` of :class:`Bio.SeqFeature.SeqFeature`
+    :param islands: list of island locations
+    :type islands: :class:`list` of :class:`SeqFeature`
     """
 
     @abstractmethod
-    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
-        """Create a list of CpG island features in a sequence.
+    def set_results(self, seq, islands):
+        """Set the results of island computation.
 
-        :param seq: the sequence to annotate
-        :type seq: :class:`Bio.Seq.Seq`
-        :param island_size: the number of bases which an island may contain
-        :type island_size: :class:`int`
-        :param min_gc_ratio: the ratio of GC to other bases
-        :type min_gc_ratio: :class:`float`
-        :raise: :exc:`ValueError` when parameters are invalid
+        :param seq: the sequence analyzed
+        :type seq: :class:`Seq`
+        :param islands: list of computed island locations
+        :type islands: :class:`list` or :class:`SeqFeature`
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_global_seq(self):
+        """Returns the entire sequence.
+
+        :return: the full sequence
+        :rtype: :class:`str`
         """
         raise NotImplementedError()
 
     @abstractmethod
     def get_local_seq(self, index):
-        """Returns a string representation of a feature based on it's index.
+        """Returns a string representation of a feature based on its index.
 
         :param index: the index of the feature to be returned
         :type index: :class:`int`
@@ -148,17 +163,15 @@ class MetaResultsModel(object):
 
 
 class AppModel(MetaAppModel):
-    def __init__(self, seq_input_model, results_model):
+    def __init__(self, seq_input_model):
         """Constructor.
 
         :param type: :class:`MetaSeqInputModel`
-        :param type: :class:`MetaResultsModel`
         """
         self.seq_input_model = seq_input_model
-        self.results_model = results_model
 
     def register_for_events(self):
-        self.results_model.locations_computed.append(self._locations_computed)
+        self.seq_input_model.islands_computed.append(self.islands_computed)
 
     def run(self, argv):
         author_strings = []
@@ -189,12 +202,6 @@ URL: <{url}>
     def load_file(self, file_path):
         self.seq_input_model.load_file(file_path)
 
-    def _locations_computed(self, features):
-        """Pass-through locations computed event to
-        presenter. Features argument is discarded.
-        """
-        self.locations_computed()
-
 
 class SeqInputModel(MetaSeqInputModel):
     def __init__(self, results_model):
@@ -215,38 +222,25 @@ class SeqInputModel(MetaSeqInputModel):
             return
         self.file_loaded(str(seq_record.seq))
 
-    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
-        self.results_model.annotate_cpg_islands(
-            seq, island_size, min_gc_ratio)
+    def compute_islands(self, seq, island_size, min_gc_ratio):
+        islands = \
+            algorithms.registry[0].algorithm(seq, island_size, min_gc_ratio)
+        self.results_model.set_results(seq, islands)
+        self.islands_computed()
 
 
 class ResultsModel(MetaResultsModel):
-    def annotate_cpg_islands(self, seq, island_size, min_gc_ratio):
-        if island_size <= 0:
-            raise ValueError(
-                'Invalid island size: {0}'.format(island_size))
-        seq_len = len(seq)
-        if island_size > seq_len:
-            raise ValueError(
-                'Island size ({0}) must be less than or '
-                'equal to sequence length ({1})'.format(island_size, seq_len))
-        if not (0 <= min_gc_ratio <= 1):
-            raise ValueError('Invalid GC ratio for ratio between '
-                             'zero and one: {0}'.format(min_gc_ratio))
-        minimum_gc_percentage = min_gc_ratio * 100
-        features = []
-        for start_index in xrange(len(seq) - island_size + 1):
-            end_index = start_index + island_size
-            if GC(seq[start_index:end_index]) >= minimum_gc_percentage:
-                feature = SeqFeature(
-                    FeatureLocation(start_index, end_index))
-                features.append(feature)
+    def __init__(self):
+        self._islands = []
+        self._seq = ''
+
+    def set_results(self, seq, islands):
         self._seq = seq
-        self._features = features
-        self.locations_computed(features)
+        self._islands = islands
+        self.islands_computed(islands)
 
     def get_local_seq(self, index):
-        return str(self._features[index].extract(self._seq))
+        return str(self._islands[index].extract(self._seq))
 
     def get_global_seq(self):
         return str(self._seq)

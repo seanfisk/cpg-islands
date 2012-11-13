@@ -19,18 +19,18 @@ class TestResultPresenter:
     def test_register_for_events(self, presenter):
         presenter.register_for_events()
         assert (presenter.model.mock_calls ==
-                [call.locations_computed.append(
-                    presenter._locations_computed)])
+                [call.islands_computed.append(
+                    presenter._islands_computed)])
         assert (presenter.view.mock_calls ==
-                [call.feature_selected.append(
+                [call.island_selected.append(
                     presenter._get_local_seq)])
 
-    def test_locations_computed(self, presenter):
-        feature_tuples = [(0, 5), (1, 6), (3, 8)]
-        feature_locations = make_features(feature_tuples)
-        presenter._locations_computed(feature_locations)
+    def test_islands_computed(self, presenter):
+        island_tuples = [(0, 5), (1, 6), (3, 8)]
+        islands = make_features(island_tuples)
+        presenter._islands_computed(islands)
         assert (presenter.view.mock_calls ==
-                [call.set_locations(feature_tuples)])
+                [call.set_islands(island_tuples)])
         assert presenter.model.mock_calls == []
 
     def test_get_local_seq(self, presenter):

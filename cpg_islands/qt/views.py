@@ -145,9 +145,9 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         super(ResultsView, self).__init__(parent)
 
         self.hbox = QtGui.QHBoxLayout(self)
-        self.cpg_list = QtGui.QListWidget(self)
-        self.cpg_list.currentRowChanged.connect(self._feature_selected)
-        self.cpg_list.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.islands_list = QtGui.QListWidget(self)
+        self.islands_list.currentRowChanged.connect(self._island_selected)
+        self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
         self.scene = QtGui.QGraphicsScene()
         self.global_seq = AutoZoomGraphicsView(self.scene)
 
@@ -159,27 +159,27 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.sequences.setSizes([100, 100])
 
         self.holder = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.holder.addWidget(self.cpg_list)
+        self.holder.addWidget(self.islands_list)
         self.holder.addWidget(self.sequences)
         self.holder.setSizes([100, 490])
 
         self.hbox.addWidget(self.holder)
 
-    def set_locations(self, locations):
-        """Set encoded text result.
+    def set_islands(self, islands):
+        """Set the list of islands.
 
-        :param result: the encoded text
-        :type locations: :class:`list` of :class:`tuple`
+        :param islands: the list of islands
+        :type islands: :class:`list` of :class:`tuple`
         """
-        self.cpg_list.clear()
-        for index, (start, end) in enumerate(locations):
-            self.cpg_list.insertItem(index, str(start) + ', ' + str(end))
+        self.islands_list.clear()
+        for start, end in islands:
+            self.islands_list.addItem('{0}, {1}'.format(start, end))
 
-    def _feature_selected(self, current_row):
+    def _island_selected(self, current_row):
         # According to the Qt docs, "If there is no current item, the
         # currentRow is -1." Handle this case.
         if current_row >= 0:
-            self.feature_selected(current_row)
+            self.island_selected(current_row)
 
     def set_local_seq(self, local_seq):
         self.local_seq.setPlainText(local_seq)

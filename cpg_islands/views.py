@@ -73,13 +73,13 @@ class BaseSeqInputView(object):
 
 
 class BaseResultsView(object):
-    feature_selected = Event()
+    island_selected = Event()
 
-    def set_locations(self, locations):
+    def set_islands(self, islands):
         """Set the CpG island locations.
 
-        :param locations: CpG island locations
-        :type locations: :class:`list` of :class:`tuple`
+        :param islands: CpG island locations
+        :type islands: :class:`list` of :class:`tuple`
         """
         raise NotImplementedError()
 

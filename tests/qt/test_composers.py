@@ -45,15 +45,13 @@ class TestComposers:
         mock_app_view.return_value = sentinel.app_view
 
         app_pres = mock_app_pres.return_value
-        # seq_input_pres = mock_seq_input_pres.return_value
-        # results_pres = mock_results_pres.return_value
 
         from cpg_islands.qt.composers import create_app_presenter
         retval = create_app_presenter(sentinel.argv)
         assert retval == app_pres
 
         assert (mock_app_model.mock_calls ==
-                [call(sentinel.seq_input_model, sentinel.results_model),
+                [call(sentinel.seq_input_model),
                  call().register_for_events(),
                  call().run(sentinel.argv)])
         assert (mock_app_view.mock_calls ==

@@ -42,14 +42,14 @@ class TestSeqInputPresenter:
             # we cannot use assert_called_once_with or mock_cals because
             # these two Seq's use object comparison, and therefore are not
             # "equal"
-            assert presenter.model.annotate_cpg_islands.call_count == 1
+            assert presenter.model.compute_islands.call_count == 1
             # call_args[0] is ordered arguments, call_args[1] is
             # keyword arguments
-            annotate_args = presenter.model.annotate_cpg_islands.call_args[0]
-            assert len(annotate_args) == 3
-            assert str(annotate_args[0]) == str(seq)
-            assert annotate_args[1] == 4
-            assert annotate_args[2] == 0.5
+            args = presenter.model.compute_islands.call_args[0]
+            assert len(args) == 3
+            assert str(args[0]) == str(seq)
+            assert args[1] == 4
+            assert args[2] == 0.5
             assert presenter.view.mock_calls == []
 
         def test_invalid_sequence(self, presenter):
@@ -86,12 +86,12 @@ class TestSeqInputPresenter:
             seq_str = 'ATatgcGCAtaT'
             presenter._user_submits(seq_str, '4', '0.5')
             seq = Seq('ATATGCGCATAT', IUPAC.unambiguous_dna)
-            assert presenter.model.annotate_cpg_islands.call_count == 1
-            annotate_args = presenter.model.annotate_cpg_islands.call_args[0]
-            assert len(annotate_args) == 3
-            assert str(annotate_args[0]) == str(seq)
-            assert annotate_args[1] == 4
-            assert annotate_args[2] == 0.5
+            assert presenter.model.compute_islands.call_count == 1
+            args = presenter.model.compute_islands.call_args[0]
+            assert len(args) == 3
+            assert str(args[0]) == str(seq)
+            assert args[1] == 4
+            assert args[2] == 0.5
             assert presenter.view.mock_calls == []
 
     class TestLoadFile:

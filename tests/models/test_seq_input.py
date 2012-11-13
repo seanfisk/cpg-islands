@@ -1,5 +1,5 @@
 import pytest
-from mock import create_autospec, MagicMock, call, sentinel
+from mock import patch, create_autospec, MagicMock, call, sentinel
 
 from cpg_islands.models import SeqInputModel, MetaResultsModel
 from tests.helpers import fixture_file, read_fixture_file
@@ -52,11 +52,19 @@ class TestSeqInputModel:
                     [call('More than one record found in handle')])
             assert model.results_model.mock_calls == []
 
-    def test_annotate_cpg_islands(self, model):
-        model.annotate_cpg_islands(
-            sentinel.seq, sentinel.island_size, sentinel.min_gc_ratio)
-        assert (model.results_model.mock_calls ==
-                [call.annotate_cpg_islands(
-                    sentinel.seq,
-                    sentinel.island_size,
-                    sentinel.min_gc_ratio)])
+    @patch('cpg_islands.models.algorithms')
+    class TestComputeIslands:
+        def test_results_set(self, mock_algorithms, model):
+            first_algo = mock_algorithms.registry[0].algorithm
+            first_algo.return_value = sentinel.islands
+            model.compute_islands(
+                sentinel.seq, sentinel.island_size, sentinel.min_gc_ratio)
+            assert (model.results_model.mock_calls ==
+                    [call.set_results(sentinel.seq, sentinel.islands)])
+
+        def test_islands_computed_called(self, mock_algorithms, model):
+            callback = MagicMock()
+            model.islands_computed.append(callback)
+            model.compute_islands(
+                sentinel.fake, sentinel.fake, sentinel.fake)
+            assert callback.mock_calls == [call()]
