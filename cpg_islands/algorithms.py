@@ -61,11 +61,11 @@ class MetaAlgorithm(object):
         return self.name.lower().replace(' ', '_')
 
     @abstractmethod
-    def algorithm(self, seq, island_size, min_gc_ratio):
+    def algorithm(self, seq_record, island_size, min_gc_ratio):
         """Create a list of CpG island features in a sequence.
 
-        :param seq: the sequence to annotate
-        :type seq: :class:`Bio.Seq.Seq`
+        :param seq_record: the sequence record to annotate
+        :type seq_record: :class:`SeqRecord`
         :param island_size: the number of bases which an island may contain
         :type island_size: :class:`int`
         :param min_gc_ratio: the ratio of GC to other bases
@@ -78,7 +78,7 @@ class MetaAlgorithm(object):
         if island_size <= 0:
             raise ValueError(
                 'Invalid island size: {0}'.format(island_size))
-        seq_len = len(seq)
+        seq_len = len(seq_record)
         if island_size > seq_len:
             raise ValueError(
                 'Island size ({0}) must be less than or '
@@ -93,16 +93,18 @@ class SlidingWindowBiopythonGCAlgorithm(MetaAlgorithm):
     def name(self):
         return 'Sliding Window with Biopython GC function'
 
-    def algorithm(self, seq, island_size, min_gc_ratio):
+    def algorithm(self, seq_record, island_size, min_gc_ratio):
         super(SlidingWindowBiopythonGCAlgorithm,
-              self).algorithm(seq, island_size, min_gc_ratio)
+              self).algorithm(seq_record, island_size, min_gc_ratio)
+        seq = seq_record.seq
         min_gc_pct = min_gc_ratio * 100
         islands = []
         for start_index in xrange(len(seq) - island_size + 1):
             end_index = start_index + island_size
             if GC(seq[start_index:end_index]) >= min_gc_pct:
                 islands.append(_make_feature(start_index, end_index))
-        return islands
+        seq_record.features = islands
+        return seq_record
 
 
 class SlidingWindowAccumulator(MetaAlgorithm):
@@ -110,9 +112,10 @@ class SlidingWindowAccumulator(MetaAlgorithm):
     def name(self):
         return 'Sliding Window with Count Accumulator'
 
-    def algorithm(self, seq, island_size, min_gc_ratio):
+    def algorithm(self, seq_record, island_size, min_gc_ratio):
         super(SlidingWindowAccumulator,
-              self).algorithm(seq, island_size, min_gc_ratio)
+              self).algorithm(seq_record, island_size, min_gc_ratio)
+        seq = seq_record.seq
         seq_len = len(seq)
         start_index = 0
         gc_count = _count_gc(seq[0:island_size])
@@ -131,7 +134,8 @@ class SlidingWindowAccumulator(MetaAlgorithm):
             if _is_gc(seq[end_index]):
                 gc_count += 1
             start_index += 1
-        return islands
+        seq_record.features = islands
+        return seq_record
 
 
 # Create instances of each implementation of a MetaAlgorithm, so that

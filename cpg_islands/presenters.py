@@ -1,5 +1,6 @@
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC, _verify_alphabet
+from Bio.SeqRecord import SeqRecord
 
 
 class AppPresenter(object):
@@ -83,7 +84,7 @@ class SeqInputPresenter(object):
             self.view.show_error(
                 'Invalid ratio for GC: {0}'.format(min_gc_ratio_str))
             return
-        self.model.compute_islands(seq, island_size, min_gc_ratio)
+        self.model.compute_islands(SeqRecord(seq), island_size, min_gc_ratio)
 
     def _file_loaded(self, file_path):
         """Called when the user loads a file.
@@ -113,15 +114,15 @@ class ResultsPresenter(object):
         self.model.islands_computed.append(self._islands_computed)
         self.view.island_selected.append(self._island_selected)
 
-    def _islands_computed(self, islands):
+    def _islands_computed(self, seq_record):
         """Called after island locations have been computed.
 
-        :param features: list of island locations
-        :type features: :class:`list` of :class:`tuple`
+        :param seq_record: seq record with features
+        :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
         """
         island_tuples = [(
             f.location.start.position, f.location.end.position)
-            for f in islands]
+            for f in seq_record.features]
         self.view.set_islands(island_tuples)
 
     def _island_selected(self, island_index):
@@ -130,5 +131,7 @@ class ResultsPresenter(object):
         :param island_index: index of the requested island
         :type island_index: :class:`int`
         """
-        self.view.set_global_seq(self.model.get_global_seq())
-        self.view.set_local_seq(self.model.get_local_seq(island_index))
+        seq_record = self.model.get_results()
+        self.view.set_global_seq(str(seq_record.seq))
+        self.view.set_local_seq(
+            str(seq_record.features[island_index].extract(seq_record.seq)))

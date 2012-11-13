@@ -5,6 +5,9 @@ import argparse
 from abc import ABCMeta, abstractmethod
 
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
+from Bio.Alphabet import IUPAC
 
 from cpg_islands import metadata, algorithms
 from cpg_islands.utils import Event
@@ -126,38 +129,26 @@ class MetaResultsModel(object):
     """Fired when island locations have been computed. Callbacks
     should look like:
 
-    .. function:: callback(islands)
+    .. function:: callback(seq_record)
 
-    :param islands: list of island locations
-    :type islands: :class:`list` of :class:`SeqFeature`
+        :param seq_record: seq record with features
+        :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
     """
 
     @abstractmethod
-    def set_results(self, seq, islands):
+    def set_results(self, seq_record):
         """Set the results of island computation.
 
-        :param seq: the sequence analyzed
-        :type seq: :class:`Seq`
-        :param islands: list of computed island locations
-        :type islands: :class:`list` or :class:`SeqFeature`
+        :param seq_record: the seq record with features
+        :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
         """
         raise NotImplementedError()
 
-    @abstractmethod
-    def get_global_seq(self):
-        """Returns the entire sequence.
+    def get_results(self):
+        """Return the results of computation.
 
-        :return: the full sequence
-        :rtype: :class:`str`
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
-    def get_local_seq(self, index):
-        """Returns a string representation of a feature based on its index.
-
-        :param index: the index of the feature to be returned
-        :type index: :class:`int`
+        :return: the seq record with features
+        :rtype: :class:`Bio.SeqRecord.SeqRecord`
         """
         raise NotImplementedError()
 
@@ -222,25 +213,21 @@ class SeqInputModel(MetaSeqInputModel):
             return
         self.file_loaded(str(seq_record.seq))
 
-    def compute_islands(self, seq, island_size, min_gc_ratio):
-        islands = \
-            algorithms.registry[0].algorithm(seq, island_size, min_gc_ratio)
-        self.results_model.set_results(seq, islands)
+    def compute_islands(self, seq_record, island_size, min_gc_ratio):
+        seq_record = \
+            algorithms.registry[0].algorithm(
+                seq_record, island_size, min_gc_ratio)
+        self.results_model.set_results(seq_record)
         self.islands_computed()
 
 
 class ResultsModel(MetaResultsModel):
     def __init__(self):
-        self._islands = []
-        self._seq = ''
+        self._seq_record = SeqRecord(Seq('', IUPAC.unambiguous_dna))
 
-    def set_results(self, seq, islands):
-        self._seq = seq
-        self._islands = islands
-        self.islands_computed(islands)
+    def set_results(self, seq_record):
+        self._seq_record = seq_record
+        self.islands_computed(seq_record)
 
-    def get_local_seq(self, index):
-        return str(self._islands[index].extract(self._seq))
-
-    def get_global_seq(self):
-        return str(self._seq)
+    def get_results(self):
+        return self._seq_record

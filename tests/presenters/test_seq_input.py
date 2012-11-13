@@ -1,7 +1,5 @@
 from mock import create_autospec, sentinel, call
 import pytest
-from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 
 from cpg_islands.models import MetaSeqInputModel
 from cpg_islands.views import BaseSeqInputView
@@ -38,7 +36,6 @@ class TestSeqInputPresenter:
             locations are shown."""
             seq_str = 'ATATGCGCATAT'
             presenter._user_submits(seq_str, '4', '0.5')
-            seq = Seq(seq_str, IUPAC.unambiguous_dna)
             # we cannot use assert_called_once_with or mock_cals because
             # these two Seq's use object comparison, and therefore are not
             # "equal"
@@ -47,7 +44,7 @@ class TestSeqInputPresenter:
             # keyword arguments
             args = presenter.model.compute_islands.call_args[0]
             assert len(args) == 3
-            assert str(args[0]) == str(seq)
+            assert str(args[0].seq) == seq_str
             assert args[1] == 4
             assert args[2] == 0.5
             assert presenter.view.mock_calls == []
@@ -85,11 +82,10 @@ class TestSeqInputPresenter:
             these should be gracefully handled."""
             seq_str = 'ATatgcGCAtaT'
             presenter._user_submits(seq_str, '4', '0.5')
-            seq = Seq('ATATGCGCATAT', IUPAC.unambiguous_dna)
             assert presenter.model.compute_islands.call_count == 1
             args = presenter.model.compute_islands.call_args[0]
             assert len(args) == 3
-            assert str(args[0]) == str(seq)
+            assert str(args[0].seq) == 'ATATGCGCATAT'
             assert args[1] == 4
             assert args[2] == 0.5
             assert presenter.view.mock_calls == []
