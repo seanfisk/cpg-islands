@@ -5,20 +5,30 @@ Todo
 
 .. todo::
 
+   Switch from using Seq objects to using SeqRecord objects.
+
+.. todo::
+
+   Global sequence highlight.
+
+.. todo::
+
+   BUG: Analyze one sequence with at least one island. Then analyze a
+   sequence without any islands. In the results view, the global and
+   local sequence are still set to the old sequences.
+
+.. todo::
+
+   Fix sequence input text area in SeqInputView to expand to its
+   maximum size.
+   
+.. todo::
+
    Sean - Remove some redundancy in valid algorithm tests in ``test_results.py``.
 
 .. todo::
 
-   Sean - Consider moving the real definition for
-   ``annotate_cpg_islands`` into ``SeqInputModel``.
-
-.. todo::
-
    Sean - Have mutiple algorithm options available.
-
-.. todo::
-
-   Sean - New algorithm.
 
 .. todo::
 
@@ -31,6 +41,10 @@ Todo
 .. todo::
 
    Measure speed of algorithm.
+
+.. todo::
+
+   C-based extension model implementing sliding window.
 
 .. todo::
 
