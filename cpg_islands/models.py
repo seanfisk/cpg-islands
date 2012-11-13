@@ -126,6 +126,21 @@ class MetaResultsModel(object):
         """
         raise NotImplementedError()
 
+    @abstractmethod
+    def get_feature(self, index):
+        """Returns a string representation of a feature based on it's index.
+
+        :param index: the index of the feature to be returned
+        :type index: :class:`int`
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_seq(self):
+        """Returns a string representation of the sequence.
+        """
+        raise NotImplementedError()
+
 
 class AppModel(MetaAppModel):
     def __init__(self, seq_input_model):
@@ -210,4 +225,12 @@ class ResultsModel(MetaResultsModel):
                 feature = SeqFeature(
                     FeatureLocation(start_index, end_index))
                 features.append(feature)
+        self._seq = seq
+        self._features = features
         self.locations_computed(features)
+
+    def get_seq(self):
+        return str(self._seq)
+
+    def get_feature(self, index):
+        return self._features[index]

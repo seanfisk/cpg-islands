@@ -1,7 +1,7 @@
 """:mod:`cpg_islands.views.qt` --- Views based on Q toolkit
 """
 
-from PySide import QtGui
+from PySide import QtGui, QtCore
 
 from cpg_islands import metadata
 from cpg_islands.views import (BaseAppView,
@@ -130,6 +130,7 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         QtGui.QMessageBox.critical(self, metadata.nice_title, message)
 
     def _submit_clicked(self):
+        """Submit the input to the model."""
         try:
             self.submitted(self._get_seq(),
                            self._get_island_size(),
@@ -143,20 +144,76 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         super(ResultsView, self).__init__(parent)
 
         self.layout = QtGui.QVBoxLayout(self)
-        self.result_output = QtGui.QPlainTextEdit(self)
-        self.result_output.setReadOnly(True)
-        self.layout.addWidget(self.result_output)
+
+        self.hbox = QtGui.QHBoxLayout(self)
+        self.cpg_list = QtGui.QListWidget(self)
+        self.cpg_list.itemActivated.connect(self._item_activated)
+        self.cpg_list.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.scene = QtGui.QGraphicsScene()
+        self.global_seq = QtGui.QTextEdit(self)
+        self.global_seq.setReadOnly(True)
+
+        self.local_seq = QtGui.QPlainTextEdit(self)
+        self.local_seq.setReadOnly(True)
+
+        self.sequences = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.sequences.addWidget(self.global_seq)
+        self.sequences.addWidget(self.local_seq)
+        self.sequences.setSizes([100, 100])
+
+        self.holder = QtGui.QSplitter(QtCore.Qt.Horizontal)
+        self.holder.addWidget(self.cpg_list)
+        self.holder.addWidget(self.sequences)
+        self.holder.setSizes([100, 490])
+
+        self.layout.addWidget(self.holder)
 
     def set_locations(self, locations):
-        """Set encoded text result.
+        """Set list widget with features.
 
-        :param result: the encoded text
+        :param locations: the list of features
         :type locations: :class:`list` of :class:`tuple`
         """
-        result_list = []
-        for start, end in locations:
-            result_list.append('{0} {1}'.format(start, end))
-            self.result_output.setPlainText('\n'.join(result_list))
+        self.cpg_list.clear()
+        for index, (start, end) in enumerate(locations):
+            self.cpg_list.insertItem(index, str(start) + ', ' + str(end))
+
+    def _item_activated(self, item):
+        """Set encoded text result.
+
+        :param item: the selected item
+        :type item: :class:`QtGui.QListWidgetItem`
+        """
+        index = self.cpg_list.indexFromItem(item).row()
+        self.feature_selected(index)
+        self.global_highlight()
+
+    def set_local_seq(self, local_seq):
+        """Set local sequence text value.
+
+        :param local_seq: the selected local sequence
+        :type local_seq: :class:`str`
+        """
+        self.local_seq.setPlainText(local_seq)
+
+    def set_global_seq(self, global_seq):
+        """Set global sequence text value.
+
+        :param global_seq: the global sequence
+        :type global_seq: :class:`str`
+        """
+        self.global_seq.setPlainText(global_seq)
+
+
+class AutoZoomGraphicsView(QtGui.QGraphicsView):
+    """Graphics view class which auto-resizes the scene."""
+    def resizeEvent(self, event):
+        """Automatically resize the graphics view to fit the scene.
+
+            :param event: the resize event
+            :type event: :class:`PySide.QtGui.QResizeEvent`
+            """
+        self.fitInView(self.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
 
 class AboutDialog(QtGui.QDialog):
