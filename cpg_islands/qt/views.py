@@ -40,7 +40,7 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         self.setCentralWidget(self.input_results_tab_widget)
 
     def start(self):
-        self.show()
+        self.showMaximized()
         self.raise_()
 
     def show_results(self):
