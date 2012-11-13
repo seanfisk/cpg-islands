@@ -1,3 +1,5 @@
+from Bio.Seq import Seq
+from Bio.Alphabet import IUPAC
 from mock import create_autospec, call, sentinel
 import pytest
 
@@ -18,12 +20,10 @@ def presenter():
 class TestResultPresenter:
     def test_register_for_events(self, presenter):
         presenter.register_for_events()
-        assert (presenter.model.mock_calls ==
-                [call.locations_computed.append(
-                    presenter._locations_computed)])
         assert (presenter.view.mock_calls ==
-                [call.feature_selected.append(
-                    presenter._get_local_seq)])
+                [call.global_highlight.append(
+                    presenter._get_seq), call.feature_selected.append(
+                        presenter._get_feature)])
 
     def test_locations_computed(self, presenter):
         feature_tuples = [(0, 5), (1, 6), (3, 8)]
@@ -31,12 +31,16 @@ class TestResultPresenter:
         presenter._locations_computed(feature_locations)
         assert (presenter.view.mock_calls ==
                 [call.set_locations(feature_tuples)])
+
         assert presenter.model.mock_calls == []
 
-    def test_get_local_seq(self, presenter):
-        presenter.model.get_local_seq.return_value = sentinel.local_seq_str
-        presenter._get_local_seq(sentinel.index)
+    def test_get_feature(self, presenter):
+        sentinel.feature = make_features([(0, 1)])
+        presenter.model.get_seq.return_value = Seq('GCGC',
+                                                   IUPAC.unambiguous_dna)
+        presenter.model.get_feature.return_value = sentinel.feature[0]
+        presenter._get_feature(sentinel.index)
         assert (presenter.model.mock_calls ==
-                [call.get_local_seq(sentinel.index)])
+                [call.get_feature(sentinel.index), call.get_seq()])
         assert (presenter.view.mock_calls ==
-                [call.set_local_seq(sentinel.local_seq_str)])
+                [call.set_local_seq('G')])

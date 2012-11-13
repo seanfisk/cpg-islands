@@ -112,7 +112,8 @@ class ResultsPresenter(object):
 
     def register_for_events(self):
         self.model.locations_computed.append(self._locations_computed)
-        self.view.feature_selected.append(self._get_local_seq)
+        self.view.global_highlight.append(self._get_seq)
+        self.view.feature_selected.append(self._get_feature)
 
     def _locations_computed(self, feature_locations):
         """Called after locations have been computed.
@@ -125,10 +126,20 @@ class ResultsPresenter(object):
             for f in feature_locations]
         self.view.set_locations(location_tuples)
 
-    def _get_local_seq(self, feature_index):
+    def _get_feature(self, feature_index):
         """Called to get the sequence based on the feature index
 
         :param feature_index: index of the requested feature
         :type feature_locations: :class:`str`
         """
-        self.view.set_local_seq(self.model.get_local_seq(feature_index))
+        feature = self.model.get_feature(feature_index)
+        seq = self.model.get_seq()
+        self.view.set_local_seq(str(feature.extract(seq)))
+
+    def _get_seq(self):
+        """Called to get the sequence based on the feature index
+
+            :param feature_index: index of the requested feature
+            :type feature_locations: :class:`str`
+            """
+        self.view.set_global_seq(self.model.get_seq())

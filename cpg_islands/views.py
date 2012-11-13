@@ -73,7 +73,9 @@ class BaseSeqInputView(object):
 
 
 class BaseResultsView(object):
+
     feature_selected = Event()
+    global_highlight = Event()
 
     def set_locations(self, locations):
         """Set the CpG island locations.
@@ -85,6 +87,14 @@ class BaseResultsView(object):
 
     def set_local_seq(self, local_seq):
         """Set the local sequence string.
+
+        :param local_seq: DNA sequence of feature
+        :type local_seq: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_global_seq(self, local_seq):
+        """Set the global sequence string.
 
         :param local_seq: DNA sequence of feature
         :type local_seq: :class:`str`

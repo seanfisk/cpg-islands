@@ -138,11 +138,17 @@ class MetaResultsModel(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_local_seq(self, index):
+    def get_feature(self, index):
         """Returns a string representation of a feature based on it's index.
 
         :param index: the index of the feature to be returned
         :type index: :class:`int`
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_seq(self):
+        """Returns a string representation of the sequence.
         """
         raise NotImplementedError()
 
@@ -250,3 +256,9 @@ class ResultsModel(MetaResultsModel):
 
     def get_global_seq(self):
         return str(self._seq)
+
+    def get_seq(self):
+        return str(self._seq)
+
+    def get_feature(self, index):
+        return self._features[index]

@@ -3,8 +3,8 @@ from __future__ import division
 import pytest
 from mock import MagicMock
 from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
+from Bio.Alphabet import IUPAC
 
 from cpg_islands.models import ResultsModel
 from tests.helpers import make_features
@@ -150,11 +150,13 @@ class TestResultsModel:
         def test_get_one(self, model):
             model._seq = Seq('GCTT', IUPAC.unambiguous_dna)
             model._features = [SeqFeature(FeatureLocation(0, 1))]
-            computed = model.get_local_seq(0)
+            feature = model.get_feature(0)
+            seq = model.get_seq()
+            computed = feature.extract(seq)
             assert computed == 'G'
 
     class TestGetGlobalSeq:
         def test_get_one(self, model):
             model._seq = Seq('GCTT', IUPAC.unambiguous_dna)
-            computed = model.get_global_seq()
+            computed = model.get_seq()
             assert computed == 'GCTT'

@@ -132,6 +132,7 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         QtGui.QMessageBox.critical(self, metadata.nice_title, message)
 
     def _submit_clicked(self):
+        """Submit the input to the model."""
         try:
             self.submitted(self._get_seq(),
                            self._get_island_size(),
@@ -144,14 +145,18 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
     def __init__(self, parent=None):
         super(ResultsView, self).__init__(parent)
 
+        self.layout = QtGui.QVBoxLayout(self)
+
         self.hbox = QtGui.QHBoxLayout(self)
         self.cpg_list = QtGui.QListWidget(self)
-        self.cpg_list.currentRowChanged.connect(self._feature_selected)
+        self.cpg_list.itemActivated.connect(self._item_activated)
         self.cpg_list.setFrameShape(QtGui.QFrame.StyledPanel)
         self.scene = QtGui.QGraphicsScene()
-        self.global_seq = AutoZoomGraphicsView(self.scene)
+        self.global_seq = QtGui.QTextEdit(self)
+        self.global_seq.setReadOnly(True)
 
         self.local_seq = QtGui.QPlainTextEdit(self)
+        self.local_seq.setReadOnly(True)
 
         self.sequences = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.sequences.addWidget(self.global_seq)
@@ -163,12 +168,13 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.holder.addWidget(self.sequences)
         self.holder.setSizes([100, 490])
 
-        self.hbox.addWidget(self.holder)
+        #self.hbox.addWidget(self.holder)
+        self.layout.addWidget(self.holder)
 
     def set_locations(self, locations):
-        """Set encoded text result.
+        """Set list widget with features.
 
-        :param result: the encoded text
+        :param locations: the list of features
         :type locations: :class:`list` of :class:`tuple`
         """
         self.cpg_list.clear()
@@ -181,8 +187,31 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         if current_row >= 0:
             self.feature_selected(current_row)
 
+    def _item_activated(self, item):
+        """Set encoded text result.
+
+        :param item: the selected item
+        :type item: :class:`QtGui.QListWidgetItem`
+        """
+        index = self.cpg_list.indexFromItem(item).row()
+        self.feature_selected(index)
+        self.global_highlight()
+
     def set_local_seq(self, local_seq):
+        """Set local sequence text value.
+
+        :param local_seq: the selected local sequence
+        :type local_seq: :class:`str`
+        """
         self.local_seq.setPlainText(local_seq)
+
+    def set_global_seq(self, global_seq):
+        """Set global sequence text value.
+
+        :param global_seq: the global sequence
+        :type global_seq: :class:`str`
+        """
+        self.global_seq.setPlainText(global_seq)
 
 
 class AutoZoomGraphicsView(QtGui.QGraphicsView):
