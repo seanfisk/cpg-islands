@@ -48,6 +48,12 @@ Todo
 
 .. todo::
 
+   In the open file dialog, the dialog should remember the directory
+   last visited. To do this between opens, use a variable. To do this
+   between runs (better), store it in a QSettings instance.
+
+.. todo::
+
    Sean - Distribution with pyinstaller.
 
 .. todo::
