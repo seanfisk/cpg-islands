@@ -9,10 +9,6 @@ Todo
 
 .. todo::
 
-   Global sequence highlight.
-
-.. todo::
-
    BUG: Analyze one sequence with at least one island. Then analyze a
    sequence without any islands. In the results view, the global and
    local sequence are still set to the old sequences.
@@ -29,6 +25,10 @@ Todo
 .. todo::
 
    Sean - Have mutiple algorithm options available.
+
+.. todo::
+
+   Refine sequence highlight to look nicer, use fixed with text, etc.
 
 .. todo::
 

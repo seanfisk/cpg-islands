@@ -39,5 +39,5 @@ class TestResultPresenter:
         presenter._island_selected(1)
         assert presenter.model.mock_calls == [call.get_results()]
         assert (presenter.view.mock_calls ==
-                [call.set_global_seq(seq_str),
+                [call.set_global_seq(seq_str, (3, 5)),
                  call.set_local_seq('CG')])

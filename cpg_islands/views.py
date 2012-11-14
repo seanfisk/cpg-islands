@@ -91,10 +91,13 @@ class BaseResultsView(object):
         """
         raise NotImplementedError()
 
-    def set_global_seq(self, seq_str):
-        """Set the global sequence string.
+    def set_global_seq(self, seq_str, island_location):
+        """Set the global sequence string and the local sequence's
+        island location inside of it.
 
         :param seq_str: DNA sequence of feature
         :type seq_str: :class:`str`
+        :param island_location: location of the currently selected island
+        :type island_location: :class:`tuple` of :class:`int` of length 2
         """
         raise NotImplementedError()

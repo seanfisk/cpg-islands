@@ -114,15 +114,25 @@ class ResultsPresenter(object):
         self.model.islands_computed.append(self._islands_computed)
         self.view.island_selected.append(self._island_selected)
 
+    def _seq_feature_to_tuple(self, seq_feature):
+        """Convert a SeqFeature to a tuple.
+
+        :param seq_feature: the feature
+        :type seq_feature: :class:`SeqFeature`
+        :return: the tuple
+        :rtype: :class:`tuple` of :class:`int` of length 2
+        """
+        return (seq_feature.location.start.position,
+                seq_feature.location.end.position)
+
     def _islands_computed(self, seq_record):
         """Called after island locations have been computed.
 
         :param seq_record: seq record with features
         :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
         """
-        island_tuples = [(
-            f.location.start.position, f.location.end.position)
-            for f in seq_record.features]
+        island_tuples = [self._seq_feature_to_tuple(f) for f in
+                         seq_record.features]
         self.view.set_islands(island_tuples)
 
     def _island_selected(self, island_index):
@@ -132,6 +142,7 @@ class ResultsPresenter(object):
         :type island_index: :class:`int`
         """
         seq_record = self.model.get_results()
-        self.view.set_global_seq(str(seq_record.seq))
-        self.view.set_local_seq(
-            str(seq_record.features[island_index].extract(seq_record.seq)))
+        island = seq_record.features[island_index]
+        island_tuple = self._seq_feature_to_tuple(island)
+        self.view.set_global_seq(str(seq_record.seq), island_tuple)
+        self.view.set_local_seq(str(island.extract(seq_record.seq)))
