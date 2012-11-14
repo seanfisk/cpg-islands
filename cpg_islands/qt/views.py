@@ -24,9 +24,11 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         # Menu
         self.menu_bar = QtGui.QMenuBar()
         self.file_menu = self.menu_bar.addMenu('&File')
-        self.file_action = self.file_menu.addAction('&Load File')
+        self.file_action = self.file_menu.addAction('&Open...')
+        self.file_action.setShortcut(QtGui.QKeySequence.Open)
         self.file_action.triggered.connect(self._load_file)
         self.quit_action = self.file_menu.addAction('&Quit')
+        self.quit_action.setShortcut(QtGui.QKeySequence.Quit)
         self.quit_action.triggered.connect(self.close)
         self.help_menu = self.menu_bar.addMenu('&Help')
         self.about_action = self.help_menu.addAction('&About')

@@ -18,11 +18,6 @@ Todo
 
 .. todo::
 
-   "Load File" should change to "Open" and should be given the
-   shortcut Ctrl/Cmd-O.
-
-.. todo::
-
    Fix sequence input text area in SeqInputView to expand to its
    maximum size.
    
