@@ -11,13 +11,6 @@ Todo
 
 .. todo::
 
-   BUG: When Cancel is clicked in the file open dialog, an IOError (no
-   such file or directory) is printed to the console. This should go
-   to the user or just plain be ignored. Either way, it should be
-   handled and should *not* be sent to the console.
-
-.. todo::
-
    Fix sequence input text area in SeqInputView to expand to its
    maximum size.
    

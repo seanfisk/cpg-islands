@@ -54,11 +54,20 @@ class AppView(QtGui.QMainWindow, BaseAppView):
 
     def _load_file(self):
         """Create and show the file dialog."""
-        file_name = QtGui.QFileDialog.getOpenFileName(
+        # `getOpenFileName' returns a tuple of (file_name, filter).
+        file_name_and_filter_tuple = QtGui.QFileDialog.getOpenFileName(
             self,
             caption='Load GenBank File...',
             filter='GenBank Sequence File (*.gb)')
-        self.file_load_requested(file_name[0])
+
+        # According to the Qt documentation on `getOpenFileName'', "If
+        # the user presses Cancel, it returns a null string." That's
+        # not quite true for PySide, where it will return a tuple of
+        # two empty strings. Handle it here and don't let it reach the
+        # file loading code.
+        file_name = file_name_and_filter_tuple[0]
+        if len(file_name) > 0:
+            self.file_load_requested(file_name)
 
 
 class SeqInputView(QtGui.QWidget, BaseSeqInputView):
