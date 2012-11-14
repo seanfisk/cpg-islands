@@ -11,11 +11,6 @@ Todo
 
 .. todo::
 
-   Fix sequence input text area in SeqInputView to expand to its
-   maximum size.
-   
-.. todo::
-
    Sean - Remove some redundancy in valid algorithm tests in ``test_results.py``.
 
 .. todo::

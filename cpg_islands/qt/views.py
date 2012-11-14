@@ -74,27 +74,35 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
     def __init__(self, parent=None):
         super(SeqInputView, self).__init__(parent)
 
-        self.layout = QtGui.QFormLayout(self)
-        self.seq_input = QtGui.QPlainTextEdit(self)
-        self.seq_input.setTabChangesFocus(True)
-        self.layout.addRow('Sequence', self.seq_input)
+        self.top_layout = QtGui.QVBoxLayout(self)
+        self.form_layout = QtGui.QFormLayout()
 
         self.island_size_input = QtGui.QLineEdit(self)
         self.island_size_validator = QtGui.QIntValidator()
         self.island_size_validator.setBottom(0)
         self.island_size_input.setValidator(self.island_size_validator)
-        self.layout.addRow('Island Size', self.island_size_input)
+        self.form_layout.addRow('Island Size', self.island_size_input)
 
         self.min_gc_ratio_input = QtGui.QLineEdit(self)
         self.min_gc_ratio_validator = QtGui.QDoubleValidator()
         self.min_gc_ratio_validator.setBottom(0)
         self.min_gc_ratio_validator.setTop(1)
         self.min_gc_ratio_input.setValidator(self.min_gc_ratio_validator)
-        self.layout.addRow('GC Ratio', self.min_gc_ratio_input)
+        self.form_layout.addRow('GC Ratio', self.min_gc_ratio_input)
 
-        self.submit_button = QtGui.QPushButton('Find Islands', self)
+        self.top_layout.addLayout(self.form_layout)
+
+        self.seq_input_label = QtGui.QLabel('Sequence')
+        self.seq_input_label.setAlignment(QtCore.Qt.AlignHCenter)
+        self.top_layout.addWidget(self.seq_input_label)
+
+        self.seq_input = QtGui.QPlainTextEdit(self)
+        self.seq_input.setTabChangesFocus(True)
+        self.top_layout.addWidget(self.seq_input)
+
+        self.submit_button = QtGui.QPushButton('Compute Islands', self)
         self.submit_button.clicked.connect(self._submit_clicked)
-        self.layout.addRow(self.submit_button)
+        self.top_layout.addWidget(self.submit_button)
 
     def _get_seq(self):
         """Return the widget's entered text.
