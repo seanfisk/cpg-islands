@@ -152,6 +152,12 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
         self.global_seq = QtGui.QTextEdit(self)
         self.global_seq.setReadOnly(True)
+        global_seq_extra_sel = QtGui.QTextEdit.ExtraSelection()
+        global_seq_extra_sel.cursor = self.global_seq.textCursor()
+        global_seq_extra_sel.format.setBackground(QtCore.Qt.green)
+        global_seq_extra_sel.format.setFontOverline(True)
+        global_seq_extra_sel.format.setFontUnderline(True)
+        self.global_seq.setExtraSelections([global_seq_extra_sel])
 
         self.local_seq = QtGui.QPlainTextEdit(self)
         self.local_seq.setReadOnly(True)
@@ -187,8 +193,15 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
     def set_local_seq(self, seq_str):
         self.local_seq.setPlainText(seq_str)
 
-    def set_global_seq(self, seq_str):
+    def set_global_seq(self, seq_str, island_location):
         self.global_seq.setText(seq_str)
+        # Extra selections are already set in the constructor, so we
+        # know the list has at least a length of one.
+        extra_sels = self.global_seq.extraSelections()
+        extra_sels[0].cursor.setPosition(island_location[0])
+        extra_sels[0].cursor.setPosition(
+            island_location[1], QtGui.QTextCursor.KeepAnchor)
+        self.global_seq.setExtraSelections(extra_sels)
 
 
 class AboutDialog(QtGui.QDialog):

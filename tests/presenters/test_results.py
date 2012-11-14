@@ -1,10 +1,10 @@
-from mock import create_autospec, call, sentinel
+from mock import create_autospec, call
 import pytest
 
 from cpg_islands.models import MetaResultsModel
 from cpg_islands.views import BaseResultsView
 from cpg_islands.presenters import ResultsPresenter
-from tests.helpers import make_features
+from tests.helpers import make_seq_record
 
 
 @pytest.fixture
@@ -26,19 +26,18 @@ class TestResultPresenter:
 
     def test_islands_computed(self, presenter):
         island_tuples = [(0, 5), (1, 6), (3, 8)]
-        islands = make_features(island_tuples)
-        presenter._islands_computed(islands)
+        seq_record = make_seq_record('', island_tuples)
+        presenter._islands_computed(seq_record)
         assert (presenter.view.mock_calls ==
                 [call.set_islands(island_tuples)])
         assert presenter.model.mock_calls == []
 
     def test_island_selected(self, presenter):
-        presenter.model.get_global_seq.return_value = sentinel.global_seq
-        presenter.model.get_local_seq.return_value = sentinel.local_seq
-        presenter._island_selected(sentinel.island_index)
-        assert (presenter.model.mock_calls ==
-                [call.get_global_seq(),
-                 call.get_local_seq(sentinel.island_index)])
+        seq_str = 'ATGCGCAT'
+        presenter.model.get_results.return_value = \
+            make_seq_record(seq_str, [(2, 4), (3, 5), (4, 6)])
+        presenter._island_selected(1)
+        assert presenter.model.mock_calls == [call.get_results()]
         assert (presenter.view.mock_calls ==
-                [call.set_global_seq(sentinel.global_seq),
-                 call.set_local_seq(sentinel.local_seq)])
+                [call.set_global_seq(seq_str, (3, 5)),
+                 call.set_local_seq('CG')])

@@ -56,11 +56,11 @@ class TestSeqInputModel:
     class TestComputeIslands:
         def test_results_set(self, mock_algorithms, model):
             first_algo = mock_algorithms.registry[0].algorithm
-            first_algo.return_value = sentinel.islands
+            first_algo.return_value = sentinel.seq_record
             model.compute_islands(
                 sentinel.seq, sentinel.island_size, sentinel.min_gc_ratio)
             assert (model.results_model.mock_calls ==
-                    [call.set_results(sentinel.seq, sentinel.islands)])
+                    [call.set_results(sentinel.seq_record)])
 
         def test_islands_computed_called(self, mock_algorithms, model):
             callback = MagicMock()
