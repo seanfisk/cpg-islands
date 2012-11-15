@@ -9,6 +9,17 @@ from cpg_islands.views import (BaseAppView,
                                BaseResultsView)
 
 
+class SeqTextEdit(QtGui.QPlainTextEdit):
+    """Text editor specifically for DNA sequences. Sets up special
+    formatting.
+    """
+    def __init__(self, parent=None):
+        super(SeqTextEdit, self).__init__(parent)
+        font = QtGui.QFont('Consolas', 16)
+        font.setStyleHint(QtGui.QFont.TypeWriter)
+        self.setFont(font)
+
+
 class AppView(QtGui.QMainWindow, BaseAppView):
     def __init__(self, seq_input_view, results_view, parent=None):
         """Initialize the main application view with docked
@@ -99,7 +110,7 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         self.seq_input_label.setAlignment(QtCore.Qt.AlignHCenter)
         self.top_layout.addWidget(self.seq_input_label)
 
-        self.seq_input = QtGui.QPlainTextEdit(self)
+        self.seq_input = SeqTextEdit(self)
         self.seq_input.setTabChangesFocus(True)
         self.top_layout.addWidget(self.seq_input)
 
@@ -185,7 +196,7 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.islands_list = QtGui.QListWidget(self)
         self.islands_list.currentRowChanged.connect(self._island_selected)
         self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.global_seq = QtGui.QTextEdit(self)
+        self.global_seq = SeqTextEdit(self)
         self.global_seq.setReadOnly(True)
         global_seq_extra_sel = QtGui.QTextEdit.ExtraSelection()
         global_seq_extra_sel.cursor = self.global_seq.textCursor()
@@ -194,7 +205,7 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         global_seq_extra_sel.format.setFontUnderline(True)
         self.global_seq.setExtraSelections([global_seq_extra_sel])
 
-        self.local_seq = QtGui.QPlainTextEdit(self)
+        self.local_seq = SeqTextEdit(self)
         self.local_seq.setReadOnly(True)
 
         self.sequences = QtGui.QSplitter(QtCore.Qt.Vertical)
@@ -229,7 +240,7 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.local_seq.setPlainText(seq_str)
 
     def set_global_seq(self, seq_str, island_location):
-        self.global_seq.setText(seq_str)
+        self.global_seq.setPlainText(seq_str)
         # Extra selections are already set in the constructor, so we
         # know the list has at least a length of one.
         extra_sels = self.global_seq.extraSelections()

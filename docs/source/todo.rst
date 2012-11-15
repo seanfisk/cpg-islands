@@ -15,10 +15,6 @@ Todo
 
 .. todo::
 
-   Refine sequence highlight to look nicer, use fixed with text, etc.
-
-.. todo::
-
    Gray - ResultsView:
 
    * list of CpG islands on the left
@@ -36,6 +32,15 @@ Todo
 .. todo::
 
    Entrez database search (new MVP triad)
+
+.. todo::
+
+   Refine global sequence text edit to have an auto-zoom.
+
+.. todo::
+
+   Refine global sequence text edit with numbered lines, better
+   format, etc.
 
 .. todo::
 
