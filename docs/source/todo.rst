@@ -15,10 +15,6 @@ Todo
 
 .. todo::
 
-   Sean - Have mutiple algorithm options available.
-
-.. todo::
-
    Refine sequence highlight to look nicer, use fixed with text, etc.
 
 .. todo::
