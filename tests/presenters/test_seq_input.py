@@ -20,7 +20,8 @@ class TestSeqInputPresenter:
                 [call.island_definition_defaults_set.append(
                     presenter._island_definition_defaults_set),
                  call.file_loaded.append(presenter.view.set_seq),
-                 call.error_raised.append(presenter.view.show_error)])
+                 call.error_raised.append(presenter.view.show_error),
+                 call.algorithms_loaded.append(presenter.view.set_algorithms)])
         assert (presenter.view.mock_calls ==
                 [call.submitted.append(presenter._user_submits)])
 
@@ -35,7 +36,7 @@ class TestSeqInputPresenter:
             """When the user clicks submit with valid values, the island
             locations are shown."""
             seq_str = 'ATATGCGCATAT'
-            presenter._user_submits(seq_str, '4', '0.5')
+            presenter._user_submits(seq_str, '4', '0.5', sentinel.algo_index)
             # we cannot use assert_called_once_with or mock_cals because
             # these two Seq's use object comparison, and therefore are not
             # "equal"
@@ -43,16 +44,15 @@ class TestSeqInputPresenter:
             # call_args[0] is ordered arguments, call_args[1] is
             # keyword arguments
             args = presenter.model.compute_islands.call_args[0]
-            assert len(args) == 3
+            assert len(args) == 4
             assert str(args[0].seq) == seq_str
-            assert args[1] == 4
-            assert args[2] == 0.5
+            assert args[1:] == (4, 0.5, sentinel.algo_index)
             assert presenter.view.mock_calls == []
 
         def test_invalid_sequence(self, presenter):
             """When the user submits a sequence that does not contain
             valid bases, they are shown an error."""
-            presenter._user_submits('ABCD', '3', '0.5')
+            presenter._user_submits('ABCD', '3', '0.5', 0)
             assert (presenter.view.mock_calls == [call.show_error(
                 'Sequence letters not within alphabet:\n'
                 '  Alphabet: GATC\n'
@@ -62,7 +62,7 @@ class TestSeqInputPresenter:
         def test_invalid_island_size_type(self, presenter):
             """When the user submits an invalid type of island size, they
             are shown an error."""
-            presenter._user_submits('ATATGCGC', 'invalid size', '0.5')
+            presenter._user_submits('ATATGCGC', 'invalid size', '0.5', 0)
             assert (presenter.view.mock_calls ==
                     [call.show_error(
                         'Invalid integer for island size: invalid size')])
@@ -72,7 +72,7 @@ class TestSeqInputPresenter:
             """When the user submits an invalid type for GC ratio, they
             are shown an error.
             """
-            presenter._user_submits('ATATGCGC', '3', 'invalid gc')
+            presenter._user_submits('ATATGCGC', '3', 'invalid gc', 0)
             assert (presenter.view.mock_calls ==
                     [call.show_error('Invalid ratio for GC: invalid gc')])
             assert presenter.model.mock_calls == []
@@ -81,13 +81,12 @@ class TestSeqInputPresenter:
             """When the user submits a sequence with lowercase letters,
             these should be gracefully handled."""
             seq_str = 'ATatgcGCAtaT'
-            presenter._user_submits(seq_str, '4', '0.5')
+            presenter._user_submits(seq_str, '4', '0.5', sentinel.algo_index)
             assert presenter.model.compute_islands.call_count == 1
             args = presenter.model.compute_islands.call_args[0]
-            assert len(args) == 3
+            assert len(args) == 4
             assert str(args[0].seq) == 'ATATGCGCATAT'
-            assert args[1] == 4
-            assert args[2] == 0.5
+            assert args[1:] == (4, 0.5, sentinel.algo_index)
             assert presenter.view.mock_calls == []
 
     class TestLoadFile:

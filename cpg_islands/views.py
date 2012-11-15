@@ -55,6 +55,14 @@ class BaseSeqInputView(object):
         """
         raise NotImplementedError()
 
+    def set_algorithms(self, algorithm_names):
+        """Set the list of algorithm names.
+
+        :param algorithm_names: list of algorithm names
+        :type algorithm_names: :class:`list` of :class:`str`
+        """
+        raise NotImplementedError()
+
     def set_min_gc_ratio(self, min_gc_ratio):
         """Set minimum GC ratio.
 

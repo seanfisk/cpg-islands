@@ -40,7 +40,7 @@ class TestAppModel:
             assert out == ''
 
         def test_help(self, model, helparg, capfd):
-            with patch('sys.exit') as mock_exit:
+            with patch('sys.exit', autospec=True, spec_set=True) as mock_exit:
                 mock_exit.side_effect = Exception(
                     'fake exception to stop execution')
                 with pytest.raises(Exception):
@@ -54,7 +54,7 @@ class TestAppModel:
             assert mock_exit.mock_calls == [call(0)]
 
         def test_version(self, model, versionarg, capfd):
-            with patch('sys.exit') as mock_exit:
+            with patch('sys.exit', autospec=True, spec_set=True) as mock_exit:
                 mock_exit.side_effect = Exception(
                     'fake exception to stop execution')
                 with pytest.raises(Exception):
@@ -69,7 +69,7 @@ class TestAppModel:
                 self, model, helparg):
             started_callback = MagicMock()
             model.started.append(started_callback)
-            with patch('sys.exit') as mock_exit:
+            with patch('sys.exit', autospec=True, spec_set=True) as mock_exit:
                 mock_exit.side_effect = Exception(
                     'fake exception to stop execution')
                 with pytest.raises(Exception):
@@ -77,13 +77,15 @@ class TestAppModel:
             assert model.seq_input_model.mock_calls == []
             assert started_callback.mock_calls == []
 
-        def test_started_and_defaults_set_called_normally(self, model):
+        def test_started_defaults_set_and_algos_loaded_called_normally(
+                self, model):
             started_callback = MagicMock()
             model.started.append(started_callback)
             model.run(['progname'])
             assert started_callback.mock_calls == [call()]
             assert (model.seq_input_model.mock_calls ==
-                    [call.set_island_definition_defaults()])
+                    [call.set_island_definition_defaults(),
+                     call.load_algorithms()])
 
     def test_load_file(self, model):
         model.load_file(sentinel.file_path)

@@ -19,6 +19,20 @@ class TestSeqInputModel:
         assert callback.mock_calls == [call(200, 0.6)]
         assert model.results_model.mock_calls == []
 
+    @patch('cpg_islands.models.algorithms', autospec=True, spec_set=True)
+    def test_load_algorithms(self, mock_algorithms, model):
+        registry = []
+        for i in xrange(5):
+            algo = MagicMock()
+            algo.name = 'fakealgo{0}'.format(i)
+            registry.append(algo)
+        mock_algorithms.registry = registry
+        callback = MagicMock()
+        model.algorithms_loaded.append(callback)
+        model.load_algorithms()
+        assert (callback.mock_calls ==
+                [call(['fakealgo{0}'.format(i) for i in xrange(5)])])
+
     class TestLoadFile:
         def test_load_jx500709_1(self, model):
             file_loaded_callback = MagicMock()
@@ -52,19 +66,43 @@ class TestSeqInputModel:
                     [call('More than one record found in handle')])
             assert model.results_model.mock_calls == []
 
-    @patch('cpg_islands.models.algorithms')
+    @patch('cpg_islands.models.algorithms', autospec=True, spec_set=True)
     class TestComputeIslands:
-        def test_results_set(self, mock_algorithms, model):
-            first_algo = mock_algorithms.registry[0].algorithm
-            first_algo.return_value = sentinel.seq_record
-            model.compute_islands(
-                sentinel.seq, sentinel.island_size, sentinel.min_gc_ratio)
+        @pytest.mark.parametrize('algo_index', range(5))
+        def test_correct_algorithm_called(self, mock_algorithms,
+                                          model, algo_index):
+            unselected_algo_indices = set(range(5)) - set([algo_index])
+            registry = [MagicMock() for _ in xrange(5)]
+            for i in unselected_algo_indices:
+                registry[i].algorithm.return_value = sentinel.wrong_results
+            registry[algo_index].algorithm.return_value = \
+                sentinel.correct_results
+            mock_algorithms.registry = registry
+
+            model.compute_islands(sentinel.seq_record, sentinel.island_size,
+                                  sentinel.min_gc_ratio, algo_index)
             assert (model.results_model.mock_calls ==
-                    [call.set_results(sentinel.seq_record)])
+                    [call.set_results(sentinel.correct_results)])
+            for i in unselected_algo_indices:
+                assert mock_algorithms.registry[i].mock_calls == []
+            assert (mock_algorithms.registry[algo_index].mock_calls ==
+                    [call.algorithm(sentinel.seq_record,
+                                    sentinel.island_size,
+                                    sentinel.min_gc_ratio)])
+
+        def test_results_set(self, mock_algorithms, model):
+            first_algo = MagicMock()
+            first_algo.algorithm.return_value = sentinel.results
+            mock_algorithms.registry = [first_algo]
+            model.compute_islands(sentinel.seq_record,
+                                  sentinel.island_size,
+                                  sentinel.min_gc_ratio, 0)
+            assert (model.results_model.mock_calls ==
+                    [call.set_results(sentinel.results)])
 
         def test_islands_computed_called(self, mock_algorithms, model):
             callback = MagicMock()
             model.islands_computed.append(callback)
             model.compute_islands(
-                sentinel.fake, sentinel.fake, sentinel.fake)
+                sentinel.fake, sentinel.fake, sentinel.fake, sentinel.fake)
             assert callback.mock_calls == [call()]

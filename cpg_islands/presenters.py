@@ -38,6 +38,7 @@ class SeqInputPresenter(object):
             self._island_definition_defaults_set)
         self.model.file_loaded.append(self.view.set_seq)
         self.model.error_raised.append(self.view.show_error)
+        self.model.algorithms_loaded.append(self.view.set_algorithms)
         self.view.submitted.append(self._user_submits)
 
     def _island_definition_defaults_set(self, island_size, min_gc_ratio):
@@ -51,7 +52,8 @@ class SeqInputPresenter(object):
         self.view.set_island_size(str(island_size))
         self.view.set_min_gc_ratio(str(min_gc_ratio))
 
-    def _user_submits(self, seq_str, island_size_str, min_gc_ratio_str):
+    def _user_submits(self, seq_str, island_size_str,
+                      min_gc_ratio_str, algo_index):
         """Called when the user submits the form.
 
         :param seq_str: the sequence as a string
@@ -60,6 +62,8 @@ class SeqInputPresenter(object):
         :type island_size_str: :class:`str`
         :param min_gc_ratio_str: the ratio of GC to other bases
         :type min_gc_ratio_str: :class:`str`
+        :param algo_index: the algorithm chosen
+        :type algo_index: :class:`int`
         """
         seq_mixed_case = Seq(seq_str, IUPAC.unambiguous_dna)
         seq = seq_mixed_case.upper()
@@ -84,7 +88,8 @@ class SeqInputPresenter(object):
             self.view.show_error(
                 'Invalid ratio for GC: {0}'.format(min_gc_ratio_str))
             return
-        self.model.compute_islands(SeqRecord(seq), island_size, min_gc_ratio)
+        self.model.compute_islands(
+            SeqRecord(seq), island_size, min_gc_ratio, algo_index)
 
     def _file_loaded(self, file_path):
         """Called when the user loads a file.

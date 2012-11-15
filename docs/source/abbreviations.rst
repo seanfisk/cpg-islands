@@ -17,6 +17,8 @@ The following abbreviations are used consistently throughout the application (or
 +-------------------------------+------------+
 |guanine-cytosine               |gc          |
 +-------------------------------+------------+
+|algorithm                      |algo        |
++-------------------------------+------------+
 |presenter                      |pres        |
 +-------------------------------+------------+
 

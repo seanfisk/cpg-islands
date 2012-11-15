@@ -90,6 +90,9 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         self.min_gc_ratio_input.setValidator(self.min_gc_ratio_validator)
         self.form_layout.addRow('GC Ratio', self.min_gc_ratio_input)
 
+        self.algorithms_combo_box = QtGui.QComboBox(self)
+        self.form_layout.addRow('Algorithm', self.algorithms_combo_box)
+
         self.top_layout.addLayout(self.form_layout)
 
         self.seq_input_label = QtGui.QLabel('Sequence')
@@ -139,8 +142,20 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         """
         return self.island_size_input.text()
 
+    def _get_algorithm_index(self):
+        """Return the currently selected algorithm's index.
+
+        :return: the algorithm index
+        :rtype: :class:`int`
+        """
+        return self.algorithms_combo_box.currentIndex()
+
     def set_island_size(self, island_size):
         self.island_size_input.setText(island_size)
+
+    def set_algorithms(self, algorithm_names):
+        self.algorithms_combo_box.clear()
+        self.algorithms_combo_box.addItems(algorithm_names)
 
     def show_error(self, message):
         """Show the user an error dialog.
@@ -155,7 +170,8 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         try:
             self.submitted(self._get_seq(),
                            self._get_island_size(),
-                           self._get_min_gc_ratio())
+                           self._get_min_gc_ratio(),
+                           self._get_algorithm_index())
         except ValueError as error:
             self.show_error(str(error))
 

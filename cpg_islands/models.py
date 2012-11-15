@@ -85,6 +85,25 @@ class MetaSeqInputModel(object):
         :type min_gc_ratio: :class:`float`
     """
 
+    algorithms_loaded = Event()
+    """Fired when all algorithms have been loaded.
+
+    .. function:: callback(algorithm_names)
+
+        :param algorithm_names: list of algorithm names
+        :types algorithm_names: :class:`list` of :class:`str`
+    """
+
+    algorithms_loaded = Event()
+    """Fired when all available algorithms have been loaded. Callbacks
+    should look like:
+
+    .. function:: callback(algorithm_names)
+
+        :param algorithm_names: list of algorithm names
+        :type algorithm_names: :class:`list` of :class:`str`
+    """
+
     islands_computed = Event()
     """Fired when island locations have been computed. Callbacks
     should look like:
@@ -94,10 +113,15 @@ class MetaSeqInputModel(object):
     """
 
     @abstractmethod
-    def set_island_definition_defaults():
+    def set_island_definition_defaults(self):
         """Set the default island definitions of an island size of 200
         and a GC ratio of 60%.
         """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def load_algorithms(self):
+        """Load all available algorithms."""
         raise NotImplementedError()
 
     @abstractmethod
@@ -110,7 +134,7 @@ class MetaSeqInputModel(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def compute_islands(self, seq, island_size, min_gc_ratio):
+    def compute_islands(self, seq, island_size, min_gc_ratio, algo_index):
         """Create a list of CpG island features in a sequence.
 
         :param seq: the sequence to analyze
@@ -120,6 +144,8 @@ class MetaSeqInputModel(object):
         :param min_gc_ratio: the ratio of GC to other bases
         :type min_gc_ratio: :class:`float`
         :raise: :exc:`ValueError` when parameters are invalid
+        :param algo_index: the index of the algorithm to use
+        :type algo_index: :class:`int`
         """
         raise NotImplementedError()
 
@@ -188,6 +214,7 @@ URL: <{url}>
         arg_parser.parse_args(args=argv[1:])
 
         self.seq_input_model.set_island_definition_defaults()
+        self.seq_input_model.load_algorithms()
         self.started()
 
     def load_file(self, file_path):
@@ -205,6 +232,10 @@ class SeqInputModel(MetaSeqInputModel):
     def set_island_definition_defaults(self):
         self.island_definition_defaults_set(200, 0.6)
 
+    def load_algorithms(self):
+        algorithm_names = [algo.name for algo in algorithms.registry]
+        self.algorithms_loaded(algorithm_names)
+
     def load_file(self, file_path):
         try:
             seq_record = SeqIO.read(file_path, 'genbank')
@@ -213,9 +244,10 @@ class SeqInputModel(MetaSeqInputModel):
             return
         self.file_loaded(str(seq_record.seq))
 
-    def compute_islands(self, seq_record, island_size, min_gc_ratio):
+    def compute_islands(self, seq_record, island_size, min_gc_ratio,
+                        algo_index):
         seq_record = \
-            algorithms.registry[0].algorithm(
+            algorithms.registry[algo_index].algorithm(
                 seq_record, island_size, min_gc_ratio)
         self.results_model.set_results(seq_record)
         self.islands_computed()
