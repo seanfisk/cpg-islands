@@ -29,7 +29,10 @@ class TestResultPresenter:
         seq_record = make_seq_record('', island_tuples)
         presenter._islands_computed(seq_record)
         assert (presenter.view.mock_calls ==
-                [call.set_islands(island_tuples)])
+                [call.clear_local_seq(),
+                 call.clear_global_seq(),
+                 call.set_islands(island_tuples),
+                 ])
         assert presenter.model.mock_calls == []
 
     def test_island_selected(self, presenter):

@@ -5,21 +5,7 @@ Todo
 
 .. todo::
 
-   BUG: Analyze one sequence with at least one island. Then analyze a
-   sequence without any islands. In the results view, the global and
-   local sequence are still set to the old sequences.
-
-.. todo::
-
    Sean - Remove some redundancy in valid algorithm tests in ``test_results.py``.
-
-.. todo::
-
-   Gray - ResultsView:
-
-   * list of CpG islands on the left
-   * big picture view of sequence on the top right
-   * detailed view of sequence on the bottom right
 
 .. todo::
 

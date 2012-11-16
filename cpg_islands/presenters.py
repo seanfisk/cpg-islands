@@ -138,6 +138,8 @@ class ResultsPresenter(object):
         """
         island_tuples = [self._seq_feature_to_tuple(f) for f in
                          seq_record.features]
+        self.view.clear_local_seq()
+        self.view.clear_global_seq()
         self.view.set_islands(island_tuples)
 
     def _island_selected(self, island_index):
