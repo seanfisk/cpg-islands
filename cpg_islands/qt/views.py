@@ -198,12 +198,6 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
         self.global_seq = SeqTextEdit(self)
         self.global_seq.setReadOnly(True)
-        global_seq_extra_sel = QtGui.QTextEdit.ExtraSelection()
-        global_seq_extra_sel.cursor = self.global_seq.textCursor()
-        global_seq_extra_sel.format.setBackground(QtCore.Qt.green)
-        global_seq_extra_sel.format.setFontOverline(True)
-        global_seq_extra_sel.format.setFontUnderline(True)
-        self.global_seq.setExtraSelections([global_seq_extra_sel])
 
         self.local_seq = SeqTextEdit(self)
         self.local_seq.setReadOnly(True)
@@ -221,11 +215,6 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.layout.addWidget(self.holder)
 
     def set_islands(self, islands):
-        """Set the list of islands.
-
-        :param islands: the list of islands
-        :type islands: :class:`list` of :class:`tuple`
-        """
         self.islands_list.clear()
         for start, end in islands:
             self.islands_list.addItem('{0}, {1}'.format(start, end))
@@ -239,15 +228,25 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
     def set_local_seq(self, seq_str):
         self.local_seq.setPlainText(seq_str)
 
+    def clear_local_seq(self):
+        self.local_seq.clear()
+
     def set_global_seq(self, seq_str, island_location):
         self.global_seq.setPlainText(seq_str)
         # Extra selections are already set in the constructor, so we
         # know the list has at least a length of one.
-        extra_sels = self.global_seq.extraSelections()
-        extra_sels[0].cursor.setPosition(island_location[0])
-        extra_sels[0].cursor.setPosition(
-            island_location[1], QtGui.QTextCursor.KeepAnchor)
-        self.global_seq.setExtraSelections(extra_sels)
+        cursor = self.global_seq.textCursor()
+        cursor.setPosition(island_location[0])
+        cursor.setPosition(island_location[1], QtGui.QTextCursor.KeepAnchor)
+        extra_sel = QtGui.QTextEdit.ExtraSelection()
+        extra_sel.format.setBackground(QtCore.Qt.green)
+        extra_sel.format.setFontOverline(True)
+        extra_sel.format.setFontUnderline(True)
+        extra_sel.cursor = cursor
+        self.global_seq.setExtraSelections([extra_sel])
+
+    def clear_global_seq(self):
+        self.global_seq.clear()
 
 
 class AboutDialog(QtGui.QDialog):

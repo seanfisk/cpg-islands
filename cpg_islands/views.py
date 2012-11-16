@@ -75,13 +75,21 @@ class BaseSeqInputView(object):
         """Show the user an error dialog.
 
         :param message: error message
-            :type message: :class:`str`
-            """
+        :type message: :class:`str`
+        """
         raise NotImplementedError()
 
 
 class BaseResultsView(object):
     island_selected = Event()
+
+    def clear_global_seq(self):
+        """Clear out the global sequence."""
+        raise NotImplementedError()
+
+    def clear_local_seq(self):
+        """Clear out the local sequence."""
+        raise NotImplementedError()
 
     def set_islands(self, islands):
         """Set the CpG island locations.
