@@ -129,6 +129,13 @@ def test_all():
 
 
 @task
+def travis():
+    """Perform setup for Travis-CI and run the tests."""
+    subprocess.check_call(['python', 'setup.py', 'build_ext', '--inplace'])
+    test_all()
+
+
+@task
 def commit():
     """Commit only if all the tests pass."""
     if _test_all() == 0:

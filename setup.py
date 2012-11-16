@@ -9,6 +9,8 @@ distribute_setup.use_setuptools()
 
 from setuptools import setup, find_packages
 
+from Cython.Build import cythonize
+
 
 # credit: <http://packages.python.org/an_example_pypi_project/setuptools.html>
 # Utility function to read the README file.
@@ -51,6 +53,8 @@ setup(name=metadata.title,
           'Topic :: Scientific/Engineering :: Visualization',
       ],
       packages=find_packages(),
+      ext_modules=cythonize(
+          'cpg_islands/algorithms/sliding_window_cython.pyx'),
       install_requires=install_requirements,
       zip_safe=False,  # don't use eggs
       entry_points={

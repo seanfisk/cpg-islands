@@ -7,6 +7,8 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from Bio.SeqUtils import GC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
+from cpg_islands.algorithms import sliding_window_cython
+
 
 def _is_gc(base):
     """Test whether a specified base is Guanine or Cytosine.
@@ -91,7 +93,7 @@ class MetaAlgorithm(object):
 class SlidingWindowBiopythonGCAlgorithm(MetaAlgorithm):
     @property
     def name(self):
-        return 'Sliding Window with Biopython GC function'
+        return ' Biopython GC Sliding Window (Python)'
 
     def algorithm(self, seq_record, island_size, min_gc_ratio):
         super(SlidingWindowBiopythonGCAlgorithm,
@@ -107,13 +109,13 @@ class SlidingWindowBiopythonGCAlgorithm(MetaAlgorithm):
         return seq_record
 
 
-class SlidingWindowAccumulator(MetaAlgorithm):
+class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
     @property
     def name(self):
-        return 'Sliding Window with Count Accumulator'
+        return 'Accumulating Sliding Window (Python)'
 
     def algorithm(self, seq_record, island_size, min_gc_ratio):
-        super(SlidingWindowAccumulator,
+        super(AccumulatingSlidingWindowPythonAlgorithm,
               self).algorithm(seq_record, island_size, min_gc_ratio)
         seq = seq_record.seq
         seq_len = len(seq)
@@ -137,6 +139,20 @@ class SlidingWindowAccumulator(MetaAlgorithm):
         seq_record.features = islands
         return seq_record
 
+
+class AccumulatingSlidingWindowCythonAlgorithm(MetaAlgorithm):
+    @property
+    def name(self):
+        return 'Accumulating Sliding Window (Cython)'
+
+    def algorithm(self, seq_record, island_size, min_gc_ratio):
+        super(AccumulatingSlidingWindowCythonAlgorithm,
+              self).algorithm(seq_record, island_size, min_gc_ratio)
+        island_tuples = sliding_window_cython.sliding_window(
+            str(seq_record.seq), island_size, min_gc_ratio)
+        seq_record.features = \
+            [_make_feature(start, end) for start, end in island_tuples]
+        return seq_record
 
 # Create instances of each implementation of a MetaAlgorithm, so that
 # they are ready to use.
