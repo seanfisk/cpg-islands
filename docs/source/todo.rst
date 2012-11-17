@@ -9,7 +9,16 @@ Todo
 
 .. todo::
 
-   Measure speed of algorithm.
+   Measure speed of algorithm. Decided to add a "Timing" tab which
+   gets populated in the same way as Results when ``compute_islands``
+   is called. We will compose the SeqInputModel with a
+   TimingModel. The SeqInputModel calls a setter on the TimingModel
+   which then sends the information to the TimingView. The timing view
+   will list the algorithms run. The algorithms which are run can be
+   chosen from a multiple select box within the SeqInputModel. The
+   timings will initially be graphed using a bar graph for single
+   runs, and then be changed to a box plot for multiple runs of the
+   same algorithm.
 
 .. todo::
 
