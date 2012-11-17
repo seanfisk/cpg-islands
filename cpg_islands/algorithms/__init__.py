@@ -63,7 +63,8 @@ class MetaAlgorithm(object):
         return self.name.lower().replace(' ', '_')
 
     @abstractmethod
-    def algorithm(self, seq_record, island_size, min_gc_ratio):
+    def algorithm(
+            self, seq_record, island_size, min_gc_ratio, obs_exp_cpg_ratio):
         """Create a list of CpG island features in a sequence.
 
         :param seq_record: the sequence record to annotate
@@ -72,6 +73,8 @@ class MetaAlgorithm(object):
         :type island_size: :class:`int`
         :param min_gc_ratio: the ratio of GC to other bases
         :type min_gc_ratio: :class:`float`
+        :param obs_exp_cpg_ratio: observed-to-expected CpG ratio
+        :type obs_exp_cpg_ratio: :class:`float`
         :return: a list of features found in the sequence
         :rtype: :class:`list` of :class:`Bio.SeqFeature.SeqFeature`
         :raise: :exc:`ValueError` when parameters are invalid
@@ -86,27 +89,32 @@ class MetaAlgorithm(object):
                 'Island size ({0}) must be less than or '
                 'equal to sequence length ({1})'.format(island_size, seq_len))
         if not (0 <= min_gc_ratio <= 1):
-            raise ValueError('Invalid GC ratio for ratio between '
-                             'zero and one: {0}'.format(min_gc_ratio))
+            raise ValueError(
+                'Invalid GC ratio for ratio between '
+                'zero and one: {0}'.format(min_gc_ratio))
+        if not (0 <= obs_exp_cpg_ratio <= 1):
+            raise ValueError(
+                'Invalid observed-to-expected CpG ratio for ratio '
+                'between zero and one: {0}'.format(obs_exp_cpg_ratio))
 
 
-class SlidingWindowBiopythonGCAlgorithm(MetaAlgorithm):
-    @property
-    def name(self):
-        return ' Biopython GC Sliding Window (Python)'
+# class SlidingWindowBiopythonGCAlgorithm(MetaAlgorithm):
+#     @property
+#     def name(self):
+#         return ' Biopython GC Sliding Window (Python)'
 
-    def algorithm(self, seq_record, island_size, min_gc_ratio):
-        super(SlidingWindowBiopythonGCAlgorithm,
-              self).algorithm(seq_record, island_size, min_gc_ratio)
-        seq = seq_record.seq
-        min_gc_pct = min_gc_ratio * 100
-        islands = []
-        for start_index in xrange(len(seq) - island_size + 1):
-            end_index = start_index + island_size
-            if GC(seq[start_index:end_index]) >= min_gc_pct:
-                islands.append(_make_feature(start_index, end_index))
-        seq_record.features = islands
-        return seq_record
+#     def algorithm(self, seq_record, island_size, min_gc_ratio):
+#         super(SlidingWindowBiopythonGCAlgorithm,
+#               self).algorithm(seq_record, island_size, min_gc_ratio)
+#         seq = seq_record.seq
+#         min_gc_pct = min_gc_ratio * 100
+#         islands = []
+#         for start_index in xrange(len(seq) - island_size + 1):
+#             end_index = start_index + island_size
+#             if GC(seq[start_index:end_index]) >= min_gc_pct:
+#                 islands.append(_make_feature(start_index, end_index))
+#         seq_record.features = islands
+#         return seq_record
 
 
 class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
@@ -114,9 +122,10 @@ class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
     def name(self):
         return 'Accumulating Sliding Window (Python)'
 
-    def algorithm(self, seq_record, island_size, min_gc_ratio):
-        super(AccumulatingSlidingWindowPythonAlgorithm,
-              self).algorithm(seq_record, island_size, min_gc_ratio)
+    def algorithm(
+            self, seq_record, island_size, min_gc_ratio, obs_to_exp_ratio):
+        super(AccumulatingSlidingWindowPythonAlgorithm, self).algorithm(
+            seq_record, island_size, min_gc_ratio, obs_to_exp_ratio)
         seq = seq_record.seq
         seq_len = len(seq)
         start_index = 0
@@ -140,19 +149,19 @@ class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
         return seq_record
 
 
-class AccumulatingSlidingWindowCythonAlgorithm(MetaAlgorithm):
-    @property
-    def name(self):
-        return 'Accumulating Sliding Window (Cython)'
+# class AccumulatingSlidingWindowCythonAlgorithm(MetaAlgorithm):
+#     @property
+#     def name(self):
+#         return 'Accumulating Sliding Window (Cython)'
 
-    def algorithm(self, seq_record, island_size, min_gc_ratio):
-        super(AccumulatingSlidingWindowCythonAlgorithm,
-              self).algorithm(seq_record, island_size, min_gc_ratio)
-        island_tuples = sliding_window_cython.sliding_window(
-            str(seq_record.seq), island_size, min_gc_ratio)
-        seq_record.features = \
-            [_make_feature(start, end) for start, end in island_tuples]
-        return seq_record
+#     def algorithm(self, seq_record, island_size, min_gc_ratio):
+#         super(AccumulatingSlidingWindowCythonAlgorithm,
+#               self).algorithm(seq_record, island_size, min_gc_ratio)
+#         island_tuples = sliding_window_cython.sliding_window(
+#             str(seq_record.seq), island_size, min_gc_ratio)
+#         seq_record.features = \
+#             [_make_feature(start, end) for start, end in island_tuples]
+#         return seq_record
 
 # Create instances of each implementation of a MetaAlgorithm, so that
 # they are ready to use.

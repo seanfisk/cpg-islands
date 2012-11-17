@@ -19,6 +19,10 @@ The following abbreviations are used consistently throughout the application (or
 +-------------------------------+------------+
 |algorithm                      |algo        |
 +-------------------------------+------------+
+|observed                       |obs         |
++-------------------------------+------------+
+|expected                       |exp         |
++-------------------------------+------------+
 |presenter                      |pres        |
 +-------------------------------+------------+
 
