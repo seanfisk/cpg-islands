@@ -153,3 +153,50 @@ class ResultsPresenter(object):
         island_tuple = self._seq_feature_to_tuple(island)
         self.view.set_global_seq(str(seq_record.seq), island_tuple)
         self.view.set_local_seq(str(island.extract(seq_record.seq)))
+
+
+class EntrezPresenter(object):
+    def __init__(self, model, view):
+        """Constructor.
+
+        :param model: results model
+        :type model: :class:`MetaResultsModel`
+        :param view: results view
+        :type view: :class:`MetaResultsView`
+        """
+        self.model = model
+        self.view = view
+
+    def register_for_events(self):
+        """Connect view methods to presenter methods."""
+        self.view.text_changed.append(self._text_changed)
+        self.view.searched.append(self._user_submits)
+        self.view.result_selected.append(self._user_selected)
+
+    def _user_submits(self, text):
+        """Handle user submission.
+
+        :param text: text to encode
+        :type text: :class:`str`
+        """
+        result = self.model.search(text)
+        self.view.set_result(result["IdList"])
+        self.view.set_query(result["QueryTranslation"])
+
+    def _user_selected(self, id):
+        """Handle user submission.
+
+        :param text: text to encode
+        :type text: :class:`str`
+        """
+        result = self.model.get_seq(self.model.results["IdList"][id])
+        self.view.set_seq(str(result.seq))
+
+    def _text_changed(self, text):
+        """Handle user suggestions.
+
+        :param text: text to query for suggestion
+        :type text: :class:`str`
+        """
+        result = self.model.suggest(text)
+        self.view.set_suggestion(result["CorrectedQuery"])

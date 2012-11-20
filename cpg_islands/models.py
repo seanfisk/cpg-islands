@@ -4,7 +4,7 @@
 import argparse
 from abc import ABCMeta, abstractmethod
 
-from Bio import SeqIO
+from Bio import Entrez, SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
@@ -179,6 +179,42 @@ class MetaResultsModel(object):
         raise NotImplementedError()
 
 
+class MetaEntrezModel(object):
+    started = Event()
+    """Responsible for initializing the Entrez email"""
+    @abstractmethod
+    def search(self, text):
+        """Search Entrez database.
+
+        :param text: the text to search
+        :type text: :class:`str`
+        :return: the results
+        :rtype: :class:`str`
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def suggest(self, text):
+        """Suggested Entrez spelling.
+
+        :param text: the text to encode
+        :type text: :class:`str`
+        :return: the results
+        :rtype: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def get_seq(self, id):
+        """Pull sequence based on id.
+
+        :param id: the text to encode
+        :type id: :class:`int`
+        :return: the sequence
+        :rtype: :class:`Seq`
+        """
+        raise NotImplementedError()
+
+
 class AppModel(MetaAppModel):
     def __init__(self, seq_input_model):
         """Constructor.
@@ -263,3 +299,24 @@ class ResultsModel(MetaResultsModel):
 
     def get_results(self):
         return self._seq_record
+
+
+class EntrezModel(object):
+    def __init__(self):
+        Entrez.email = 'gray.gwizdz@gmail.com'
+
+    def search(self, text):
+        handle = Entrez.esearch(db="nucleotide", term=text)
+        self.results = Entrez.read(handle)
+        return self.results
+
+    def suggest(self, text):
+        handle = Entrez.espell(db="pubmed", term=text)
+        return Entrez.read(handle)
+
+    def get_seq(self, id):
+        handle = Entrez.efetch(db="nucleotide", id=id,
+                               rettype="gb", retmode="text")
+        record = SeqIO.read(handle, "genbank")
+        handle.close()
+        return record

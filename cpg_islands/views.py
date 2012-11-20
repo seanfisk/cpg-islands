@@ -117,3 +117,57 @@ class BaseResultsView(object):
         :type island_location: :class:`tuple` of :class:`int` of length 2
         """
         raise NotImplementedError()
+
+
+class BaseEntrezView(object):
+    searched = Event()
+    text_changed = Event()
+    result_selected = Event()
+
+    def get_text(self):
+        """Return the widget's entered text.
+
+        :return: the text
+        :rtype: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_suggestion(self, suggestion):
+        """Set the suggestions based on spelling.
+
+        :param result: the encoded text
+        :type result: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_query(self, query):
+        """Set the evaluated query.
+
+        :param result: the encoded text
+        :type result: :class:`list`
+        """
+        raise NotImplementedError()
+
+    def set_seq(self, seq):
+        """Set the selected sequence.
+
+        :param result: the encoded text
+        :type result: :class:`list`
+        """
+        raise NotImplementedError()
+
+    def set_result(self, results):
+        """Set encoded text result.
+
+        :param result: the encoded text
+        :type result: :class:`list`
+        """
+        raise NotImplementedError()
+
+    def show_error(self, message):
+        """Show the user an error dialog.
+
+        :param message: error message
+        :type message: :class:`str`
+        """
+        raise NotImplementedError()

@@ -6,7 +6,8 @@ from PySide import QtGui, QtCore
 from cpg_islands import metadata
 from cpg_islands.views import (BaseAppView,
                                BaseSeqInputView,
-                               BaseResultsView)
+                               BaseResultsView,
+                               BaseEntrezView)
 
 
 class SeqTextEdit(QtGui.QPlainTextEdit):
@@ -249,14 +250,113 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.global_seq.clear()
 
 
+class EntrezView(QtGui.QWidget, BaseEntrezView):
+    def __init__(self, parent=None):
+        """Construct a entrez widget.
+
+        :param parent: widget parent
+        :type parent: :class:`QtGui.QWidget`
+        """
+        super(EntrezView, self).__init__(parent)
+
+        # Layout
+        self.layout = QtGui.QVBoxLayout(self)
+        self.text_input = QtGui.QLineEdit(self)
+        self.text_input.textChanged.connect(self._text_input_changed)
+        self.layout.addRow('Term', self.text_input)
+
+        self.suggest = QtGui.QLineEdit(self)
+        self.suggest.setReadOnly(True)
+        self.layout.addRow('Suggested', self.suggest)
+
+        self.query = QtGui.QLineEdit(self)
+        self.query.setReadOnly(True)
+        self.layout.addRow('Query Translation', self.query)
+
+        self.result_output = QtGui.QListWidget(self)
+        self.result_output.currentRowChanged.connect(self._result_selected)
+        self.layout.addRow('Results', self.result_output)
+
+        self.seq = QtGui.QTextEdit(self)
+        self.seq.setReadOnly(True)
+        self.layout.addRow('Sequence', self.seq)
+
+        self.submit_button = QtGui.QPushButton('Search', self)
+        self.submit_button.clicked.connect(self._submit_clicked)
+        self.layout.addRow(self.submit_button)
+
+    def get_text(self):
+        """Return the widget's entered text.
+
+        :return: the text
+        :rtype: :class:`str`
+        """
+        return self.text_input.text()
+
+    def set_suggestion(self, suggestion):
+        """Set the suggestions based on spelling.
+
+        :param result: the encoded text
+        :type result: :class:`list`
+        """
+        self.suggest.setText(suggestion)
+
+    def set_query(self, query):
+        """Set the evaluated query.
+
+        :param result: the encoded text
+        :type result: :class:`list`
+        """
+        self.query.setText(query)
+
+    def set_seq(self, seq):
+        """Set the selected sequence.
+
+        :param result: the encoded text
+        :type result: :class:`list`
+        """
+        self.seq.setPlainText(seq)
+
+    def set_result(self, results):
+        """Set encoded text result.
+
+        :param result: the encoded text
+        :type result: :class:`list`
+        """
+        for index, result in enumerate(results):
+            self.result_output.insertItem(index, result)
+
+    def show_error(self, message):
+        """Show the user an error dialog.
+
+        :param message: error message
+        :type message: :class:`str`
+        """
+        error_dialog = QtGui.QErrorMessage(self)
+        error_dialog.showMessage(message)
+
+    def _submit_clicked(self):
+        """Submit the entered term."""
+        self.searched(self.get_text())
+
+    def _text_input_changed(self):
+        """Submit the entered term."""
+        self.text_changed(self.get_text())
+
+    def _result_selected(self, current_row):
+        """Pulls the selected Id."""
+        if current_row >= 0:
+            self.result_selected(current_row)
+
+
 class AboutDialog(QtGui.QDialog):
     """Shows information about the program."""
     def __init__(self, parent=None):
         """Construct the dialog.
 
-            :param parent: the widget's parent
-            :type parent: :class:`QtGui.QWidget`
-            """
+        :param parent: the widget's parent
+        :type parent: :class:`QtGui.QWidget`
+        """
         super(AboutDialog, self).__init__(parent)
         self.setWindowTitle('About ' + metadata.nice_title)
         self.layout = QtGui.QVBoxLayout(self)
