@@ -25,8 +25,8 @@ class TestEntrezPresenter:
         def test_valid_values(self, presenter):
             """When the user clicks search with a valid string,
                 the search results are shown."""
-            search_str = 'manta birostris'
-            record = {'IdList': sentinel.id_list, 'QueryTranslation': sentinel.query_translation}
+            record = {'IdList': sentinel.id_list,
+                      'QueryTranslation': sentinel.query_translation}
             presenter.model.search.return_value = record
             presenter._user_submits(sentinel.search_str)
             assert (presenter.model.mock_calls ==
