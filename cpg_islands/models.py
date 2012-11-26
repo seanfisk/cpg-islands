@@ -83,6 +83,8 @@ class MetaSeqInputModel(object):
         :type island_size: :class:`int`
         :param min_gc_ratio: minimum ratio of Guanine/Cytosine
         :type min_gc_ratio: :class:`float`
+        :param min_obs_exp_cpg_ratio: minimum of observed CpG's to expected
+        :type min_obs_exp_cpg_ratio: :class:`float`
     """
 
     algorithms_loaded = Event()
@@ -114,8 +116,7 @@ class MetaSeqInputModel(object):
 
     @abstractmethod
     def set_island_definition_defaults(self):
-        """Set the default island definitions of an island size of 200
-        and a GC ratio of 60%.
+        """Set the default island definitions.
         """
         raise NotImplementedError()
 
@@ -134,7 +135,9 @@ class MetaSeqInputModel(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def compute_islands(self, seq, island_size, min_gc_ratio, algo_index):
+    def compute_islands(
+            self, seq, island_size, min_gc_ratio,
+            min_obs_exp_cpg_ratio, algo_index):
         """Create a list of CpG island features in a sequence.
 
         :param seq: the sequence to analyze
@@ -143,9 +146,11 @@ class MetaSeqInputModel(object):
         :type island_size: :class:`int`
         :param min_gc_ratio: the ratio of GC to other bases
         :type min_gc_ratio: :class:`float`
-        :raise: :exc:`ValueError` when parameters are invalid
+        :param min_obs_exp_cpg_ratio: minimum observed to expected CpG's
+        :type min_obs_exp_cpg_ratio: :class:`float`
         :param algo_index: the index of the algorithm to use
         :type algo_index: :class:`int`
+        :raise: :exc:`ValueError` when parameters are invalid
         """
         raise NotImplementedError()
 
@@ -230,7 +235,7 @@ class SeqInputModel(MetaSeqInputModel):
         self.results_model = results_model
 
     def set_island_definition_defaults(self):
-        self.island_definition_defaults_set(200, 0.6)
+        self.island_definition_defaults_set(200, 0.5, 0.65)
 
     def load_algorithms(self):
         algorithm_names = [algo.name for algo in algorithms.registry]
@@ -244,11 +249,12 @@ class SeqInputModel(MetaSeqInputModel):
             return
         self.file_loaded(str(seq_record.seq))
 
-    def compute_islands(self, seq_record, island_size, min_gc_ratio,
-                        algo_index):
+    def compute_islands(
+            self, seq_record, island_size, min_gc_ratio,
+            min_obs_exp_cpg_ratio, algo_index):
         seq_record = \
             algorithms.registry[algo_index].algorithm(
-                seq_record, island_size, min_gc_ratio)
+                seq_record, island_size, min_gc_ratio, min_obs_exp_cpg_ratio)
         self.results_model.set_results(seq_record)
         self.islands_computed()
 

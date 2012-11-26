@@ -71,6 +71,14 @@ class BaseSeqInputView(object):
         """
         raise NotImplementedError()
 
+    def set_min_obs_exp_cpg_ratio(self, min_obs_exp_cpg_ratio):
+        """Set the minimum observed/expected CpG ratio.
+
+        :param min_gc_ratio: the ratio of Guanine/Cytosine as a string
+        :type min_gc_ratio: :class:`str`
+        """
+        raise NotImplementedError()
+
     def show_error(self, message):
         """Show the user an error dialog.
 

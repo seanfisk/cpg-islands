@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+# The encoding declaration is necessary to tell Python that we are
+# using Unicode in this file. See
+# <http://www.python.org/dev/peps/pep-0263/>.
 """:mod:`cpg_islands.views.qt` --- Views based on Q toolkit
 """
 
@@ -99,7 +104,15 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         self.min_gc_ratio_validator.setBottom(0)
         self.min_gc_ratio_validator.setTop(1)
         self.min_gc_ratio_input.setValidator(self.min_gc_ratio_validator)
-        self.form_layout.addRow('GC Ratio', self.min_gc_ratio_input)
+        self.form_layout.addRow(u'GC Ratio ≥', self.min_gc_ratio_input)
+
+        self.min_obs_exp_cpg_ratio_input = QtGui.QLineEdit(self)
+        self.min_obs_exp_ratio_validator = QtGui.QDoubleValidator()
+        self.min_obs_exp_ratio_validator.setBottom(0)
+        self.min_obs_exp_cpg_ratio_input.setValidator(
+            self.min_obs_exp_ratio_validator)
+        self.form_layout.addRow(
+            u'Observed/Expected CpG Ratio ≥', self.min_obs_exp_cpg_ratio_input)
 
         self.algorithms_combo_box = QtGui.QComboBox(self)
         self.form_layout.addRow('Algorithm', self.algorithms_combo_box)
@@ -137,13 +150,24 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
     def _get_min_gc_ratio(self):
         """Return the widget's entered GC ratio.
 
-        :return: the key
+        :return: the ratio
         :rtype: :class:`str`
         """
         return self.min_gc_ratio_input.text()
 
-    def set_min_gc_ratio(self, min_gc_ratio):
-        self.min_gc_ratio_input.setText(min_gc_ratio)
+    def set_min_gc_ratio(self, min_gc_ratio_str):
+        self.min_gc_ratio_input.setText(min_gc_ratio_str)
+
+    def _get_min_obs_exp_cpg_ratio(self):
+        """Return the widget's entered observed/expected CpG ratio.
+
+        :return: the ratio
+        :rtype: :class:`str`
+        """
+        return self.min_obs_exp_cpg_ratio_input.text()
+
+    def set_min_obs_exp_cpg_ratio(self, min_obs_exp_cpg_ratio_str):
+        self.min_obs_exp_cpg_ratio_input.setText(min_obs_exp_cpg_ratio_str)
 
     def _get_island_size(self):
         """Return the widget's entered island size.
@@ -182,6 +206,7 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
             self.submitted(self._get_seq(),
                            self._get_island_size(),
                            self._get_min_gc_ratio(),
+                           self._get_min_obs_exp_cpg_ratio(),
                            self._get_algorithm_index())
         except ValueError as error:
             self.show_error(str(error))

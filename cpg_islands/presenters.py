@@ -41,7 +41,8 @@ class SeqInputPresenter(object):
         self.model.algorithms_loaded.append(self.view.set_algorithms)
         self.view.submitted.append(self._user_submits)
 
-    def _island_definition_defaults_set(self, island_size, min_gc_ratio):
+    def _island_definition_defaults_set(
+            self, island_size, min_gc_ratio, min_obs_exp_cpg_ratio):
         """Called when island definition defaults are set.
 
         :param island_size: number of bases in the island
@@ -51,9 +52,11 @@ class SeqInputPresenter(object):
         """
         self.view.set_island_size(str(island_size))
         self.view.set_min_gc_ratio(str(min_gc_ratio))
+        self.view.set_min_obs_exp_cpg_ratio(str(min_obs_exp_cpg_ratio))
 
-    def _user_submits(self, seq_str, island_size_str,
-                      min_gc_ratio_str, algo_index):
+    def _user_submits(
+            self, seq_str, island_size_str, min_gc_ratio_str,
+            min_obs_exp_cpg_ratio_str, algo_index):
         """Called when the user submits the form.
 
         :param seq_str: the sequence as a string
@@ -88,8 +91,16 @@ class SeqInputPresenter(object):
             self.view.show_error(
                 'Invalid ratio for GC: {0}'.format(min_gc_ratio_str))
             return
+        try:
+            min_obs_exp_cpg_ratio = float(min_obs_exp_cpg_ratio_str)
+        except ValueError:
+            self.view.show_error(
+                'Invalid ratio for minimum observed/expected '
+                'CpG ratio: {0}'.format(min_obs_exp_cpg_ratio_str))
+            return
         self.model.compute_islands(
-            SeqRecord(seq), island_size, min_gc_ratio, algo_index)
+            SeqRecord(seq), island_size, min_gc_ratio,
+            min_obs_exp_cpg_ratio, algo_index)
 
     def _file_loaded(self, file_path):
         """Called when the user loads a file.

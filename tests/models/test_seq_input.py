@@ -16,7 +16,7 @@ class TestSeqInputModel:
         callback = MagicMock()
         model.island_definition_defaults_set.append(callback)
         model.set_island_definition_defaults()
-        assert callback.mock_calls == [call(200, 0.6)]
+        assert callback.mock_calls == [call(200, 0.5, 0.65)]
         assert model.results_model.mock_calls == []
 
     @patch('cpg_islands.models.algorithms', autospec=True, spec_set=True)
@@ -79,8 +79,11 @@ class TestSeqInputModel:
                 sentinel.correct_results
             mock_algorithms.registry = registry
 
-            model.compute_islands(sentinel.seq_record, sentinel.island_size,
-                                  sentinel.min_gc_ratio, algo_index)
+            model.compute_islands(sentinel.seq_record,
+                                  sentinel.island_size,
+                                  sentinel.min_gc_ratio,
+                                  sentinel.min_obs_exp_cpg_ratio,
+                                  algo_index)
             assert (model.results_model.mock_calls ==
                     [call.set_results(sentinel.correct_results)])
             for i in unselected_algo_indices:
@@ -88,7 +91,8 @@ class TestSeqInputModel:
             assert (mock_algorithms.registry[algo_index].mock_calls ==
                     [call.algorithm(sentinel.seq_record,
                                     sentinel.island_size,
-                                    sentinel.min_gc_ratio)])
+                                    sentinel.min_gc_ratio,
+                                    sentinel.min_obs_exp_cpg_ratio)])
 
         def test_results_set(self, mock_algorithms, model):
             first_algo = MagicMock()
@@ -96,13 +100,15 @@ class TestSeqInputModel:
             mock_algorithms.registry = [first_algo]
             model.compute_islands(sentinel.seq_record,
                                   sentinel.island_size,
-                                  sentinel.min_gc_ratio, 0)
+                                  sentinel.min_gc_ratio,
+                                  sentinel.min_obs_exp_cpg_ratio,
+                                  0)
             assert (model.results_model.mock_calls ==
                     [call.set_results(sentinel.results)])
 
         def test_islands_computed_called(self, mock_algorithms, model):
             callback = MagicMock()
             model.islands_computed.append(callback)
-            model.compute_islands(
-                sentinel.fake, sentinel.fake, sentinel.fake, sentinel.fake)
+            model.compute_islands(sentinel.fake, sentinel.fake,
+                                  sentinel.fake, sentinel.fake, sentinel.fake)
             assert callback.mock_calls == [call()]
