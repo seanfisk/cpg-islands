@@ -13,6 +13,17 @@ Todo
 
 .. todo::
 
+   Results view - for each island, also show:
+
+   * index number
+   * start index
+   * end index
+   * GC percentage
+   * obs/exp CpG
+   * length
+
+.. todo::
+
    Cython sliding window and accumulating sliding window.
 
 .. todo::
