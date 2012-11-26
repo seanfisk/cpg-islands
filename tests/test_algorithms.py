@@ -3,7 +3,7 @@ from __future__ import division
 import pytest
 
 from cpg_islands import algorithms
-from tests.helpers import make_features, make_seq_record
+from tests.helpers import make_seq_record
 
 
 def extract_features(seq_record):
@@ -12,6 +12,7 @@ def extract_features(seq_record):
 
 
 def assert_seq_records_equal(computed, expected):
+    assert str(computed.seq) == str(expected.seq)
     assert extract_features(computed) == extract_features(expected)
 
 # Use the old style parametrization code to set explicit ids. This
@@ -69,6 +70,14 @@ class TestAlgorithms:
         assert (str(exc_info.value) ==
                 'Invalid GC ratio for ratio between zero and one: -1.5')
 
+    def test_zero_gc_ratio(self, algorithm):
+        """The user can submit a GC ratio of zero."""
+        algorithm(make_seq_record('ATCG'), 2, 0, 0.6)
+
+    def test_one_gc_ratio(self, algorithm):
+        """The user can submit a GC ratio of one."""
+        algorithm(make_seq_record('ATCG'), 2, 1, 0.6)
+
     def test_greater_than_one_gc_ratio(self, algorithm):
         """When the user submits a GC ratio greater than one, they
         are shown an error.
@@ -86,46 +95,38 @@ class TestAlgorithms:
             algorithm(make_seq_record('ATGC'), 2, 0.5, -1.5)
         assert (str(exc_info.value) ==
                 'Invalid observed-to-expected CpG ratio '
-                'for ratio between zero and one: -1.5')
+                'for ratio greater than or equal to zero: -1.5')
+
+    def test_zero_obs_to_exp_ratio(self, algorithm):
+        """The user can submit an observed-to-expected CpG ratio of zero."""
+        algorithm(make_seq_record('ATGC'), 2, 0.5, 0)
 
     def test_greater_than_one_obs_to_exp_ratio(self, algorithm):
-        """When the user submits a GC ratio greater than one, they
-        are shown an error.
+        """The user can submit an observed-to-expected CpG ratio
+        greater than one.
         """
-        with pytest.raises(ValueError) as exc_info:
-            algorithm(make_seq_record('ATGC'), 2, 0.5, 20)
-        assert (str(exc_info.value) ==
-                'Invalid observed-to-expected CpG ratio '
-                'for ratio between zero and one: 20')
+        algorithm(make_seq_record('ATGC'), 2, 0.5, 1.5)
 
-    # def test_single_base(self, algorithm):
-    #     seq_record = make_seq_record('C')
-    #     computed = algorithm(seq_record, 1, 1)
-    #     seq_record.features = make_features([(0, 1)])
-    #     assert_seq_records_equal(computed, seq_record)
+    def test_single_cpg(self, algorithm):
+        seq_str = 'CG'
+        computed = algorithm(make_seq_record(seq_str), 2, 1, 2)
+        expected = make_seq_record(seq_str, [(0, 2)])
+        assert_seq_records_equal(computed, expected)
 
-    # def test_ratio_one(self, algorithm):
-    #     seq_record = make_seq_record('ATGCCGATTTTA')
-    #     computed = algorithm(seq_record, 4, 1)
-    #     seq_record.features = make_features([(2, 6)])
-    #     assert_seq_records_equal(computed, seq_record)
+    def test_island_at_beginning(self, algorithm):
+        seq_str = 'CGGATATATA'
+        computed = algorithm(make_seq_record(seq_str), 3, 0.5, 0.6)
+        expected = make_seq_record(seq_str, [(0, 6)])
+        assert_seq_records_equal(computed, expected)
 
-    # def test_ratio_half(self, algorithm):
-    #     seq_record = make_seq_record('ATATGCTAAT')
-    #     computed = algorithm(seq_record, 4, 0.5)
-    #     seq_record.features = make_features([(2, 6), (3, 7), (4, 8)])
-    #     assert_seq_records_equal(computed, seq_record)
+    def test_island_in_middle(self, algorithm):
+        seq_str = 'ATATACACGGAATATT'
+        computed = algorithm(make_seq_record(seq_str), 4, 0.5, 0.6)
+        expected = make_seq_record(seq_str, [(5, 13)])
+        assert_seq_records_equal(computed, expected)
 
-    # def test_ratio_third(self, algorithm):
-    #     seq_record = make_seq_record('TTATATGCTAATAT')
-    #     size = 6
-    #     computed = algorithm(seq_record, size, 1 / 3)
-    #     seq_record.features = \
-    #         make_features([(i, i + size) for i in xrange(2, 7)])
-    #     assert_seq_records_equal(computed, seq_record)
-
-    # def test_island_at_end(self, algorithm):
-    #     seq_record = make_seq_record('ATATATGCGC')
-    #     computed = algorithm(seq_record, 4, 1)
-    #     seq_record.features = make_features([(6, 10)])
-    #     assert_seq_records_equal(computed, seq_record)
+    def test_island_at_end(self, algorithm):
+        seq_str = 'ATATATTATTCAACGAGG'
+        computed = algorithm(make_seq_record(seq_str), 5, 0.5, 0.6)
+        expected = make_seq_record(seq_str, [(10, 18)])
+        assert_seq_records_equal(computed, expected)

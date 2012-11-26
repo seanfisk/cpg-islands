@@ -9,6 +9,14 @@ Todo
 
 .. todo::
 
+   Add lots more tests for algorithms.
+
+.. todo::
+
+   Cython sliding window and accumulating sliding window.
+
+.. todo::
+
    Measure speed of algorithm. Decided to add a "Timing" tab which
    gets populated in the same way as Results when ``compute_islands``
    is called. We will compose the SeqInputModel with a
@@ -23,6 +31,10 @@ Todo
 .. todo::
 
    C-based extension model implementing sliding window.
+
+.. todo::
+
+   Decrease the cyclomatic complexity of the Python accumulator algorithm.
 
 .. todo::
 
