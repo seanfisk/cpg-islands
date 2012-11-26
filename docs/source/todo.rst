@@ -61,6 +61,11 @@ Todo
 
 .. todo::
 
+   Figure out why flake8>1.5 is not working with NOQA comments. For
+   now we are just staying at flake8==1.5.
+
+.. todo::
+
    Make documentation organization nicer.
 
 .. todo::
