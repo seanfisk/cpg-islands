@@ -235,7 +235,7 @@ class SeqInputModel(MetaSeqInputModel):
         self.results_model = results_model
 
     def set_island_definition_defaults(self):
-        self.island_definition_defaults_set(200, 0.5, 0.65)
+        self.island_definition_defaults_set(200, 0.5, 0.6)
 
     def load_algorithms(self):
         algorithm_names = [algo.name for algo in algorithms.registry]

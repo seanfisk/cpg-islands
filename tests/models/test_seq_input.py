@@ -16,7 +16,7 @@ class TestSeqInputModel:
         callback = MagicMock()
         model.island_definition_defaults_set.append(callback)
         model.set_island_definition_defaults()
-        assert callback.mock_calls == [call(200, 0.5, 0.65)]
+        assert callback.mock_calls == [call(200, 0.5, 0.6)]
         assert model.results_model.mock_calls == []
 
     @patch('cpg_islands.models.algorithms', autospec=True, spec_set=True)
