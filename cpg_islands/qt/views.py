@@ -97,7 +97,7 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         self.island_size_validator = QtGui.QIntValidator()
         self.island_size_validator.setBottom(0)
         self.island_size_input.setValidator(self.island_size_validator)
-        self.form_layout.addRow('Island Size', self.island_size_input)
+        self.form_layout.addRow(u'Island Size ≥', self.island_size_input)
 
         self.min_gc_ratio_input = QtGui.QLineEdit(self)
         self.min_gc_ratio_validator = QtGui.QDoubleValidator()
