@@ -28,6 +28,11 @@ Todo
 
 .. todo::
 
+   Add mnemonics and buddy labels, etc. to fields and labels. Some are
+   there but go through and check.
+
+.. todo::
+
    Measure speed of algorithm. Decided to add a "Timing" tab which
    gets populated in the same way as Results when ``compute_islands``
    is called. We will compose the SeqInputModel with a
@@ -69,6 +74,10 @@ Todo
 .. todo::
 
    Sean - Distribution with pyinstaller.
+
+.. todo::
+
+   Buck up and run the program on Windows.
 
 .. todo::
 
