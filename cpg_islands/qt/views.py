@@ -216,15 +216,16 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
     def __init__(self, parent=None):
         super(ResultsView, self).__init__(parent)
 
-        self.layout = QtGui.QVBoxLayout(self)
+        self.top_layout = QtGui.QVBoxLayout(self)
 
-        self.form_layout = QtGui.QFormLayout()
+        self.global_stats_layout = QtGui.QFormLayout()
         self.exec_time_label = QtGui.QLabel()
         self.exec_time_label.setTextInteractionFlags(
             QtCore.Qt.TextSelectableByMouse |
             QtCore.Qt.TextSelectableByKeyboard)
-        self.form_layout.addRow('Execution Time:', self.exec_time_label)
-        self.layout.addLayout(self.form_layout)
+        self.global_stats_layout.addRow(
+            'Execution Time:', self.exec_time_label)
+        self.top_layout.addLayout(self.global_stats_layout)
 
         self.islands_list = QtGui.QListWidget(self)
         self.islands_list.currentRowChanged.connect(self._island_selected)
@@ -235,17 +236,17 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.local_seq = SeqTextEdit(self)
         self.local_seq.setReadOnly(True)
 
-        self.sequences = QtGui.QSplitter(QtCore.Qt.Vertical)
-        self.sequences.addWidget(self.global_seq)
-        self.sequences.addWidget(self.local_seq)
-        self.sequences.setSizes([100, 100])
+        self.seq_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.seq_splitter.addWidget(self.global_seq)
+        self.seq_splitter.addWidget(self.local_seq)
+        self.seq_splitter.setSizes([100, 100])
 
-        self.holder = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.holder.addWidget(self.islands_list)
-        self.holder.addWidget(self.sequences)
-        self.holder.setSizes([100, 490])
+        self.list_seq_splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
+        self.list_seq_splitter.addWidget(self.islands_list)
+        self.list_seq_splitter.addWidget(self.seq_splitter)
+        self.list_seq_splitter.setSizes([100, 490])
 
-        self.layout.addWidget(self.holder, 1)
+        self.top_layout.addWidget(self.list_seq_splitter, 1)
 
     def set_islands(self, islands):
         self.islands_list.clear()
