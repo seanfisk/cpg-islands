@@ -219,8 +219,8 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.top_layout = QtGui.QVBoxLayout(self)
 
         self.global_stats_layout = QtGui.QFormLayout()
-        self.algo_name_label = QtGui.QLabel()
-        self.exec_time_label = QtGui.QLabel()
+        self.algo_name_label = QtGui.QLabel(self)
+        self.exec_time_label = QtGui.QLabel(self)
         for label in [self.algo_name_label, self.exec_time_label]:
             label.setTextInteractionFlags(
                 QtCore.Qt.TextSelectableByMouse |
@@ -232,22 +232,41 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
             'Execution Time:', self.exec_time_label)
         self.top_layout.addLayout(self.global_stats_layout)
 
+        self.islands_list_container = QtGui.QWidget(self)
+        self.islands_list_label = QtGui.QLabel('Islands List', self)
         self.islands_list = QtGui.QListWidget(self)
         self.islands_list.currentRowChanged.connect(self._island_selected)
         self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.islands_list_layout = QtGui.QVBoxLayout(
+            self.islands_list_container)
+        self.islands_list_layout.addWidget(self.islands_list_label)
+        self.islands_list_layout.addWidget(self.islands_list)
+
+        self.global_seq_container = QtGui.QWidget(self)
+        self.global_seq_label = QtGui.QLabel(
+            'Island Highlighted Within Full Sequence', self)
         self.global_seq = SeqTextEdit(self)
         self.global_seq.setReadOnly(True)
+        self.global_seq_layout = QtGui.QVBoxLayout(self.global_seq_container)
+        self.global_seq_layout.addWidget(self.global_seq_label)
+        self.global_seq_layout.addWidget(self.global_seq)
 
+        self.local_seq_container = QtGui.QWidget(self)
+        self.local_seq_label = QtGui.QLabel(
+            'Island Bases', self)
         self.local_seq = SeqTextEdit(self)
         self.local_seq.setReadOnly(True)
+        self.local_seq_layout = QtGui.QVBoxLayout(self.local_seq_container)
+        self.local_seq_layout.addWidget(self.local_seq_label)
+        self.local_seq_layout.addWidget(self.local_seq)
 
         self.seq_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
-        self.seq_splitter.addWidget(self.global_seq)
-        self.seq_splitter.addWidget(self.local_seq)
+        self.seq_splitter.addWidget(self.global_seq_container)
+        self.seq_splitter.addWidget(self.local_seq_container)
         self.seq_splitter.setSizes([100, 100])
 
         self.list_seq_splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.list_seq_splitter.addWidget(self.islands_list)
+        self.list_seq_splitter.addWidget(self.islands_list_container)
         self.list_seq_splitter.addWidget(self.seq_splitter)
         self.list_seq_splitter.setSizes([100, 490])
 
