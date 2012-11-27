@@ -207,7 +207,7 @@ class MetaEntrezModel(object):
     def get_seq(self, id):
         """Pull sequence based on id.
 
-        :param id: the text to encode
+        :param id: the id of the sequence
         :type id: :class:`int`
         :return: the sequence
         :rtype: :class:`Seq`
@@ -216,11 +216,12 @@ class MetaEntrezModel(object):
 
 
 class AppModel(MetaAppModel):
-    def __init__(self, seq_input_model):
+    def __init__(self, seq_input_model, entrez_model):
         """Constructor.
 
         :param type: :class:`MetaSeqInputModel`
         """
+        self.entrez_model = entrez_model
         self.seq_input_model = seq_input_model
 
     def register_for_events(self):
@@ -301,9 +302,10 @@ class ResultsModel(MetaResultsModel):
         return self._seq_record
 
 
-class EntrezModel(object):
-    def __init__(self):
+class EntrezModel(MetaEntrezModel):
+    def __init__(self, seq_input_model):
         Entrez.email = 'gray.gwizdz@gmail.com'
+        self.seq_input_model = seq_input_model
 
     def search(self, text):
         handle = Entrez.esearch(db="nucleotide", term=text)
@@ -319,4 +321,5 @@ class EntrezModel(object):
                                rettype="gb", retmode="text")
         record = SeqIO.read(handle, "genbank")
         handle.close()
+        self.seq_input_model.file_loaded(str(record.seq))
         return record

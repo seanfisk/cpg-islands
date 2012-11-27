@@ -2,13 +2,14 @@ import pytest
 from mock import create_autospec, call, sentinel, MagicMock, patch
 
 from cpg_islands import metadata
-from cpg_islands.models import AppModel, MetaSeqInputModel
+from cpg_islands.models import AppModel, MetaSeqInputModel, MetaEntrezModel
 
 
 @pytest.fixture
 def model():
     mock_seq_input_model = create_autospec(MetaSeqInputModel, spec_st=True)
-    return AppModel(mock_seq_input_model)
+    mock_entrez_model = create_autospec(MetaEntrezModel, spec_st=True)
+    return AppModel(mock_seq_input_model, mock_entrez_model)
 
 
 @pytest.fixture(params=['-h', '--help'])

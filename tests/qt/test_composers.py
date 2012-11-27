@@ -14,6 +14,12 @@ from cpg_islands.views import (BaseAppView,
 class TestComposers:
     # Keep in mind that the order of mock passed as arguments starts
     # from the bottom up.
+    @patch('cpg_islands.qt.composers.EntrezPresenter',
+           autospec=True, spec_set=True)
+    @patch('cpg_islands.qt.composers.EntrezView',
+           autospec=BaseAppView, spec_set=True)
+    @patch('cpg_islands.qt.composers.EntrezModel',
+           autospec=MetaAppModel, spec_set=True)
     @patch('cpg_islands.qt.composers.ResultsPresenter',
            autospec=True, spec_set=True)
     @patch('cpg_islands.qt.composers.ResultsView',
@@ -36,13 +42,16 @@ class TestComposers:
             self,
             mock_app_model, mock_app_view, mock_app_pres,
             mock_seq_input_model, mock_seq_input_view, mock_seq_input_pres,
-            mock_results_model, mock_results_view, mock_results_pres):
+            mock_results_model, mock_results_view, mock_results_pres,
+            mock_entrez_model, mock_entrez_view, mock_entrez_pres):
         mock_results_model.return_value = sentinel.results_model
         mock_results_view.return_value = sentinel.results_view
         mock_seq_input_model.return_value = sentinel.seq_input_model
         mock_seq_input_view.return_value = sentinel.seq_input_view
         app_model = mock_app_model.return_value
         mock_app_view.return_value = sentinel.app_view
+        mock_entrez_model.return_value = sentinel.entrez_model
+        mock_entrez_view.return_value = sentinel.entrez_view
 
         app_pres = mock_app_pres.return_value
 
@@ -51,7 +60,7 @@ class TestComposers:
         assert retval == app_pres
 
         assert (mock_app_model.mock_calls ==
-                [call(sentinel.seq_input_model),
+                [call(sentinel.seq_input_model, sentinel.entrez_model),
                  call().register_for_events(),
                  call().run(sentinel.argv)])
         assert (mock_app_view.mock_calls ==
@@ -71,3 +80,9 @@ class TestComposers:
         assert (mock_results_pres.mock_calls ==
                 call(sentinel.results_model,
                      sentinel.results_view).register_for_events().call_list())
+        assert (mock_entrez_model.mock_calls == [call(
+                sentinel.seq_input_model)])
+        assert (mock_entrez_view.mock_calls == [call()])
+        assert (mock_entrez_pres.mock_calls == call(
+                sentinel.entrez_model,
+                sentinel.entrez_view).register_for_events().call_list())

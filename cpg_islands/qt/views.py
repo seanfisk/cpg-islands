@@ -260,7 +260,9 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         super(EntrezView, self).__init__(parent)
 
         # Layout
-        self.layout = QtGui.QVBoxLayout(self)
+        self.top_layout = QtGui.QVBoxLayout(self)
+        self.layout = QtGui.QFormLayout()
+        #self.layout = QtGui.QVBoxLayout(self)
         self.text_input = QtGui.QLineEdit(self)
         self.text_input.textChanged.connect(self._text_input_changed)
         self.layout.addRow('Term', self.text_input)
@@ -284,6 +286,8 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         self.submit_button = QtGui.QPushButton('Search', self)
         self.submit_button.clicked.connect(self._submit_clicked)
         self.layout.addRow(self.submit_button)
+        self.top_layout.addLayout(self.layout)
+        self.show()
 
     def get_text(self):
         """Return the widget's entered text.
