@@ -115,6 +115,14 @@ class BaseResultsView(object):
         """
         raise NotImplementedError()
 
+    def set_algo_name(self, algo_name):
+        """Set the name of the algorithm used.
+
+        :param algo_name: the algorithm name
+        :type algo_name: :class:`str`
+        """
+        raise NotImplementedError()
+
     def set_local_seq(self, seq_str):
         """Set the local sequence string.
 

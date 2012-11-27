@@ -219,10 +219,15 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.top_layout = QtGui.QVBoxLayout(self)
 
         self.global_stats_layout = QtGui.QFormLayout()
+        self.algo_name_label = QtGui.QLabel()
         self.exec_time_label = QtGui.QLabel()
-        self.exec_time_label.setTextInteractionFlags(
-            QtCore.Qt.TextSelectableByMouse |
-            QtCore.Qt.TextSelectableByKeyboard)
+        for label in [self.algo_name_label, self.exec_time_label]:
+            label.setTextInteractionFlags(
+                QtCore.Qt.TextSelectableByMouse |
+                QtCore.Qt.TextSelectableByKeyboard)
+
+        self.global_stats_layout.addRow(
+            'Algorithm Used:', self.algo_name_label)
         self.global_stats_layout.addRow(
             'Execution Time:', self.exec_time_label)
         self.top_layout.addLayout(self.global_stats_layout)
@@ -252,6 +257,9 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.islands_list.clear()
         for start, end in islands:
             self.islands_list.addItem('{0}, {1}'.format(start, end))
+
+    def set_algo_name(self, algo_name):
+        self.algo_name_label.setText(algo_name)
 
     def set_exec_time(self, exec_time):
         self.exec_time_label.setText(exec_time)

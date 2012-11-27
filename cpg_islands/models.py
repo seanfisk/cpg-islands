@@ -165,16 +165,20 @@ class MetaResultsModel(object):
 
         :param seq_record: seq record with features
         :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param algo_name: the name of the algorithm used
+        :type algo_name: :class:`str`
         :param exec_time: algorithm's execution duration
         :type exec_time: :class:`float`
     """
 
     @abstractmethod
-    def set_results(self, seq_record, exec_time):
+    def set_results(self, seq_record, algo_name, exec_time):
         """Set the results of island computation.
 
         :param seq_record: the seq record with features
         :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param algo_name: the name of the algorithm used
+        :type algo_name: :class:`str`
         :param exec_time: the algorithm's execution time
         :type exec_time: :class:`float`
         """
@@ -258,14 +262,14 @@ class SeqInputModel(MetaSeqInputModel):
             self, seq_record, island_size, min_gc_ratio,
             min_obs_exp_cpg_ratio, algo_index):
         start = timeit.default_timer()
+        algo = algorithms.registry[algo_index]
 
-        seq_record = \
-            algorithms.registry[algo_index].algorithm(
-                seq_record, island_size, min_gc_ratio, min_obs_exp_cpg_ratio)
+        seq_record = algo.algorithm(
+            seq_record, island_size, min_gc_ratio, min_obs_exp_cpg_ratio)
 
         end = timeit.default_timer()
 
-        self.results_model.set_results(seq_record, end - start)
+        self.results_model.set_results(seq_record, algo.name, end - start)
         self.islands_computed()
 
 
@@ -273,9 +277,9 @@ class ResultsModel(MetaResultsModel):
     def __init__(self):
         self._seq_record = SeqRecord(Seq('', IUPAC.unambiguous_dna))
 
-    def set_results(self, seq_record, exec_time):
+    def set_results(self, seq_record, algo_name, exec_time):
         self._seq_record = seq_record
-        self.islands_computed(seq_record, exec_time)
+        self.islands_computed(seq_record, algo_name, exec_time)
 
     def get_seq_record(self):
         return self._seq_record

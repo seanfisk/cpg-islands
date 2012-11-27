@@ -141,11 +141,13 @@ class ResultsPresenter(object):
         return (seq_feature.location.start.position,
                 seq_feature.location.end.position)
 
-    def _islands_computed(self, seq_record, exec_time):
+    def _islands_computed(self, seq_record, algo_name, exec_time):
         """Called after island locations have been computed.
 
         :param seq_record: seq record with features
         :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param algo_name: the name of the algorithm used
+        :type algo_name: :class:`str`
         :param exec_time: the algorithm's execution time
         :type exec_time: :class:`float`
         """
@@ -154,6 +156,7 @@ class ResultsPresenter(object):
         self.view.clear_local_seq()
         self.view.clear_global_seq()
         self.view.set_islands(island_tuples)
+        self.view.set_algo_name(algo_name)
         self.view.set_exec_time('{0} seconds'.format(exec_time))
 
     def _island_selected(self, island_index):

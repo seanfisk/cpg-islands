@@ -1,4 +1,4 @@
-from mock import create_autospec, call
+from mock import create_autospec, call, sentinel
 import pytest
 
 from cpg_islands.models import MetaResultsModel
@@ -27,11 +27,12 @@ class TestResultPresenter:
     def test_islands_computed(self, presenter):
         island_tuples = [(0, 5), (1, 6), (3, 8)]
         seq_record = make_seq_record('', island_tuples)
-        presenter._islands_computed(seq_record, 134.45)
+        presenter._islands_computed(seq_record, sentinel.algo_name, 134.45)
         assert (presenter.view.mock_calls ==
                 [call.clear_local_seq(),
                  call.clear_global_seq(),
                  call.set_islands(island_tuples),
+                 call.set_algo_name(sentinel.algo_name),
                  call.set_exec_time('134.45 seconds')
                  ])
         assert presenter.model.mock_calls == []

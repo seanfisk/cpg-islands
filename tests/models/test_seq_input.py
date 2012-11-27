@@ -96,6 +96,7 @@ class TestSeqInputModel:
             # Mock out algorithm return value.
             first_algo = MagicMock()
             first_algo.algorithm.return_value = sentinel.results
+            first_algo.name = sentinel.algo_name
             mock_algorithms.registry = [first_algo]
 
             # Mock out timing.
@@ -121,7 +122,8 @@ class TestSeqInputModel:
                                       0)
             assert mock_default_timer.mock_calls == [call() for _ in xrange(2)]
             assert (model.results_model.mock_calls ==
-                    [call.set_results(sentinel.results, 11)])
+                    [call.set_results(
+                        sentinel.results, sentinel.algo_name, 11)])
 
         def test_islands_computed_called(self, mock_algorithms, model):
             callback = MagicMock()
