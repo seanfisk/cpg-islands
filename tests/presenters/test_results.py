@@ -27,20 +27,21 @@ class TestResultPresenter:
     def test_islands_computed(self, presenter):
         island_tuples = [(0, 5), (1, 6), (3, 8)]
         seq_record = make_seq_record('', island_tuples)
-        presenter._islands_computed(seq_record)
+        presenter._islands_computed(seq_record, 134.45)
         assert (presenter.view.mock_calls ==
                 [call.clear_local_seq(),
                  call.clear_global_seq(),
                  call.set_islands(island_tuples),
+                 call.set_exec_time('134.45 seconds')
                  ])
         assert presenter.model.mock_calls == []
 
     def test_island_selected(self, presenter):
         seq_str = 'ATGCGCAT'
-        presenter.model.get_results.return_value = \
+        presenter.model.get_seq_record.return_value = \
             make_seq_record(seq_str, [(2, 4), (3, 5), (4, 6)])
         presenter._island_selected(1)
-        assert presenter.model.mock_calls == [call.get_results()]
+        assert presenter.model.mock_calls == [call.get_seq_record()]
         assert (presenter.view.mock_calls ==
                 [call.set_global_seq(seq_str, (3, 5)),
                  call.set_local_seq('CG')])

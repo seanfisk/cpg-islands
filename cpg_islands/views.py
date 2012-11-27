@@ -107,6 +107,14 @@ class BaseResultsView(object):
         """
         raise NotImplementedError()
 
+    def set_exec_time(self, exec_time_str):
+        """Set the execution time of the algorithm.
+
+        :param exec_time_str: execution time as a string
+        :type exec_time: :class:`str`
+        """
+        raise NotImplementedError()
+
     def set_local_seq(self, seq_str):
         """Set the local sequence string.
 

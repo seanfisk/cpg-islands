@@ -23,6 +23,8 @@ The following abbreviations are used consistently throughout the application (or
 +-------------------------------+------------+
 |expected                       |exp         |
 +-------------------------------+------------+
+|execution                      |exec        |
++-------------------------------+------------+
 |presenter                      |pres        |
 +-------------------------------+------------+
 

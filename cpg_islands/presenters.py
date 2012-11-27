@@ -141,17 +141,20 @@ class ResultsPresenter(object):
         return (seq_feature.location.start.position,
                 seq_feature.location.end.position)
 
-    def _islands_computed(self, seq_record):
+    def _islands_computed(self, seq_record, exec_time):
         """Called after island locations have been computed.
 
         :param seq_record: seq record with features
         :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param exec_time: the algorithm's execution time
+        :type exec_time: :class:`float`
         """
         island_tuples = [self._seq_feature_to_tuple(f) for f in
                          seq_record.features]
         self.view.clear_local_seq()
         self.view.clear_global_seq()
         self.view.set_islands(island_tuples)
+        self.view.set_exec_time('{0} seconds'.format(exec_time))
 
     def _island_selected(self, island_index):
         """Called when the selected island is changed.
@@ -159,7 +162,7 @@ class ResultsPresenter(object):
         :param island_index: index of the requested island
         :type island_index: :class:`int`
         """
-        seq_record = self.model.get_results()
+        seq_record = self.model.get_seq_record()
         island = seq_record.features[island_index]
         island_tuple = self._seq_feature_to_tuple(island)
         self.view.set_global_seq(str(seq_record.seq), island_tuple)

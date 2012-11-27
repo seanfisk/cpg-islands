@@ -3,6 +3,7 @@
 
 import argparse
 from abc import ABCMeta, abstractmethod
+import timeit
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -164,19 +165,23 @@ class MetaResultsModel(object):
 
         :param seq_record: seq record with features
         :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param exec_time: algorithm's execution duration
+        :type exec_time: :class:`float`
     """
 
     @abstractmethod
-    def set_results(self, seq_record):
+    def set_results(self, seq_record, exec_time):
         """Set the results of island computation.
 
         :param seq_record: the seq record with features
         :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param exec_time: the algorithm's execution time
+        :type exec_time: :class:`float`
         """
         raise NotImplementedError()
 
-    def get_results(self):
-        """Return the results of computation.
+    def get_seq_record(self):
+        """Return the sequence record with a list of computed features.
 
         :return: the seq record with features
         :rtype: :class:`Bio.SeqRecord.SeqRecord`
@@ -252,10 +257,15 @@ class SeqInputModel(MetaSeqInputModel):
     def compute_islands(
             self, seq_record, island_size, min_gc_ratio,
             min_obs_exp_cpg_ratio, algo_index):
+        start = timeit.default_timer()
+
         seq_record = \
             algorithms.registry[algo_index].algorithm(
                 seq_record, island_size, min_gc_ratio, min_obs_exp_cpg_ratio)
-        self.results_model.set_results(seq_record)
+
+        end = timeit.default_timer()
+
+        self.results_model.set_results(seq_record, end - start)
         self.islands_computed()
 
 
@@ -263,9 +273,9 @@ class ResultsModel(MetaResultsModel):
     def __init__(self):
         self._seq_record = SeqRecord(Seq('', IUPAC.unambiguous_dna))
 
-    def set_results(self, seq_record):
+    def set_results(self, seq_record, exec_time):
         self._seq_record = seq_record
-        self.islands_computed(seq_record)
+        self.islands_computed(seq_record, exec_time)
 
-    def get_results(self):
+    def get_seq_record(self):
         return self._seq_record

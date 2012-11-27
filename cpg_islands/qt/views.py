@@ -218,6 +218,14 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
 
         self.layout = QtGui.QVBoxLayout(self)
 
+        self.form_layout = QtGui.QFormLayout()
+        self.exec_time_label = QtGui.QLabel()
+        self.exec_time_label.setTextInteractionFlags(
+            QtCore.Qt.TextSelectableByMouse |
+            QtCore.Qt.TextSelectableByKeyboard)
+        self.form_layout.addRow('Execution Time:', self.exec_time_label)
+        self.layout.addLayout(self.form_layout)
+
         self.islands_list = QtGui.QListWidget(self)
         self.islands_list.currentRowChanged.connect(self._island_selected)
         self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -237,12 +245,15 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.holder.addWidget(self.sequences)
         self.holder.setSizes([100, 490])
 
-        self.layout.addWidget(self.holder)
+        self.layout.addWidget(self.holder, 1)
 
     def set_islands(self, islands):
         self.islands_list.clear()
         for start, end in islands:
             self.islands_list.addItem('{0}, {1}'.format(start, end))
+
+    def set_exec_time(self, exec_time):
+        self.exec_time_label.setText(exec_time)
 
     def _island_selected(self, current_row):
         # According to the Qt docs, "If there is no current item, the

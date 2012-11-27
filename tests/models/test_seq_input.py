@@ -84,8 +84,6 @@ class TestSeqInputModel:
                                   sentinel.min_gc_ratio,
                                   sentinel.min_obs_exp_cpg_ratio,
                                   algo_index)
-            assert (model.results_model.mock_calls ==
-                    [call.set_results(sentinel.correct_results)])
             for i in unselected_algo_indices:
                 assert mock_algorithms.registry[i].mock_calls == []
             assert (mock_algorithms.registry[algo_index].mock_calls ==
@@ -95,16 +93,35 @@ class TestSeqInputModel:
                                     sentinel.min_obs_exp_cpg_ratio)])
 
         def test_results_set(self, mock_algorithms, model):
+            # Mock out algorithm return value.
             first_algo = MagicMock()
             first_algo.algorithm.return_value = sentinel.results
             mock_algorithms.registry = [first_algo]
-            model.compute_islands(sentinel.seq_record,
-                                  sentinel.island_size,
-                                  sentinel.min_gc_ratio,
-                                  sentinel.min_obs_exp_cpg_ratio,
-                                  0)
+
+            # Mock out timing.
+            class DefaultTimer(object):
+                RETVALS = [24, 35]
+
+                def __init__(self):
+                    self.times_called = 0
+
+                def __call__(self):
+                    retval = self.RETVALS[self.times_called]
+                    self.times_called += 1
+                    return retval
+
+            mock_default_timer = MagicMock()
+            mock_default_timer.side_effect = DefaultTimer()
+
+            with patch('timeit.default_timer', mock_default_timer):
+                model.compute_islands(sentinel.seq_record,
+                                      sentinel.island_size,
+                                      sentinel.min_gc_ratio,
+                                      sentinel.min_obs_exp_cpg_ratio,
+                                      0)
+            assert mock_default_timer.mock_calls == [call() for _ in xrange(2)]
             assert (model.results_model.mock_calls ==
-                    [call.set_results(sentinel.results)])
+                    [call.set_results(sentinel.results, 11)])
 
         def test_islands_computed_called(self, mock_algorithms, model):
             callback = MagicMock()
