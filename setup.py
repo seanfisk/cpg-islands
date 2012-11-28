@@ -25,6 +25,14 @@ install_requirements = ['numpy', 'biopython']
 
 if sys.platform == 'darwin':
     # For py2app
+
+    # Tricks: Had to link the path to libpython2.7.dylib into my
+    # virtualenv for bundling to work, i.e.,
+    #
+    #     ln -s \
+    #     ~/.pythonz/pythons/CPython-2.7.3/lib/libpython2.7.dylib \
+    #     ~/.virtualenvs/cpg_islands/lib/
+    #
     extra_options = dict(
         setup_requires=['py2app'],
         app=['cpg_islands/qt/main.py'],
