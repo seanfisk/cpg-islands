@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 import os
 from cpg_islands import metadata
 
@@ -9,7 +10,7 @@ distribute_setup.use_setuptools()
 
 from setuptools import setup, find_packages
 
-from Cython.Build import cythonize
+# from Cython.Build import cythonize
 
 
 # credit: <http://packages.python.org/an_example_pypi_project/setuptools.html>
@@ -21,6 +22,23 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 install_requirements = ['numpy', 'biopython']
+
+if sys.platform == 'darwin':
+    # For py2app
+    extra_options = dict(
+        setup_requires=['py2app'],
+        app=['cpg_islands/qt/main.py'],
+        data_files=[],
+        options={
+            'py2app': {
+                'argv_emulation': True,
+                'includes': ['PySide.QtCore', 'PySide.QtGui'],
+            }
+        },
+    )
+else:
+    extra_options = {}
+
 
 # see here for more options:
 # <http://packages.python.org/distribute/setuptools.html>
@@ -53,13 +71,13 @@ setup(name=metadata.title,
           'Topic :: Scientific/Engineering :: Visualization',
       ],
       packages=find_packages(),
-      ext_modules=cythonize(
-          'cpg_islands/algorithms/sliding_window_cython.pyx'),
+      # ext_modules=cythonize(
+      #     'cpg_islands/algorithms/sliding_window_cython.pyx'),
       install_requires=install_requirements,
       zip_safe=False,  # don't use eggs
       entry_points={
           'gui_scripts': [
               'cpg_islands = cpg_islands.qt.main:main'
           ]
-      }
-      )
+      },
+      **extra_options)
