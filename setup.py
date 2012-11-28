@@ -33,6 +33,13 @@ if sys.platform == 'darwin':
             'py2app': {
                 'argv_emulation': True,
                 'includes': ['PySide.QtCore', 'PySide.QtGui'],
+                'plist': {
+                    'CFBundleName': metadata.nice_title,
+                    'CFBundleDisplayName': metadata.nice_title,
+                    'CFBundleIdentifier': metadata.organization_domain,
+                    'CFBundleGetInfoString': metadata.description,
+                    'CFBundleShortVersionString': metadata.version,
+                }
             }
         },
     )
