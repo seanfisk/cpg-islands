@@ -130,32 +130,30 @@ class ResultsPresenter(object):
         self.model.islands_computed.append(self._islands_computed)
         self.view.island_selected.append(self._island_selected)
 
-    def _seq_feature_to_tuple(self, seq_feature):
-        """Convert a SeqFeature to a tuple.
+    def _format_zero_indexed(self, index):
+        """Format an index with a note that the index is zero-indexed.
 
-        :param seq_feature: the feature
-        :type seq_feature: :class:`SeqFeature`
-        :return: the tuple
-        :rtype: :class:`tuple` of :class:`int` of length 2
+        :param index: the index to format
+        :type index: :class:`int`
         """
-        return (seq_feature.location.start.position,
-                seq_feature.location.end.position)
+        return '{0} (zero-indexed)'.format(index)
 
-    def _islands_computed(self, seq_record, algo_name, exec_time):
+    def _islands_computed(self, global_seq, feature_tuples, algo_name,
+                          exec_time):
         """Called after island locations have been computed.
 
-        :param seq_record: seq record with features
-        :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param global_seq: the full sequence
+        :type global_seq: :class:`str`
+        :param feature_tuples: tuples containing locations of the features
+        :type feature_tuples: :class:`list` of :class:`tuple`
         :param algo_name: the name of the algorithm used
         :type algo_name: :class:`str`
-        :param exec_time: the algorithm's execution time
+        :param exec_time: algorithm's execution duration
         :type exec_time: :class:`float`
         """
-        island_tuples = [self._seq_feature_to_tuple(f) for f in
-                         seq_record.features]
-        self.view.clear_local_seq()
-        self.view.clear_global_seq()
-        self.view.set_islands(island_tuples)
+        self.view.clear_subseq()
+        self.view.set_global_seq(global_seq)
+        self.view.set_islands(feature_tuples)
         self.view.set_algo_name(algo_name)
         self.view.set_exec_time('{0} seconds'.format(exec_time))
 
@@ -165,8 +163,11 @@ class ResultsPresenter(object):
         :param island_index: index of the requested island
         :type island_index: :class:`int`
         """
-        seq_record = self.model.get_seq_record()
-        island = seq_record.features[island_index]
-        island_tuple = self._seq_feature_to_tuple(island)
-        self.view.set_global_seq(str(seq_record.seq), island_tuple)
-        self.view.set_local_seq(str(island.extract(seq_record.seq)))
+        island_info = self.model.get_island_info(island_index)
+        self.view.highlight_global_seq(island_info.start, island_info.end)
+        self.view.set_start(self._format_zero_indexed(island_info.start))
+        self.view.set_end(self._format_zero_indexed(island_info.end))
+        self.view.set_length('{0} bases'.format(island_info.length))
+        self.view.set_subseq(island_info.subseq)
+        self.view.set_gc_ratio('{0}%'.format(island_info.gc_ratio * 100))
+        self.view.set_obs_exp_cpg_ratio(str(island_info.obs_exp_cpg_ratio))

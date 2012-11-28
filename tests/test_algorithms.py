@@ -3,17 +3,8 @@ from __future__ import division
 import pytest
 
 from cpg_islands import algorithms
-from tests.helpers import make_seq_record
+from tests.helpers import make_algo_results, make_seq_record
 
-
-def extract_features(seq_record):
-    return [str(feature.extract(seq_record.seq)) for feature in
-            seq_record.features]
-
-
-def assert_seq_records_equal(computed, expected):
-    assert str(computed.seq) == str(expected.seq)
-    assert extract_features(computed) == extract_features(expected)
 
 # Use the old style parametrization code to set explicit ids. This
 # makes the output look far better. To see why, uncomment the 2.3
@@ -110,23 +101,26 @@ class TestAlgorithms:
     def test_single_cpg(self, algorithm):
         seq_str = 'CG'
         computed = algorithm(make_seq_record(seq_str), 2, 1, 2)
-        expected = make_seq_record(seq_str, [(0, 2)])
-        assert_seq_records_equal(computed, expected)
+        expected = make_algo_results(seq_str, [(0, 2, 1, 2)])
+        print computed.seq_record.features[0].extract(computed.seq_record.seq)
+        for a in [computed, expected]:
+            print a.island_metadata_list[0].gc_ratio
+        assert computed == expected
 
     def test_island_at_beginning(self, algorithm):
         seq_str = 'CGGATATATA'
         computed = algorithm(make_seq_record(seq_str), 3, 0.5, 0.6)
-        expected = make_seq_record(seq_str, [(0, 6)])
-        assert_seq_records_equal(computed, expected)
+        expected = make_algo_results(seq_str, [(0, 6, 0.5, 3)])
+        assert computed == expected
 
     def test_island_in_middle(self, algorithm):
         seq_str = 'ATATACACGGAATATT'
         computed = algorithm(make_seq_record(seq_str), 4, 0.5, 0.6)
-        expected = make_seq_record(seq_str, [(5, 13)])
-        assert_seq_records_equal(computed, expected)
+        expected = make_algo_results(seq_str, [(5, 13, 0.5, 2)])
+        assert computed == expected
 
     def test_island_at_end(self, algorithm):
         seq_str = 'ATATATTATTCAACGAGG'
         computed = algorithm(make_seq_record(seq_str), 5, 0.5, 0.6)
-        expected = make_seq_record(seq_str, [(10, 18)])
-        assert_seq_records_equal(computed, expected)
+        expected = make_algo_results(seq_str, [(10, 18, 0.625,  4 / 3)])
+        assert computed == expected

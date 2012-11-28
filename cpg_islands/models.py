@@ -14,6 +14,39 @@ from cpg_islands import metadata, algorithms
 from cpg_islands.utils import Event
 
 
+class IslandInfo(object):
+    """Container class for island information."""
+    def __init__(self, start, end, length, subseq, gc_ratio,
+                 obs_exp_cpg_ratio):
+        """Constructor.
+
+        :param start: island start index
+        :type start: :class:`int`
+        :param end: island end index
+        :type end: :class:`int`
+        :param length: length of the island
+        :type length: :class:`int`
+        :param subseq: the bases that make up the island
+        :type subseq: :class:`str`
+        :param gc_ratio: island GC ratio
+        :type gc_ratio: :class:`float`
+        :param obs_exp_cpg_ratio: island observed/expected CpG ratio
+        :type obs_exp_cpg_ratio: :class:`float`
+        """
+        self.start = start
+        self.end = end
+        self.length = length
+        self.subseq = subseq
+        self.gc_ratio = gc_ratio
+        self.obs_exp_cpg_ratio = obs_exp_cpg_ratio
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not self == other
+
+
 class MetaAppModel(object):
     """Overlying application model interface."""
     __metaclass__ = ABCMeta
@@ -89,15 +122,6 @@ class MetaSeqInputModel(object):
     """
 
     algorithms_loaded = Event()
-    """Fired when all algorithms have been loaded.
-
-    .. function:: callback(algorithm_names)
-
-        :param algorithm_names: list of algorithm names
-        :types algorithm_names: :class:`list` of :class:`str`
-    """
-
-    algorithms_loaded = Event()
     """Fired when all available algorithms have been loaded. Callbacks
     should look like:
 
@@ -161,10 +185,12 @@ class MetaResultsModel(object):
     """Fired when island locations have been computed. Callbacks
     should look like:
 
-    .. function:: callback(seq_record)
+    .. function:: callback(global_seq, feature_tuples, algo_name, exec_time)
 
-        :param seq_record: seq record with features
-        :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param global_seq: the full sequence
+        :type global_seq: :class:`str`
+        :param feature_tuples: tuples containing locations of the features
+        :type feature_tuples: :class:`list` of :class:`tuple`
         :param algo_name: the name of the algorithm used
         :type algo_name: :class:`str`
         :param exec_time: algorithm's execution duration
@@ -172,11 +198,11 @@ class MetaResultsModel(object):
     """
 
     @abstractmethod
-    def set_results(self, seq_record, algo_name, exec_time):
+    def set_results(self, results, algo_name, exec_time):
         """Set the results of island computation.
 
-        :param seq_record: the seq record with features
-        :type seq_record: :class:`Bio.SeqRecord.SeqRecord`
+        :param results: algorithm results
+        :type results: :class:`AlgoResults`
         :param algo_name: the name of the algorithm used
         :type algo_name: :class:`str`
         :param exec_time: the algorithm's execution time
@@ -184,11 +210,12 @@ class MetaResultsModel(object):
         """
         raise NotImplementedError()
 
-    def get_seq_record(self):
-        """Return the sequence record with a list of computed features.
+    @abstractmethod
+    def get_island_info(self, island_index):
+        """Return the island information corresponding to a certain index.
 
-        :return: the seq record with features
-        :rtype: :class:`Bio.SeqRecord.SeqRecord`
+        :return: island information
+        :rtype: :class:`IslandInfo`
         """
         raise NotImplementedError()
 
@@ -275,11 +302,28 @@ class SeqInputModel(MetaSeqInputModel):
 
 class ResultsModel(MetaResultsModel):
     def __init__(self):
-        self._seq_record = SeqRecord(Seq('', IUPAC.unambiguous_dna))
+        self.island_information = algorithms.AlgoResults(
+            SeqRecord(Seq('', IUPAC.unambiguous_dna)),
+            [])
 
-    def set_results(self, seq_record, algo_name, exec_time):
-        self._seq_record = seq_record
-        self.islands_computed(seq_record, algo_name, exec_time)
+    def set_results(self, results, algo_name, exec_time):
+        self.results = results
+        island_tuples = [(feature.location.start.position,
+                          feature.location.end.position) for feature in
+                         self.results.seq_record.features]
+        self.islands_computed(str(results.seq_record.seq),
+                              island_tuples, algo_name, exec_time)
 
-    def get_seq_record(self):
-        return self._seq_record
+    def get_island_info(self, island_index):
+        feature = self.results.seq_record.features[island_index]
+        metadata = self.results.island_metadata_list[island_index]
+
+        start = feature.location.start.position
+        end = feature.location.end.position
+        length = end - start
+        subseq = str(feature.extract(self.results.seq_record.seq))
+        gc_ratio = metadata.gc_ratio
+        obs_exp_cpg_ratio = metadata.obs_exp_cpg_ratio
+
+        return IslandInfo(start, end, length, subseq, gc_ratio,
+                          obs_exp_cpg_ratio)

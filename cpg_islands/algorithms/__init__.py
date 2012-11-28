@@ -9,91 +9,120 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 # from cpg_islands.algorithms import sliding_window_cython
 
 
-def _is_gc(base):
-    """Test whether a specified base is Guanine or Cytosine.
+class IslandMetadata(object):
+    """Container class for island metadata."""
+    def __init__(self, gc_ratio, obs_exp_cpg_ratio):
+        """Constructor.
 
-    :param base: the base to test
-    :type base: :class:`str`
-    :return: whether the base in G or C
-    :rtype: :class:`bool`
-    """
-    return base == 'G' or base == 'C'
+        :param gc_ratio: this island's GC ratio
+        :type gc_ratio: :class:`float`
+        :param obs_exp_cpg_ratio: this islands's observed/expected CpG ratio
+        :type obs_exp_cpg_ratio: :class:`float`
+        """
+        self.gc_ratio = gc_ratio
+        self.obs_exp_cpg_ratio = obs_exp_cpg_ratio
+
+    def __eq__(self, other):
+        return (self.gc_ratio == other.gc_ratio and
+                self.obs_exp_cpg_ratio == other.obs_exp_cpg_ratio)
+
+    def __ne__(self, other):
+        return not self == other
 
 
-def _count_g_c_cpg(subseq):
+class AlgoResults(object):
+    """Container class for algorithm results."""
+    def __init__(self, seq_record, island_metadata_list):
+        """Constructor.
+
+        :param seq_record: seq record with feature added
+        :type seq_record: :class:`SeqRecord`
+        :param island_metadata_list: list of metadata for each island
+        :type island_metadata_list: :class:``
+        """
+        self.seq_record = seq_record
+        self.island_metadata_list = island_metadata_list
+
+    def extract_features(self):
+        return [str(feature.extract(self.seq_record.seq)) for feature
+                in self.seq_record.features]
+
+    def __eq__(self, other):
+        if str(self.seq_record) != str(other.seq_record):
+            return False
+        if self.extract_features() != other.extract_features():
+            return False
+        return self.island_metadata_list == other.island_metadata_list
+
+    def __ne__(self, other):
+        return not self == other
+
+
+def _compute_counts(subseq):
     """Count the number of Guanine bases, Cytosine bases, and CpG in a
     subsequence.
 
     :param subseq: the partial sequence
     :type subseq: :class:`str`
-    :return: a tuple of ``(g_count, c_count, cpg_count)``
+    :return: a tuple of ``(c_count, g_count, cpg_count)``
     :rtype: :class:`tuple`
     """
-    g_count = 0
     c_count = 0
+    g_count = 0
     cpg_count = 0
     seq_len = len(subseq)
     i = 0
-    # for i in xrange(len(partial_seq_str) - 1):
     while True:
         base = subseq[i]
-        if base == 'G':
-            g_count += 1
-        elif base == 'C':
+        if base == 'C':
             c_count += 1
+        elif base == 'G':
+            g_count += 1
         if i >= seq_len - 1:
             break
         if subseq[i:i + 2] == 'CG':
             cpg_count += 1
         i += 1
-    return (g_count, c_count, cpg_count)
+    return (c_count, g_count, cpg_count)
 
 
-def _is_island(g_count, c_count, cpg_count, subseq_len, min_gc_ratio,
-               min_obs_exp_cpg_ratio):
-    """Given a set of parameters, calculate whether the parameters
-    constitute an island.
+def _compute_ratios(c_count, g_count, cpg_count, subseq_len):
+    """Compute ratios given counts.
 
-    :param g_count: number of G's in the subsequence
-    :type g_count: :class:`int`
     :param c_count: number of C's in the subsequence
     :type c_count: :class:`int`
+    :param g_count: number of G's in the subsequence
+    :type g_count: :class:`int`
     :param cpg_count: number of CpG's in the subsequence
     :type cpg_count: :class:`int`
     :param subseq_len: length of the subsequence
     :type subseq_len: :class:`int`
-    :param min_gc_ratio: the ratio of GC to other bases
-    :type min_gc_ratio: :class:`float`
-    :param min_obs_exp_cpg_ratio: minimum observed-to-expected CpG ratio
-    :type min_obs_exp_cpg_ratio: :class:`float`
-    :return: whether this subsequence is an island
-    :rtype: :class:`bool`
+    :return: GC ratio and observed/expected CpG ratio
+    :rtype: :class:`tuple` of (gc_ratio, obs_exp_cpg_ratio)
     """
-    if g_count == 0 or c_count == 0:
-        return False
-    gc_ratio = (g_count + c_count) / subseq_len
+    gc_ratio = (c_count + g_count) / subseq_len
     obs_exp_cpg_ratio = \
-        cpg_count / ((g_count * c_count) / subseq_len)
-    return (gc_ratio >= min_gc_ratio and
-            obs_exp_cpg_ratio >= min_obs_exp_cpg_ratio)
+        cpg_count / ((c_count * g_count) / subseq_len)
+    return (gc_ratio, obs_exp_cpg_ratio)
 
 
-def _is_subseq_island(subseq, min_gc_ratio, min_obs_exp_cpg_ratio):
-    """Determine if the subsequence is an island.
+def _is_island(gc_ratio, obs_exp_cpg_ratio, min_gc_ratio,
+               min_obs_exp_gc_ratio):
+    """Determine whether these ratios constitute an island.
 
-    :param subseq: the subsequence
-    :type subseq: :class:`str`
-    :param min_gc_ratio: the ratio of GC to other bases
+    :param gc_ratio: the ratio of GC to other bases
+    :type gc_ratio: :class:`float`
+    :param obs_exp_cpg_ratio: observed-to-expected CpG ratio
+    :type obs_exp_cpg_ratio: :class:`float`
+    :param min_gc_ratio: the minimum ratio of GC to other bases
     :type min_gc_ratio: :class:`float`
     :param min_obs_exp_cpg_ratio: minimum observed-to-expected CpG ratio
     :type min_obs_exp_cpg_ratio: :class:`float`
     :return: whether this subsequence is an island
     :rtype: :class:`bool`
     """
-    g_count, c_count, cpg_count = _count_g_c_cpg(subseq)
-    subseq_len = len(subseq)
-    return _is_island(g_count, c_count, cpg_count, subseq_len,
-                      min_gc_ratio, min_obs_exp_cpg_ratio)
+    return (gc_ratio >= min_gc_ratio and
+            obs_exp_cpg_ratio >= min_obs_exp_gc_ratio)
 
 
 def _make_feature(start, end):
@@ -139,8 +168,8 @@ class MetaAlgorithm(object):
         :type min_gc_ratio: :class:`float`
         :param min_obs_exp_cpg_ratio: minimum observed-to-expected CpG ratio
         :type min_obs_exp_cpg_ratio: :class:`float`
-        :return: a list of features found in the sequence
-        :rtype: :class:`list` of :class:`Bio.SeqFeature.SeqFeature`
+        :return: container class of algorithm results
+        :rtype: :class:`AlgoResults`
         :raise: :exc:`ValueError` when parameters are invalid
         """
         # This is helper code to validate parameters. Call with super.
@@ -175,17 +204,29 @@ class SlidingWindowPythonAlgorithm(MetaAlgorithm):
 
         seq_str = str(seq_record.seq)
         seq_len = len(seq_str)
-        islands = []
+        island_features = []
+        island_metadata_list = []
         start_index = 0
         end_index = island_size
+        gc_ratio = 0
+        obs_exp_cpg_ratio = 0
 
         while end_index <= seq_len:
             # Keep adding bases to the end of the subsequence until
             # the subsequence no longer meets the criteria for being
             # an island.
-            while (end_index <= seq_len and
-                   _is_subseq_island(seq_str[start_index:end_index],
-                                     min_gc_ratio, min_obs_exp_cpg_ratio)):
+            while end_index <= seq_len:
+                c_count, g_count, cpg_count = _compute_counts(
+                    seq_str[start_index:end_index])
+                if c_count == 0 or g_count == 0:
+                    break
+                last_gc_ratio = gc_ratio
+                last_obs_exp_cpg_ratio = obs_exp_cpg_ratio
+                gc_ratio, obs_exp_cpg_ratio = _compute_ratios(
+                    c_count, g_count, cpg_count, end_index - start_index)
+                if not _is_island(gc_ratio, obs_exp_cpg_ratio,
+                                  min_gc_ratio, min_obs_exp_cpg_ratio):
+                    break
                 end_index += 1
             # If `end_index' was incremented at least once, we've
             # found an island.
@@ -193,7 +234,18 @@ class SlidingWindowPythonAlgorithm(MetaAlgorithm):
                 # This means that the true exclusive end index of the
                 # island is one less than `end_index'.
                 island_end_index = end_index - 1
-                islands.append(_make_feature(start_index, island_end_index))
+                island_features.append(
+                    _make_feature(start_index, island_end_index))
+                # If we ended by reaching the end of the sequence, the
+                # current ratios are the accurate ones. Otherwise, the
+                # last ratios computed will be accurate.
+                if end_index > seq_len:
+                    island_metadata = IslandMetadata(gc_ratio,
+                                                     obs_exp_cpg_ratio)
+                else:
+                    island_metadata = IslandMetadata(last_gc_ratio,
+                                                     last_obs_exp_cpg_ratio)
+                island_metadata_list.append(island_metadata)
                 # Reset the pointer to the start of the subsequence to
                 # the exclusive end of the island we just found.
                 start_index = island_end_index
@@ -205,8 +257,8 @@ class SlidingWindowPythonAlgorithm(MetaAlgorithm):
             # be reset to the start index plus the window size.
             end_index = start_index + island_size
 
-        seq_record.features = islands
-        return seq_record
+        seq_record.features = island_features
+        return AlgoResults(seq_record, island_metadata_list)
 
 
 class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
@@ -223,22 +275,32 @@ class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
         super(AccumulatingSlidingWindowPythonAlgorithm, self).algorithm(
             seq_record, island_size, min_gc_ratio, min_obs_exp_cpg_ratio)
 
-        islands = []
+        island_features = []
+        island_metadata_list = []
         seq_str = str(seq_record.seq)
         seq_len = len(seq_str)
         start_index = 0
         end_index = island_size
         # Calculate initial counts.
-        g_count, c_count, cpg_count = \
-            _count_g_c_cpg(seq_str[start_index:end_index])
+        c_count, g_count, cpg_count = _compute_counts(
+            seq_str[start_index:end_index])
         is_island = False
+        gc_ratio = 0
+        obs_exp_cpg_ratio = 0
 
         while True:
             was_island = is_island
             # Calculate whether we have an island.
-            is_island = _is_island(g_count, c_count, cpg_count,
-                                   end_index - start_index, min_gc_ratio,
-                                   min_obs_exp_cpg_ratio)
+            if c_count == 0 or g_count == 0:
+                is_island = False
+            else:
+                last_gc_ratio = gc_ratio
+                last_obs_exp_cpg_ratio = obs_exp_cpg_ratio
+                gc_ratio, obs_exp_cpg_ratio = _compute_ratios(
+                    c_count, g_count, cpg_count, end_index - start_index)
+                is_island = _is_island(gc_ratio, obs_exp_cpg_ratio,
+                                       min_gc_ratio, min_obs_exp_cpg_ratio)
+
             if not is_island:
                 if was_island:
                     # We were in an island and we just exited the
@@ -248,8 +310,10 @@ class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
                     # The true exclusive end index of the island is
                     # one less than `end_index'.
                     island_end_index = end_index - 1
-                    islands.append(
+                    island_features.append(
                         _make_feature(start_index, island_end_index))
+                    island_metadata_list.append(
+                        IslandMetadata(last_gc_ratio, last_obs_exp_cpg_ratio))
                     # Reset the pointer to the start of the subsequence to
                     # the exclusive end of the island we just found.
                     start_index = island_end_index
@@ -257,8 +321,8 @@ class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
                     # now be the minimal window.
                     end_index = start_index + island_size
                     # Recalculate initial counts.
-                    g_count, c_count, cpg_count = \
-                        _count_g_c_cpg(seq_str[start_index:end_index])
+                    c_count, g_count, cpg_count = \
+                        _compute_counts(seq_str[start_index:end_index])
                     is_island = False
                     # Start again looking again.
                     continue
@@ -292,13 +356,15 @@ class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
                     cpg_count += 1
 
         # If we ended in an island, it won't be recorded by the
-        # loop. Record it now.
+        # loop. Record it now. We also use the current ratios, since
+        # the loop exited due to bounds checking.
         if is_island:
-            islands.append(_make_feature(start_index, seq_len))
+            island_features.append(_make_feature(start_index, seq_len))
+            island_metadata_list.append(
+                IslandMetadata(gc_ratio, obs_exp_cpg_ratio))
 
-        seq_record.features = islands
-        return seq_record
-
+        seq_record.features = island_features
+        return AlgoResults(seq_record, island_metadata_list)
 
 # class AccumulatingSlidingWindowCythonAlgorithm(MetaAlgorithm):
 #     @property
