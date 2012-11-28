@@ -313,8 +313,17 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.global_seq.setPlainText(seq_str)
 
     def highlight_global_seq(self, start, end):
+        # Create a text cursor from the existing text cursor.
         cursor = self.global_seq.textCursor()
+        # Set the starting position. Don't do any selection yet.
         cursor.setPosition(start)
+        # Now set this cursor as the main cursor for the widget.
+        self.global_seq.setTextCursor(cursor)
+        # Scroll such that the beginning of the sequence is now in the
+        # center of the widget.
+        self.global_seq.centerCursor()
+        # Now do the selection, and use this cursor for the extra
+        # selection, which creates a permanent selection.
         cursor.setPosition(end, QtGui.QTextCursor.KeepAnchor)
         extra_sel = QtGui.QTextEdit.ExtraSelection()
         extra_sel.format.setBackground(QtCore.Qt.green)
