@@ -1,5 +1,3 @@
-# -*- mode: python -*-
-
 # TODO: FIX THIS BEFORE USE!
 
 from __future__ import division
