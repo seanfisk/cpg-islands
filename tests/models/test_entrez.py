@@ -53,3 +53,10 @@ class TestEntrezModel:
                         retmode='text'),
             call.efetch().close()]
         assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
+
+    def test_load_seq(self, model):
+        model.seq_input_model = Mock()
+        model.seq_input_model.file_loaded = Mock(return_value=True)
+        model.load_seq(sentinel.seq)
+        assert (model.seq_input_model.mock_calls
+                == [call.file_loaded(sentinel.seq)])

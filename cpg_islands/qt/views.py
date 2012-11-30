@@ -435,6 +435,14 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         """
         self.query.setText(query)
 
+    def get_seq(self):
+        """Return the selected sequence.
+
+        :return: the text
+        :rtype: :class:`str`
+        """
+        return self.seq.toPlainText()
+
     def set_seq(self, seq):
         """Set the selected sequence.
 
@@ -467,7 +475,7 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
 
     def _load_clicked(self):
         """Submit the entered term."""
-        self.searched(self.get_text())
+        self.load(self.get_seq())
 
     def _text_input_changed(self):
         """Submit the entered term."""

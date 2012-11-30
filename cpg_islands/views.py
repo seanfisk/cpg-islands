@@ -190,6 +190,7 @@ class BaseEntrezView(object):
     searched = Event()
     text_changed = Event()
     result_selected = Event()
+    load = Event()
 
     def get_text(self):
         """Return the widget's entered text.

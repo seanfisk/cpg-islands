@@ -1,4 +1,4 @@
-from mock import create_autospec, call, sentinel
+from mock import create_autospec, call, sentinel, Mock
 import pytest
 
 from cpg_islands.models import MetaEntrezModel
@@ -19,7 +19,8 @@ class TestEntrezPresenter:
         assert presenter.view.mock_calls == [
             call.text_changed.append(presenter._text_changed),
             call.searched.append(presenter._user_submits),
-            call.result_selected.append(presenter._user_selected)]
+            call.result_selected.append(presenter._user_selected),
+            call.load.append(presenter._load_selected)]
 
     class TestUserSubmits:
         def test_valid_values(self, presenter):
@@ -55,3 +56,12 @@ class TestEntrezPresenter:
                     [call.suggest(sentinel.text)])
             assert (presenter.view.mock_calls ==
                     [call.set_suggestion(sentinel.corrected)])
+
+    class TestLoadSelected:
+        def test_changed(self, presenter):
+            presenter.model.seq_input_model = Mock()
+            presenter.model.seq_input_model.file_loaded = Mock(
+                return_value=None)
+            presenter._load_selected(sentinel.seq)
+            assert (presenter.model.mock_calls ==
+                    [call.load_seq(sentinel.seq)])

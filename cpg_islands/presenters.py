@@ -190,6 +190,7 @@ class EntrezPresenter(object):
         self.view.text_changed.append(self._text_changed)
         self.view.searched.append(self._user_submits)
         self.view.result_selected.append(self._user_selected)
+        self.view.load.append(self._load_selected)
 
     def _user_submits(self, text):
         """Handle user submission.
@@ -218,3 +219,7 @@ class EntrezPresenter(object):
         """
         result = self.model.suggest(text)
         self.view.set_suggestion(result['CorrectedQuery'])
+
+    def _load_selected(self, seq):
+        """Handle loading sequences."""
+        self.model.load_seq(seq)

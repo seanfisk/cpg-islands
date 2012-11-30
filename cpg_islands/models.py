@@ -241,7 +241,7 @@ class MetaEntrezModel(object):
         :param text: unchecked text from input
         :type text: :class:`str`
         :return: a suggested query
-        :rtype: :class:`str`
+        :rtype: :class:`list` of `dict`
         """
         raise NotImplementedError()
 
@@ -253,6 +253,15 @@ class MetaEntrezModel(object):
         :type id: :class:`int`
         :return: the sequence
         :rtype: :class:`Seq`
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def load_seq(self, seq):
+        """Load sequence into SeqInputView.
+
+        :param seq: the id of the sequence
+        :type seq: :class:`str`
         """
         raise NotImplementedError()
 
@@ -389,5 +398,7 @@ class EntrezModel(MetaEntrezModel):
                                rettype='gb', retmode='text')
         self.record = SeqIO.read(handle, 'genbank')
         handle.close()
-        self.seq_input_model.file_loaded(str(self.record.seq))
         return self.record
+
+    def load_seq(self, seq):
+        self.seq_input_model.file_loaded(seq)
