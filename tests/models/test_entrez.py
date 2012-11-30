@@ -1,7 +1,7 @@
 from __future__ import division
 
 import pytest
-from mock import sentinel, call, create_autospec, patch, Mock, MagicMock
+from mock import sentinel, call, create_autospec, patch, MagicMock
 
 from cpg_islands.models import EntrezModel, MetaSeqInputModel
 
@@ -40,24 +40,20 @@ class TestEntrezModel:
     def test_get_seq(self, model):
         with patch('cpg_islands.models.Entrez') as mock_entrez:
             with patch('cpg_islands.models.SeqIO') as mock_seqio:
-                handle = Mock()
-                handle.close = Mock(return_value=True)
+                handle = MagicMock()
                 mock_entrez.efetch.return_value = handle
-                mock_record = Mock()
-                mock_record.seq = sentinel.seq
-                mock_seqio.read.return_value = mock_record
+                mock_seqio.read.return_value = sentinel.record
                 record = model.get_seq(sentinel.id)
-        assert record == mock_record
-        assert mock_entrez.mock_calls == [
-            call.efetch(db='nucleotide', id=sentinel.id, rettype='gb',
-                        retmode='text'),
-            call.efetch().close()]
+        assert record == sentinel.record
+        assert mock_entrez.mock_calls == call.efetch(
+            db='nucleotide',
+            id=sentinel.id,
+            rettype='gb',
+            retmode='text').close().call_list()
         assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
 
     class TestLoadSeq:
         def test_file_loaded_called(self, model):
-            model.seq_input_model = Mock()
-            model.seq_input_model.file_loaded = Mock(return_value=True)
             model.load_seq(sentinel.seq)
             assert model.seq_input_model.mock_calls == [
                 call.file_loaded(sentinel.seq)]
