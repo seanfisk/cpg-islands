@@ -9,10 +9,6 @@ Todo
 
 .. todo::
 
-   Dock the Entrez view with the tab widgets.
-
-.. todo::
-
    Clicking on a search result in Entrez should load the sequence into
    the Entrez view, but not the SeqInputView. Clicking load should
    then load it.

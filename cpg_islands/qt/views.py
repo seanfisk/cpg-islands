@@ -36,10 +36,12 @@ class StatsLabel(QtGui.QLabel):
 
 
 class AppView(QtGui.QMainWindow, BaseAppView):
-    def __init__(self, seq_input_view, results_view, parent=None):
+    def __init__(self, entrez_view, seq_input_view, results_view, parent=None):
         """Initialize the main application view with docked
         SeqenceInputView and ResultsView.
 
+        :param entrez_view: the Entrez search view
+        :type entrez_view: :class:`EntrezView`
         :param seq_input_view: the input view
         :type seq_input_view: :class:`SeqInputView`
         :param results_view: the results view
@@ -65,9 +67,15 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         self.setMenuBar(self.menu_bar)
 
         # Main
+        self.entrez_view = entrez_view
+        self.seq_input_view = seq_input_view
+        self.results_view = results_view
         self.input_results_tab_widget = QtGui.QTabWidget(self)
-        self.input_results_tab_widget.addTab(seq_input_view, '&Sequence Input')
-        self.input_results_tab_widget.addTab(results_view, '&Results')
+        self.input_results_tab_widget.addTab(self.entrez_view, 'Entre&z')
+        self.input_results_tab_widget.addTab(self.seq_input_view,
+                                             '&Sequence Input')
+        self.input_results_tab_widget.addTab(self.results_view, '&Results')
+        self.input_results_tab_widget.setCurrentWidget(self.seq_input_view)
         self.setCentralWidget(self.input_results_tab_widget)
 
     def start(self):
@@ -75,7 +83,7 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         self.raise_()
 
     def show_results(self):
-        self.input_results_tab_widget.setCurrentIndex(1)
+        self.input_results_tab_widget.setCurrentWidget(self.results_view)
 
     def _about(self):
         """Create and show the about dialog."""
