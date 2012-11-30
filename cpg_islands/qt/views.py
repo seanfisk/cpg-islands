@@ -46,6 +46,9 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         """
         super(AppView, self).__init__(parent)
 
+        # Window
+        self.setWindowTitle(metadata.nice_title)
+
         # Menu
         self.menu_bar = QtGui.QMenuBar()
         self.file_menu = self.menu_bar.addMenu('&File')
