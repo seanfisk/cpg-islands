@@ -492,7 +492,7 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         self.text_changed(self.get_text())
 
     def _result_selected(self, current_row):
-        """Pulls the selected Id."""
+        """Pulls the selected index."""
         if current_row >= 0:
             self.result_selected(current_row)
 

@@ -39,7 +39,7 @@ class TestEntrezPresenter:
     class TestUserSelected:
         def test_selected(self, presenter):
             sentinel.seq.seq = 'GCGC'
-            presenter.model.results = {'IdList': [sentinel.seq]}
+            presenter.model._results = {'IdList': [sentinel.seq]}
             presenter.model.get_seq.return_value = sentinel.seq
             presenter._user_selected(0)
             assert (presenter.model.mock_calls ==

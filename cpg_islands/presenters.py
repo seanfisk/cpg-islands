@@ -203,13 +203,13 @@ class EntrezPresenter(object):
         self.view.set_result(result['IdList'])
         self.view.set_query(result['QueryTranslation'])
 
-    def _user_selected(self, id):
+    def _user_selected(self, index):
         """Handle user submission.
 
-        :param id: id of selected item on view
-        :type id: :class:`int`
+        :param index: list index of selected item on view
+        :type index: :class:`int`
         """
-        result = self.model.get_seq(self.model.results['IdList'][id])
+        result = self.model.get_seq(self.model._results['IdList'][index])
         self.view.set_seq(str(result.seq))
 
     def _text_changed(self, text):

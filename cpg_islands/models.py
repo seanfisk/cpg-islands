@@ -392,14 +392,14 @@ class EntrezModel(MetaEntrezModel):
     def __init__(self, seq_input_model):
         Entrez.email = 'gray.gwizdz@gmail.com'
         self.seq_input_model = seq_input_model
-        self.results = {'IdList': [], 'QueryTranslation': ''}
+        self._results = {'IdList': [], 'QueryTranslation': ''}
 
     def search(self, text):
         handle = Entrez.esearch(db='nucleotide', term=text)
         results = Entrez.read(handle)
-        self.results = {'IdList': results['IdList'],
-                        'QueryTranslation': results['QueryTranslation']}
-        return self.results
+        self._results = {'IdList': results['IdList'],
+                         'QueryTranslation': results['QueryTranslation']}
+        return self._results
 
     def suggest(self, text):
         handle = Entrez.espell(db='pubmed', term=text)
@@ -408,9 +408,9 @@ class EntrezModel(MetaEntrezModel):
     def get_seq(self, id):
         handle = Entrez.efetch(db='nucleotide', id=id,
                                rettype='gb', retmode='text')
-        self.record = SeqIO.read(handle, 'genbank')
+        self._record = SeqIO.read(handle, 'genbank')
         handle.close()
-        return self.record
+        return self._record
 
     def load_seq(self, seq):
         self.seq_input_model.file_loaded(seq)
