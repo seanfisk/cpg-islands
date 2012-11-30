@@ -188,10 +188,10 @@ class EntrezPresenter(object):
 
     def register_for_events(self):
         """Connect view methods to presenter methods."""
-        self.view.text_changed.append(self._text_changed)
-        self.view.searched.append(self._user_submits)
+        self.view.query_changed.append(self._query_changed)
+        self.view.search_requested.append(self._user_submits)
         self.view.result_selected.append(self._user_selected)
-        self.view.load.append(self._load_selected)
+        self.view.load_requested.append(self._load_selected)
 
     def _user_submits(self, text):
         """Handle user submission.
@@ -199,9 +199,9 @@ class EntrezPresenter(object):
         :param text: text to search
         :type text: :class:`str`
         """
-        result = self.model.search(text)
-        self.view.set_result(result['IdList'])
-        self.view.set_query(result['QueryTranslation'])
+        id_list, query_translation = self.model.search(text)
+        self.view.set_result(id_list)
+        self.view.set_query_translation(query_translation)
 
     def _user_selected(self, index):
         """Handle user submission.
@@ -209,18 +209,18 @@ class EntrezPresenter(object):
         :param index: list index of selected item on view
         :type index: :class:`int`
         """
-        result = self.model.get_seq(self.model._results['IdList'][index])
-        self.view.set_seq(str(result.seq))
+        result = self.model.get_seq(index)
+        self.view.set_selected_seq(str(result.seq))
 
-    def _text_changed(self, text):
+    def _query_changed(self, query):
         """Handle user suggestions.
 
         :param text: text to query for suggestion
         :type text: :class:`str`
         """
-        result = self.model.suggest(text)
-        self.view.set_suggestion(result['CorrectedQuery'])
+        suggestion = self.model.suggest(query)
+        self.view.set_suggestion(suggestion)
 
-    def _load_selected(self, seq):
+    def _load_selected(self):
         """Handle loading sequences."""
-        self.model.load_seq(seq)
+        self.model.load_seq()

@@ -191,18 +191,10 @@ class BaseResultsView(object):
 
 
 class BaseEntrezView(object):
-    searched = Event()
-    text_changed = Event()
+    search_requested = Event()
+    query_changed = Event()
     result_selected = Event()
-    load = Event()
-
-    def get_text(self):
-        """Return the widget's entered text.
-
-        :return: the text
-        :rtype: :class:`str`
-        """
-        raise NotImplementedError()
+    load_requested = Event()
 
     def set_suggestion(self, suggestion):
         """Set the suggestions based on spelling.
@@ -212,34 +204,27 @@ class BaseEntrezView(object):
         """
         raise NotImplementedError()
 
-    def set_query(self, query):
-        """Set the evaluated query.
+    def set_query_translation(self, query_translation):
+        """Set the query text which has been translated to Entrez
+        search terms.
 
-        :param result: the encoded text
-        :type result: :class:`list`
+        :param query_translation: the translated query
+        :type query_translation: :class:`str`
         """
         raise NotImplementedError()
 
-    def set_seq(self, seq):
+    def set_selected_seq(self, seq_str):
         """Set the selected sequence.
 
-        :param result: the encoded text
-        :type result: :class:`list`
+        :param seq_str: the sequence data
+        :type seq_str: :class:`str`
         """
         raise NotImplementedError()
 
     def set_result(self, results):
-        """Set encoded text result.
+        """Set the list of sequence ids.
 
-        :param result: the encoded text
+        :param result: list of sequence ids
         :type result: :class:`list`
-        """
-        raise NotImplementedError()
-
-    def show_error(self, message):
-        """Show the user an error dialog.
-
-        :param message: error message
-        :type message: :class:`str`
         """
         raise NotImplementedError()

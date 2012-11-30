@@ -240,8 +240,8 @@ class MetaEntrezModel(object):
 
         :param text: the text to search
         :type text: :class:`str`
-        :return: the results
-        :rtype: :class:`dict`
+        :return: tuple containing (id_list, query_translation)
+        :rtype: :class:`tuple`
         """
         raise NotImplementedError()
 
@@ -251,29 +251,25 @@ class MetaEntrezModel(object):
 
         :param text: unchecked text from input
         :type text: :class:`str`
-        :return: a suggested query
-        :rtype: :class:`list` of `dict`
+        :return: the suggested text query
+        :rtype: :class:`str`
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def get_seq(self, id):
-        """Pull sequence based on id.
+    def get_seq(self, index):
+        """Pull sequence based on index.
 
-        :param id: the id of the sequence
-        :type id: :class:`int`
+        :param index: the index of the sequence
+        :type index: :class:`int`
         :return: the sequence
-        :rtype: :class:`Seq`
+        :rtype: :class:`SeqRecord`
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def load_seq(self, seq):
-        """Load sequence into SeqInputView.
-
-        :param seq: the id of the sequence
-        :type seq: :class:`str`
-        """
+    def load_seq(self):
+        """Load the currently selected sequence into SeqInputView."""
         raise NotImplementedError()
 
 
@@ -392,26 +388,29 @@ class EntrezModel(MetaEntrezModel):
     def __init__(self, seq_input_model):
         Entrez.email = 'gray.gwizdz@gmail.com'
         self.seq_input_model = seq_input_model
-        self._results = {'IdList': [], 'QueryTranslation': ''}
+        self._last_loaded_id_list = []
+        self._last_loaded_seq_record = SeqRecord(
+            Seq('', IUPAC.unambiguous_dna))
 
     def search(self, text):
         handle = Entrez.esearch(db='nucleotide', term=text)
         results = Entrez.read(handle)
-        self._results = {'IdList': results['IdList'],
-                         'QueryTranslation': results['QueryTranslation']}
-        return self._results
+        self._last_loaded_id_list = results['IdList']
+        return (self._last_loaded_id_list, results['QueryTranslation'])
 
     def suggest(self, text):
         handle = Entrez.espell(db='pubmed', term=text)
-        return Entrez.read(handle)
+        result = Entrez.read(handle)
+        return result['CorrectedQuery']
 
-    def get_seq(self, id):
-        handle = Entrez.efetch(db='nucleotide', id=id,
-                               rettype='gb', retmode='text')
-        self._record = SeqIO.read(handle, 'genbank')
+    def get_seq(self, index):
+        handle = Entrez.efetch(
+            db='nucleotide', id=self._last_loaded_id_list[index],
+            rettype='gb', retmode='text')
+        self._last_loaded_seq_record = SeqIO.read(handle, 'genbank')
         handle.close()
-        return self._record
+        return self._last_loaded_seq_record
 
-    def load_seq(self, seq):
-        self.seq_input_model.file_loaded(seq)
+    def load_seq(self):
+        self.seq_input_model.file_loaded(str(self._last_loaded_seq_record.seq))
         self.seq_loaded()

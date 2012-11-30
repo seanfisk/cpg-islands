@@ -388,108 +388,65 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         super(EntrezView, self).__init__(parent)
 
         # Layout
-        self.top_layout = QtGui.QVBoxLayout(self)
-        self.layout = QtGui.QFormLayout()
-        self.text_input = QtGui.QLineEdit(self)
-        self.text_input.textChanged.connect(self._text_input_changed)
-        self.layout.addRow('Term', self.text_input)
+        self.layout = QtGui.QFormLayout(self)
+        self.query_input = QtGui.QLineEdit(self)
+        self.query_input.textChanged.connect(self._query_input_changed)
+        self.layout.addRow('&Query', self.query_input)
 
-        self.suggest = QtGui.QLineEdit(self)
-        self.suggest.setReadOnly(True)
-        self.layout.addRow('Suggested', self.suggest)
+        self.suggestion_display = QtGui.QLabel(self)
+        self.layout.addRow('Suggested Query', self.suggestion_display)
 
         self.submit_button = QtGui.QPushButton('Search', self)
         self.submit_button.clicked.connect(self._submit_clicked)
         self.layout.addRow(self.submit_button)
 
-        self.query = QtGui.QLineEdit(self)
-        self.query.setReadOnly(True)
-        self.layout.addRow('Query Translation', self.query)
+        self.query_translation_display = QtGui.QLabel(self)
+        self.layout.addRow('Query Translation', self.query_translation_display)
 
         self.result_output = QtGui.QListWidget(self)
         self.result_output.currentRowChanged.connect(self._result_selected)
         self.layout.addRow('Results', self.result_output)
 
-        self.seq = SeqTextEdit(self)
-        self.seq.setReadOnly(True)
-        self.layout.addRow('Sequence', self.seq)
+        self.seq_display = SeqTextEdit(self)
+        self.seq_display.setReadOnly(True)
+        self.layout.addRow('Sequence', self.seq_display)
 
         self.load_button = QtGui.QPushButton('Load', self)
         self.load_button.clicked.connect(self._load_clicked)
         self.layout.addRow(self.load_button)
 
-        self.top_layout.addLayout(self.layout)
-        self.show()
-
-    def get_text(self):
-        """Return the widget's entered text.
-
-        :return: the text
-        :rtype: :class:`str`
-        """
-        return self.text_input.text()
-
     def set_suggestion(self, suggestion):
-        """Set the suggestions based on spelling.
+        self.suggestion_display.setText(suggestion)
 
-        :param result: the encoded text
-        :type result: :class:`list`
-        """
-        self.suggest.setText(suggestion)
+    def set_query_translation(self, query_translation):
+        self.query_translation_display.setText(query_translation)
 
-    def set_query(self, query):
-        """Set the evaluated query.
-
-        :param result: the encoded text
-        :type result: :class:`list`
-        """
-        self.query.setText(query)
-
-    def get_seq(self):
-        """Return the selected sequence.
-
-        :return: the text
-        :rtype: :class:`str`
-        """
-        return self.seq.toPlainText()
-
-    def set_seq(self, seq):
-        """Set the selected sequence.
-
-        :param result: the encoded text
-        :type result: :class:`list`
-        """
-        self.seq.setPlainText(seq)
+    def set_selected_seq(self, seq_str):
+        self.seq_display.setPlainText(seq_str)
 
     def set_result(self, results):
-        """Set encoded text result.
+        self.result_output.clear()
+        self.result_output.addItems(results)
 
-        :param result: the encoded text
-        :type result: :class:`list`
+    def _get_query(self):
+        """Return the query widget's entered text.
+
+        :return: the text
+        :rtype: :class:`str`
         """
-        for index, result in enumerate(results):
-            self.result_output.insertItem(index, result)
-
-    def show_error(self, message):
-        """Show the user an error dialog.
-
-        :param message: error message
-        :type message: :class:`str`
-        """
-        error_dialog = QtGui.QErrorMessage(self)
-        error_dialog.showMessage(message)
+        return self.query_input.text()
 
     def _submit_clicked(self):
         """Submit the entered term."""
-        self.searched(self.get_text())
+        self.search_requested(self._get_query())
 
     def _load_clicked(self):
         """Submit the entered term."""
-        self.load(self.get_seq())
+        self.load_requested()
 
-    def _text_input_changed(self):
+    def _query_input_changed(self):
         """Submit the entered term."""
-        self.text_changed(self.get_text())
+        self.query_changed(self._get_query())
 
     def _result_selected(self, current_row):
         """Pulls the selected index."""
