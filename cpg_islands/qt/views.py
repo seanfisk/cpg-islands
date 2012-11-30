@@ -262,7 +262,6 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         # Layout
         self.top_layout = QtGui.QVBoxLayout(self)
         self.layout = QtGui.QFormLayout()
-        #self.layout = QtGui.QVBoxLayout(self)
         self.text_input = QtGui.QLineEdit(self)
         self.text_input.textChanged.connect(self._text_input_changed)
         self.layout.addRow('Term', self.text_input)
@@ -270,6 +269,10 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         self.suggest = QtGui.QLineEdit(self)
         self.suggest.setReadOnly(True)
         self.layout.addRow('Suggested', self.suggest)
+
+        self.submit_button = QtGui.QPushButton('Search', self)
+        self.submit_button.clicked.connect(self._submit_clicked)
+        self.layout.addRow(self.submit_button)
 
         self.query = QtGui.QLineEdit(self)
         self.query.setReadOnly(True)
@@ -279,13 +282,14 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         self.result_output.currentRowChanged.connect(self._result_selected)
         self.layout.addRow('Results', self.result_output)
 
-        self.seq = QtGui.QTextEdit(self)
+        self.seq = SeqTextEdit(self)
         self.seq.setReadOnly(True)
         self.layout.addRow('Sequence', self.seq)
 
-        self.submit_button = QtGui.QPushButton('Search', self)
-        self.submit_button.clicked.connect(self._submit_clicked)
-        self.layout.addRow(self.submit_button)
+        self.load_button = QtGui.QPushButton('Load', self)
+        self.load_button.clicked.connect(self._load_clicked)
+        self.layout.addRow(self.load_button)
+
         self.top_layout.addLayout(self.layout)
         self.show()
 
@@ -340,6 +344,10 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         error_dialog.showMessage(message)
 
     def _submit_clicked(self):
+        """Submit the entered term."""
+        self.searched(self.get_text())
+
+    def _load_clicked(self):
         """Submit the entered term."""
         self.searched(self.get_text())
 

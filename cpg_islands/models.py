@@ -189,7 +189,7 @@ class MetaEntrezModel(object):
         :param text: the text to search
         :type text: :class:`str`
         :return: the results
-        :rtype: :class:`str`
+        :rtype: :class:`dict`
         """
         raise NotImplementedError()
 
@@ -197,13 +197,14 @@ class MetaEntrezModel(object):
     def suggest(self, text):
         """Suggested Entrez spelling.
 
-        :param text: the text to encode
+        :param text: unchecked text from input
         :type text: :class:`str`
-        :return: the results
+        :return: a suggested query
         :rtype: :class:`str`
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def get_seq(self, id):
         """Pull sequence based on id.
 
@@ -306,20 +307,23 @@ class EntrezModel(MetaEntrezModel):
     def __init__(self, seq_input_model):
         Entrez.email = 'gray.gwizdz@gmail.com'
         self.seq_input_model = seq_input_model
+        self.results = {'IdList': [], 'QueryTranslation': ''}
 
     def search(self, text):
-        handle = Entrez.esearch(db="nucleotide", term=text)
-        self.results = Entrez.read(handle)
+        handle = Entrez.esearch(db='nucleotide', term=text)
+        results = Entrez.read(handle)
+        self.results = {'IdList': results['IdList'],
+                        'QueryTranslation': results['QueryTranslation']}
         return self.results
 
     def suggest(self, text):
-        handle = Entrez.espell(db="pubmed", term=text)
+        handle = Entrez.espell(db='pubmed', term=text)
         return Entrez.read(handle)
 
     def get_seq(self, id):
-        handle = Entrez.efetch(db="nucleotide", id=id,
-                               rettype="gb", retmode="text")
-        record = SeqIO.read(handle, "genbank")
+        handle = Entrez.efetch(db='nucleotide', id=id,
+                               rettype='gb', retmode='text')
+        self.record = SeqIO.read(handle, 'genbank')
         handle.close()
-        self.seq_input_model.file_loaded(str(record.seq))
-        return record
+        self.seq_input_model.file_loaded(str(self.record.seq))
+        return self.record

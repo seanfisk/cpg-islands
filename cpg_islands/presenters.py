@@ -176,20 +176,20 @@ class EntrezPresenter(object):
     def _user_submits(self, text):
         """Handle user submission.
 
-        :param text: text to encode
+        :param text: text to search
         :type text: :class:`str`
         """
         result = self.model.search(text)
-        self.view.set_result(result["IdList"])
-        self.view.set_query(result["QueryTranslation"])
+        self.view.set_result(result['IdList'])
+        self.view.set_query(result['QueryTranslation'])
 
     def _user_selected(self, id):
         """Handle user submission.
 
-        :param text: text to encode
-        :type text: :class:`str`
+        :param id: id of selected item on view
+        :type id: :class:`int`
         """
-        result = self.model.get_seq(self.model.results["IdList"][id])
+        result = self.model.get_seq(self.model.results['IdList'][id])
         self.view.set_seq(str(result.seq))
 
     def _text_changed(self, text):
@@ -199,4 +199,4 @@ class EntrezPresenter(object):
         :type text: :class:`str`
         """
         result = self.model.suggest(text)
-        self.view.set_suggestion(result["CorrectedQuery"])
+        self.view.set_suggestion(result['CorrectedQuery'])

@@ -1,7 +1,7 @@
 from __future__ import division
 
 import pytest
-from mock import sentinel, call, create_autospec
+from mock import sentinel, call, create_autospec, patch, Mock
 
 from cpg_islands.models import EntrezModel, MetaSeqInputModel
 
@@ -14,16 +14,42 @@ def model():
 
 class TestEntrezModel:
     def test_search(self, model):
-        test_model = create_autospec(model, spec_set=True)
-        test_model.search(sentinel.search)
-        assert test_model.mock_calls == [call.search(sentinel.search)]
+        with patch('cpg_islands.models.Entrez') as mock_entrez:
+            mock_entrez.esearch.return_value = sentinel.handle
+            mock_entrez.read.return_value = {
+                'IdList': sentinel.id_list,
+                'QueryTranslation': sentinel.query_translation}
+            results = model.search(sentinel.search)
+        assert results == {
+            'IdList': sentinel.id_list,
+            'QueryTranslation': sentinel.query_translation}
+        assert mock_entrez.mock_calls == [
+            call.esearch(db='nucleotide', term=sentinel.search),
+            call.read(sentinel.handle)]
 
     def test_suggest(self, model):
-        test_model = create_autospec(model, spec_set=True)
-        test_model.suggest(sentinel.suggest)
-        assert test_model.mock_calls == [call.suggest(sentinel.suggest)]
+        with patch('cpg_islands.models.Entrez') as mock_entrez:
+            mock_entrez.espell.return_value = sentinel.handle
+            mock_entrez.read.return_value = sentinel.result
+            results = model.suggest(sentinel.text)
+        assert results == sentinel.result
+        assert mock_entrez.mock_calls == [
+            call.espell(db='pubmed', term=sentinel.text),
+            call.read(sentinel.handle)]
 
     def test_get_seq(self, model):
-        test_model = create_autospec(model, spec_set=True)
-        test_model.get_seq(sentinel.seq_record)
-        assert test_model.mock_calls == [call.get_seq(sentinel.seq_record)]
+        with patch('cpg_islands.models.Entrez') as mock_entrez:
+            with patch('cpg_islands.models.SeqIO') as mock_seqio:
+                handle = Mock()
+                handle.close = Mock(return_value=True)
+                mock_entrez.efetch.return_value = handle
+                mock_record = Mock()
+                mock_record.seq = sentinel.seq
+                mock_seqio.read.return_value = mock_record
+                record = model.get_seq(sentinel.id)
+        assert record == mock_record
+        assert mock_entrez.mock_calls == [
+            call.efetch(db='nucleotide', id=sentinel.id, rettype='gb',
+                        retmode='text'),
+            call.efetch().close()]
+        assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
