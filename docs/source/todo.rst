@@ -19,6 +19,10 @@ Todo
 
 .. todo::
 
+   Rename ``file_loaded`` event to something that makes more sense.
+
+.. todo::
+
    Loading a file or a sequence from Entrez should prompt if
    overwriting a sequence currently typed in.
 
