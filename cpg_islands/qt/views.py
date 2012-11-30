@@ -106,37 +106,38 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         self.island_size_validator = QtGui.QIntValidator()
         self.island_size_validator.setBottom(0)
         self.island_size_input.setValidator(self.island_size_validator)
-        self.form_layout.addRow(u'Island Size ≥', self.island_size_input)
+        self.form_layout.addRow(u'&Island Size ≥', self.island_size_input)
 
         self.min_gc_ratio_input = QtGui.QLineEdit(self)
         self.min_gc_ratio_validator = QtGui.QDoubleValidator()
         self.min_gc_ratio_validator.setBottom(0)
         self.min_gc_ratio_validator.setTop(1)
         self.min_gc_ratio_input.setValidator(self.min_gc_ratio_validator)
-        self.form_layout.addRow(u'GC Ratio ≥', self.min_gc_ratio_input)
+        self.form_layout.addRow(u'&GC Ratio ≥', self.min_gc_ratio_input)
 
         self.min_obs_exp_cpg_ratio_input = QtGui.QLineEdit(self)
         self.min_obs_exp_ratio_validator = QtGui.QDoubleValidator()
         self.min_obs_exp_ratio_validator.setBottom(0)
         self.min_obs_exp_cpg_ratio_input.setValidator(
             self.min_obs_exp_ratio_validator)
-        self.form_layout.addRow(
-            u'Observed/Expected CpG Ratio ≥', self.min_obs_exp_cpg_ratio_input)
+        self.form_layout.addRow(u'&Observed/Expected CpG Ratio ≥',
+                                self.min_obs_exp_cpg_ratio_input)
 
         self.algorithms_combo_box = QtGui.QComboBox(self)
-        self.form_layout.addRow('Algorithm', self.algorithms_combo_box)
+        self.form_layout.addRow('&Algorithm', self.algorithms_combo_box)
 
         self.top_layout.addLayout(self.form_layout)
 
-        self.seq_input_label = QtGui.QLabel('Sequence')
+        self.seq_input_label = QtGui.QLabel('S&equence')
         self.seq_input_label.setAlignment(QtCore.Qt.AlignHCenter)
         self.top_layout.addWidget(self.seq_input_label)
 
         self.seq_input = SeqTextEdit(self)
         self.seq_input.setTabChangesFocus(True)
+        self.seq_input_label.setBuddy(self.seq_input)
         self.top_layout.addWidget(self.seq_input)
 
-        self.submit_button = QtGui.QPushButton('Compute Islands', self)
+        self.submit_button = QtGui.QPushButton('&Compute Islands', self)
         self.submit_button.clicked.connect(self._submit_clicked)
         self.top_layout.addWidget(self.submit_button)
 
@@ -232,15 +233,16 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.algo_name_label = StatsLabel(self)
         self.exec_time_label = StatsLabel(self)
         self.global_stats_layout.addRow(
-            'Algorithm Used:', self.algo_name_label)
+            '&Algorithm Used:', self.algo_name_label)
         self.global_stats_layout.addRow(
-            'Execution Time:', self.exec_time_label)
+            '&Execution Time:', self.exec_time_label)
         self.top_layout.addLayout(self.global_stats_layout)
 
         # Islands list
         self.islands_list_container = QtGui.QWidget(self)
-        self.islands_list_label = QtGui.QLabel('Islands List', self)
+        self.islands_list_label = QtGui.QLabel('Islands &List', self)
         self.islands_list = QtGui.QListWidget(self)
+        self.islands_list_label.setBuddy(self.islands_list)
         self.islands_list.currentRowChanged.connect(self._island_selected)
         self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
         self.islands_list_layout = QtGui.QVBoxLayout(
@@ -251,8 +253,9 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         # Global sequence
         self.global_seq_container = QtGui.QWidget(self)
         self.global_seq_label = QtGui.QLabel(
-            'Island Highlighted Within Full Sequence', self)
+            'Island &Highlighted Within Full Sequence', self)
         self.global_seq = SeqTextEdit(self)
+        self.global_seq_label.setBuddy(self.global_seq_label)
         self.global_seq.setReadOnly(True)
         self.global_seq_layout = QtGui.QVBoxLayout(self.global_seq_container)
         self.global_seq_layout.addWidget(self.global_seq_label)
@@ -264,23 +267,24 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         ## Subseq stats
         self.subseq_stats_layout = QtGui.QFormLayout()
         self.subseq_start = StatsLabel(self)
-        self.subseq_stats_layout.addRow('Start Index:', self.subseq_start)
+        self.subseq_stats_layout.addRow('S&tart Index:', self.subseq_start)
         self.subseq_end = StatsLabel(self)
-        self.subseq_stats_layout.addRow('End Index:', self.subseq_end)
+        self.subseq_stats_layout.addRow('E&nd Index:', self.subseq_end)
         self.subseq_length = StatsLabel(self)
-        self.subseq_stats_layout.addRow('Length:', self.subseq_length)
+        self.subseq_stats_layout.addRow('Leng&th:', self.subseq_length)
         self.subseq_gc_ratio = StatsLabel(self)
-        self.subseq_stats_layout.addRow('GC Ratio:', self.subseq_gc_ratio)
+        self.subseq_stats_layout.addRow('&GC Ratio:', self.subseq_gc_ratio)
 
         self.subseq_obs_exp_cpg_ratio = StatsLabel(self)
-        self.subseq_stats_layout.addRow('Observed/Expected CpG Ratio:',
+        self.subseq_stats_layout.addRow('&Observed/Expected CpG Ratio:',
                                         self.subseq_obs_exp_cpg_ratio)
         self.subseq_layout.addLayout(self.subseq_stats_layout)
 
         ## Subseq bases
         self.subseq_label = QtGui.QLabel(
-            'Island Bases', self)
+            'Island &Bases', self)
         self.subseq = SeqTextEdit(self)
+        self.subseq_label.setBuddy(self.subseq_label)
         self.subseq.setReadOnly(True)
         self.subseq_layout.addWidget(self.subseq_label)
         self.subseq_layout.addWidget(self.subseq)
