@@ -5,16 +5,20 @@ from Bio.Alphabet import IUPAC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.SeqRecord import SeqRecord
 
+from cpg_islands.algorithms import IslandMetadata, AlgoResults
 
-def make_features(tuples):
-    """Build a list of features from a list of tuples.
 
-    :param tuples: list of tuples
-    :type tuples: :class:`list` of :class:`tuple`
-    :return: list of features
-    :rtype: :class:`list` of :class:`SeqFeature`
+def _make_feature(start, end):
+    """Create a feature.
+
+    :param start: start index
+    :type start: :class:`int`
+    :param end: end index
+    :type end: :class:`int`
+    :return: the created feature
+    :rtype: :class:`SeqFeature`
     """
-    return [SeqFeature(FeatureLocation(a, b)) for a, b in tuples]
+    return SeqFeature(FeatureLocation(start, end))
 
 
 def make_seq_record(seq_str='', feature_tuples=[]):
@@ -25,8 +29,21 @@ def make_seq_record(seq_str='', feature_tuples=[]):
     :return: the built SeqRecord
     :rtype: :class:`SeqRecord`
     """
-    return SeqRecord(seq=Seq(seq_str, IUPAC.unambiguous_dna),
-                     features=make_features(feature_tuples))
+    return SeqRecord(
+        seq=Seq(seq_str, IUPAC.unambiguous_dna),
+        features=[_make_feature(start, end) for start, end in feature_tuples])
+
+
+def make_algo_results(seq_str='', island_metadata_tuples=[]):
+    island_features = []
+    island_metadata_list = []
+    for start, end, gc_ratio, obs_exp_cpg_ratio in island_metadata_tuples:
+        island_features.append(_make_feature(start, end))
+        island_metadata_list.append(
+            IslandMetadata(gc_ratio, obs_exp_cpg_ratio))
+    seq_record = SeqRecord(seq=Seq(seq_str, IUPAC.unambiguous_dna),
+                           features=island_features)
+    return AlgoResults(seq_record, island_metadata_list)
 
 
 def fixture_file(basename):

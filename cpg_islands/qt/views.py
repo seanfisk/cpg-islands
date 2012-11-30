@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+# The encoding declaration is necessary to tell Python that we are
+# using Unicode in this file. See
+# <http://www.python.org/dev/peps/pep-0263/>.
 """:mod:`cpg_islands.views.qt` --- Views based on Q toolkit
 """
 
@@ -21,17 +26,29 @@ class SeqTextEdit(QtGui.QPlainTextEdit):
         self.setFont(font)
 
 
+class StatsLabel(QtGui.QLabel):
+    """Label for displaying statistics."""
+    def __init__(self, parent=None):
+        super(StatsLabel, self).__init__(parent)
+        self.setTextInteractionFlags(
+            QtCore.Qt.TextSelectableByMouse |
+            QtCore.Qt.TextSelectableByKeyboard)
+
+
 class AppView(QtGui.QMainWindow, BaseAppView):
     def __init__(self, seq_input_view, results_view, parent=None):
         """Initialize the main application view with docked
         SeqenceInputView and ResultsView.
 
-        :param seqe_input_view: the input view
+        :param seq_input_view: the input view
         :type seq_input_view: :class:`SeqInputView`
         :param results_view: the results view
         :type results_view: :class:`ResultsView`
         """
         super(AppView, self).__init__(parent)
+
+        # Window
+        self.setWindowTitle(metadata.nice_title)
 
         # Menu
         self.menu_bar = QtGui.QMenuBar()
@@ -93,29 +110,38 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
         self.island_size_validator = QtGui.QIntValidator()
         self.island_size_validator.setBottom(0)
         self.island_size_input.setValidator(self.island_size_validator)
-        self.form_layout.addRow('Island Size', self.island_size_input)
+        self.form_layout.addRow(u'&Island Size ≥', self.island_size_input)
 
         self.min_gc_ratio_input = QtGui.QLineEdit(self)
         self.min_gc_ratio_validator = QtGui.QDoubleValidator()
         self.min_gc_ratio_validator.setBottom(0)
         self.min_gc_ratio_validator.setTop(1)
         self.min_gc_ratio_input.setValidator(self.min_gc_ratio_validator)
-        self.form_layout.addRow('GC Ratio', self.min_gc_ratio_input)
+        self.form_layout.addRow(u'&GC Ratio ≥', self.min_gc_ratio_input)
+
+        self.min_obs_exp_cpg_ratio_input = QtGui.QLineEdit(self)
+        self.min_obs_exp_ratio_validator = QtGui.QDoubleValidator()
+        self.min_obs_exp_ratio_validator.setBottom(0)
+        self.min_obs_exp_cpg_ratio_input.setValidator(
+            self.min_obs_exp_ratio_validator)
+        self.form_layout.addRow(u'&Observed/Expected CpG Ratio ≥',
+                                self.min_obs_exp_cpg_ratio_input)
 
         self.algorithms_combo_box = QtGui.QComboBox(self)
-        self.form_layout.addRow('Algorithm', self.algorithms_combo_box)
+        self.form_layout.addRow('&Algorithm', self.algorithms_combo_box)
 
         self.top_layout.addLayout(self.form_layout)
 
-        self.seq_input_label = QtGui.QLabel('Sequence')
+        self.seq_input_label = QtGui.QLabel('S&equence')
         self.seq_input_label.setAlignment(QtCore.Qt.AlignHCenter)
         self.top_layout.addWidget(self.seq_input_label)
 
         self.seq_input = SeqTextEdit(self)
         self.seq_input.setTabChangesFocus(True)
+        self.seq_input_label.setBuddy(self.seq_input)
         self.top_layout.addWidget(self.seq_input)
 
-        self.submit_button = QtGui.QPushButton('Compute Islands', self)
+        self.submit_button = QtGui.QPushButton('&Compute Islands', self)
         self.submit_button.clicked.connect(self._submit_clicked)
         self.top_layout.addWidget(self.submit_button)
 
@@ -138,13 +164,24 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
     def _get_min_gc_ratio(self):
         """Return the widget's entered GC ratio.
 
-        :return: the key
+        :return: the ratio
         :rtype: :class:`str`
         """
         return self.min_gc_ratio_input.text()
 
-    def set_min_gc_ratio(self, min_gc_ratio):
-        self.min_gc_ratio_input.setText(min_gc_ratio)
+    def set_min_gc_ratio(self, min_gc_ratio_str):
+        self.min_gc_ratio_input.setText(min_gc_ratio_str)
+
+    def _get_min_obs_exp_cpg_ratio(self):
+        """Return the widget's entered observed/expected CpG ratio.
+
+        :return: the ratio
+        :rtype: :class:`str`
+        """
+        return self.min_obs_exp_cpg_ratio_input.text()
+
+    def set_min_obs_exp_cpg_ratio(self, min_obs_exp_cpg_ratio_str):
+        self.min_obs_exp_cpg_ratio_input.setText(min_obs_exp_cpg_ratio_str)
 
     def _get_island_size(self):
         """Return the widget's entered island size.
@@ -183,6 +220,7 @@ class SeqInputView(QtGui.QWidget, BaseSeqInputView):
             self.submitted(self._get_seq(),
                            self._get_island_size(),
                            self._get_min_gc_ratio(),
+                           self._get_min_obs_exp_cpg_ratio(),
                            self._get_algorithm_index())
         except ValueError as error:
             self.show_error(str(error))
@@ -192,53 +230,109 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
     def __init__(self, parent=None):
         super(ResultsView, self).__init__(parent)
 
-        self.layout = QtGui.QVBoxLayout(self)
+        self.top_layout = QtGui.QVBoxLayout(self)
 
+        # Global statistics
+        self.global_stats_layout = QtGui.QFormLayout()
+        self.algo_name_label = StatsLabel(self)
+        self.exec_time_label = StatsLabel(self)
+        self.global_stats_layout.addRow(
+            '&Algorithm Used:', self.algo_name_label)
+        self.global_stats_layout.addRow(
+            '&Execution Time:', self.exec_time_label)
+        self.top_layout.addLayout(self.global_stats_layout)
+
+        # Islands list
+        self.islands_list_container = QtGui.QWidget(self)
+        self.islands_list_label = QtGui.QLabel('Islands &List', self)
         self.islands_list = QtGui.QListWidget(self)
+        self.islands_list_label.setBuddy(self.islands_list)
         self.islands_list.currentRowChanged.connect(self._island_selected)
         self.islands_list.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.islands_list_layout = QtGui.QVBoxLayout(
+            self.islands_list_container)
+        self.islands_list_layout.addWidget(self.islands_list_label)
+        self.islands_list_layout.addWidget(self.islands_list)
+
+        # Global sequence
+        self.global_seq_container = QtGui.QWidget(self)
+        self.global_seq_label = QtGui.QLabel(
+            'Island &Highlighted Within Full Sequence', self)
         self.global_seq = SeqTextEdit(self)
+        self.global_seq_label.setBuddy(self.global_seq_label)
         self.global_seq.setReadOnly(True)
+        self.global_seq_layout = QtGui.QVBoxLayout(self.global_seq_container)
+        self.global_seq_layout.addWidget(self.global_seq_label)
+        self.global_seq_layout.addWidget(self.global_seq)
 
-        self.local_seq = SeqTextEdit(self)
-        self.local_seq.setReadOnly(True)
+        # Subsequence
+        self.subseq_container = QtGui.QWidget(self)
+        self.subseq_layout = QtGui.QVBoxLayout(self.subseq_container)
+        ## Subseq stats
+        self.subseq_stats_layout = QtGui.QFormLayout()
+        self.subseq_start = StatsLabel(self)
+        self.subseq_stats_layout.addRow('S&tart Index:', self.subseq_start)
+        self.subseq_end = StatsLabel(self)
+        self.subseq_stats_layout.addRow('E&nd Index:', self.subseq_end)
+        self.subseq_length = StatsLabel(self)
+        self.subseq_stats_layout.addRow('Leng&th:', self.subseq_length)
+        self.subseq_gc_ratio = StatsLabel(self)
+        self.subseq_stats_layout.addRow('&GC Ratio:', self.subseq_gc_ratio)
 
-        self.sequences = QtGui.QSplitter(QtCore.Qt.Vertical)
-        self.sequences.addWidget(self.global_seq)
-        self.sequences.addWidget(self.local_seq)
-        self.sequences.setSizes([100, 100])
+        self.subseq_obs_exp_cpg_ratio = StatsLabel(self)
+        self.subseq_stats_layout.addRow('&Observed/Expected CpG Ratio:',
+                                        self.subseq_obs_exp_cpg_ratio)
+        self.subseq_layout.addLayout(self.subseq_stats_layout)
 
-        self.holder = QtGui.QSplitter(QtCore.Qt.Horizontal)
-        self.holder.addWidget(self.islands_list)
-        self.holder.addWidget(self.sequences)
-        self.holder.setSizes([100, 490])
+        ## Subseq bases
+        self.subseq_label = QtGui.QLabel(
+            'Island &Bases', self)
+        self.subseq = SeqTextEdit(self)
+        self.subseq_label.setBuddy(self.subseq_label)
+        self.subseq.setReadOnly(True)
+        self.subseq_layout.addWidget(self.subseq_label)
+        self.subseq_layout.addWidget(self.subseq)
 
-        self.layout.addWidget(self.holder)
+        self.seq_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.seq_splitter.addWidget(self.global_seq_container)
+        self.seq_splitter.addWidget(self.subseq_container)
+        self.seq_splitter.setSizes([100, 100])
+
+        self.list_seq_splitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
+        self.list_seq_splitter.addWidget(self.islands_list_container)
+        self.list_seq_splitter.addWidget(self.seq_splitter)
+        self.list_seq_splitter.setSizes([100, 490])
+
+        self.top_layout.addWidget(self.list_seq_splitter, 1)
 
     def set_islands(self, islands):
         self.islands_list.clear()
-        for start, end in islands:
-            self.islands_list.addItem('{0}, {1}'.format(start, end))
+        for i, (start, end) in enumerate(islands):
+            self.islands_list.addItem(
+                'Island {0} ({1}-{2})'.format(i, start, end))
 
-    def _island_selected(self, current_row):
-        # According to the Qt docs, "If there is no current item, the
-        # currentRow is -1." Handle this case.
-        if current_row >= 0:
-            self.island_selected(current_row)
+    def set_algo_name(self, algo_name):
+        self.algo_name_label.setText(algo_name)
 
-    def set_local_seq(self, seq_str):
-        self.local_seq.setPlainText(seq_str)
+    def set_exec_time(self, exec_time_str):
+        self.exec_time_label.setText(exec_time_str)
 
-    def clear_local_seq(self):
-        self.local_seq.clear()
-
-    def set_global_seq(self, seq_str, island_location):
+    def set_global_seq(self, seq_str):
         self.global_seq.setPlainText(seq_str)
-        # Extra selections are already set in the constructor, so we
-        # know the list has at least a length of one.
+
+    def highlight_global_seq(self, start, end):
+        # Create a text cursor from the existing text cursor.
         cursor = self.global_seq.textCursor()
-        cursor.setPosition(island_location[0])
-        cursor.setPosition(island_location[1], QtGui.QTextCursor.KeepAnchor)
+        # Set the starting position. Don't do any selection yet.
+        cursor.setPosition(start)
+        # Now set this cursor as the main cursor for the widget.
+        self.global_seq.setTextCursor(cursor)
+        # Scroll such that the beginning of the sequence is now in the
+        # center of the widget.
+        self.global_seq.centerCursor()
+        # Now do the selection, and use this cursor for the extra
+        # selection, which creates a permanent selection.
+        cursor.setPosition(end, QtGui.QTextCursor.KeepAnchor)
         extra_sel = QtGui.QTextEdit.ExtraSelection()
         extra_sel.format.setBackground(QtCore.Qt.green)
         extra_sel.format.setFontOverline(True)
@@ -246,8 +340,32 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         extra_sel.cursor = cursor
         self.global_seq.setExtraSelections([extra_sel])
 
-    def clear_global_seq(self):
-        self.global_seq.clear()
+    def set_start(self, start_str):
+        self.subseq_start.setText(start_str)
+
+    def set_end(self, end_str):
+        self.subseq_end.setText(end_str)
+
+    def set_length(self, length_str):
+        self.subseq_length.setText(length_str)
+
+    def set_subseq(self, seq_str):
+        self.subseq.setPlainText(seq_str)
+
+    def clear_subseq(self):
+        self.subseq.clear()
+
+    def set_gc_ratio(self, gc_ratio_str):
+        self.subseq_gc_ratio.setText(gc_ratio_str)
+
+    def set_obs_exp_cpg_ratio(self, obs_exp_cpg_ratio_str):
+        self.subseq_obs_exp_cpg_ratio.setText(obs_exp_cpg_ratio_str)
+
+    def _island_selected(self, current_row):
+        # According to the Qt docs, "If there is no current item, the
+        # currentRow is -1." Handle this case.
+        if current_row >= 0:
+            self.island_selected(current_row)
 
 
 class EntrezView(QtGui.QWidget, BaseEntrezView):

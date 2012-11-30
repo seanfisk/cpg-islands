@@ -167,3 +167,16 @@ def qt():
     """Run the Qt-based version of the program."""
     from cpg_islands.qt.main import main
     main([])
+
+
+@task
+def search(query):
+    """Search all project files for a certain string."""
+    # Stolen directly from
+    # http://docs.python.org/2/library/subprocess.html#replacing-shell-pipeline
+    git_proc = subprocess.Popen(['git', 'ls-files'], stdout=subprocess.PIPE)
+    ack_proc = subprocess.Popen(['xargs', 'ack', '--pager=less -R', query],
+                                stdin=git_proc.stdout)
+    # Allow git_proc to receive a SIGPIPE if ack_proc exits.
+    git_proc.stdout.close()
+    ack_proc.communicate()

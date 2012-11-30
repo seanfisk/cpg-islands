@@ -71,6 +71,14 @@ class BaseSeqInputView(object):
         """
         raise NotImplementedError()
 
+    def set_min_obs_exp_cpg_ratio(self, min_obs_exp_cpg_ratio):
+        """Set the minimum observed/expected CpG ratio.
+
+        :param min_gc_ratio: the ratio of Guanine/Cytosine as a string
+        :type min_gc_ratio: :class:`str`
+        """
+        raise NotImplementedError()
+
     def show_error(self, message):
         """Show the user an error dialog.
 
@@ -83,14 +91,6 @@ class BaseSeqInputView(object):
 class BaseResultsView(object):
     island_selected = Event()
 
-    def clear_global_seq(self):
-        """Clear out the global sequence."""
-        raise NotImplementedError()
-
-    def clear_local_seq(self):
-        """Clear out the local sequence."""
-        raise NotImplementedError()
-
     def set_islands(self, islands):
         """Set the CpG island locations.
 
@@ -99,22 +99,89 @@ class BaseResultsView(object):
         """
         raise NotImplementedError()
 
-    def set_local_seq(self, seq_str):
-        """Set the local sequence string.
+    def set_algo_name(self, algo_name):
+        """Set the name of the algorithm used.
+
+        :param algo_name: the algorithm name
+        :type algo_name: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_exec_time(self, exec_time_str):
+        """Set the execution time of the algorithm.
+
+        :param exec_time_str: execution time as a string
+        :type exec_time: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_global_seq(self, seq_str):
+        """Set the global sequence string.
 
         :param seq_str: DNA sequence of feature
         :type seq_str: :class:`str`
         """
         raise NotImplementedError()
 
-    def set_global_seq(self, seq_str, island_location):
-        """Set the global sequence string and the local sequence's
-        island location inside of it.
+    def highlight_global_seq(self, start, end):
+        """Highlight the subsequence within the global sequence.
 
-        :param seq_str: DNA sequence of feature
+        :param start: start index of the currently selected island
+        :type start: :class:`str`
+        :param end: end index of the currently selected island
+        :type end: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_start(self, start_str):
+        """Set start index of the island.
+
+        :param start_str: start index of island
+        :type start_str: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_end(self, end_str):
+        """Set end index of the island
+
+        :param end_str: end index of island
+        :type end_str: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_length(self, length_str):
+        """Set length of the island.
+
+        :param length: length of island
+        :type length: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_subseq(self, seq_str):
+        """Set the subsequence.
+
+        :param seq_str: DNA sequence of island
         :type seq_str: :class:`str`
-        :param island_location: location of the currently selected island
-        :type island_location: :class:`tuple` of :class:`int` of length 2
+        """
+        raise NotImplementedError()
+
+    def clear_subseq(self):
+        """Clear subsequence field."""
+        raise NotImplementedError()
+
+    def set_gc_ratio(self, gc_ratio_str):
+        """Set GC ratio of the island.
+
+        :param gc_ratio_str: GC ratio of island
+        :type gc_ratio: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_obs_exp_cpg_ratio(self, obs_exp_cpg_ratio_str):
+        """Set observed/expected CpG ratio of the island.
+
+        :param obs_exp_cpg_ratio_str: observed/expected ratio
+        :type obs_exp_cpg_ratio_str: :class:`str`
         """
         raise NotImplementedError()
 
