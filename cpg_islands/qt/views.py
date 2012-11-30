@@ -70,20 +70,22 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         self.entrez_view = entrez_view
         self.seq_input_view = seq_input_view
         self.results_view = results_view
-        self.input_results_tab_widget = QtGui.QTabWidget(self)
-        self.input_results_tab_widget.addTab(self.entrez_view, 'Entre&z')
-        self.input_results_tab_widget.addTab(self.seq_input_view,
-                                             '&Sequence Input')
-        self.input_results_tab_widget.addTab(self.results_view, '&Results')
-        self.input_results_tab_widget.setCurrentWidget(self.seq_input_view)
-        self.setCentralWidget(self.input_results_tab_widget)
+        self.tab_widget = QtGui.QTabWidget(self)
+        self.tab_widget.addTab(self.entrez_view, 'Entre&z')
+        self.tab_widget.addTab(self.seq_input_view, '&Sequence Input')
+        self.tab_widget.addTab(self.results_view, '&Results')
+        self.tab_widget.setCurrentWidget(self.seq_input_view)
+        self.setCentralWidget(self.tab_widget)
 
     def start(self):
         self.showMaximized()
         self.raise_()
 
     def show_results(self):
-        self.input_results_tab_widget.setCurrentWidget(self.results_view)
+        self.tab_widget.setCurrentWidget(self.results_view)
+
+    def show_seq_input(self):
+        self.tab_widget.setCurrentWidget(self.seq_input_view)
 
     def _about(self):
         """Create and show the about dialog."""

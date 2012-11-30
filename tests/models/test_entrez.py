@@ -1,7 +1,7 @@
 from __future__ import division
 
 import pytest
-from mock import sentinel, call, create_autospec, patch, Mock
+from mock import sentinel, call, create_autospec, patch, Mock, MagicMock
 
 from cpg_islands.models import EntrezModel, MetaSeqInputModel
 
@@ -54,9 +54,16 @@ class TestEntrezModel:
             call.efetch().close()]
         assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
 
-    def test_load_seq(self, model):
-        model.seq_input_model = Mock()
-        model.seq_input_model.file_loaded = Mock(return_value=True)
-        model.load_seq(sentinel.seq)
-        assert (model.seq_input_model.mock_calls
-                == [call.file_loaded(sentinel.seq)])
+    class TestLoadSeq:
+        def test_file_loaded_called(self, model):
+            model.seq_input_model = Mock()
+            model.seq_input_model.file_loaded = Mock(return_value=True)
+            model.load_seq(sentinel.seq)
+            assert model.seq_input_model.mock_calls == [
+                call.file_loaded(sentinel.seq)]
+
+        def test_seq_loaded_event_called(self, model):
+            callback = MagicMock()
+            model.seq_loaded.append(callback)
+            model.load_seq(sentinel.seq)
+            assert callback.mock_calls == [call()]

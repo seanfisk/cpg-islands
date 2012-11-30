@@ -19,6 +19,10 @@ class BaseAppView(object):
         """Start the view."""
         raise NotImplementedError()
 
+    def show_seq_input(self):
+        """Show the sequence input view."""
+        raise NotImplementedError()
+
     def show_results(self):
         """Show the results view."""
         raise NotImplementedError()

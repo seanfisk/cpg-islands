@@ -7,8 +7,8 @@ from cpg_islands.models import AppModel, MetaSeqInputModel, MetaEntrezModel
 
 @pytest.fixture
 def model():
-    mock_seq_input_model = create_autospec(MetaSeqInputModel, spec_st=True)
-    mock_entrez_model = create_autospec(MetaEntrezModel, spec_st=True)
+    mock_seq_input_model = create_autospec(MetaSeqInputModel, spec_set=True)
+    mock_entrez_model = create_autospec(MetaEntrezModel, spec_set=True)
     return AppModel(mock_seq_input_model, mock_entrez_model)
 
 
@@ -25,8 +25,10 @@ def versionarg(request):
 class TestAppModel:
     def test_register_for_events(self, model):
         model.register_for_events()
-        assert (model.seq_input_model.mock_calls ==
-                [call.islands_computed.append(model.islands_computed)])
+        assert model.seq_input_model.mock_calls == [
+            call.islands_computed.append(model.islands_computed)]
+        assert model.entrez_model.mock_calls == [
+            call.seq_loaded.append(model.seq_loaded)]
 
     class TestRun:
         # `capfd' argument allows capture of stdout/stderr based on

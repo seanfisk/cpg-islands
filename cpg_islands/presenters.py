@@ -17,6 +17,7 @@ class AppPresenter(object):
 
     def register_for_events(self):
         self.model.started.append(self.view.start)
+        self.model.seq_loaded.append(self.view.show_seq_input)
         self.model.islands_computed.append(self.view.show_results)
         self.view.file_load_requested.append(self.model.load_file)
 

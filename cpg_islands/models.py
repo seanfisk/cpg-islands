@@ -57,12 +57,18 @@ class MetaAppModel(object):
     .. function:: callback()
     """
 
+    seq_loaded = Event()
+    """Fired when a sequence is loaded from the Entrez triad into the
+    SeqInput triad. Callbacks should look like:
+
+    .. function:: callback()
+    """
+
     islands_computed = Event()
     """Fired when island locations have been computed. Callbacks
     should look like:
 
     .. function:: callback()
-
     """
 
     @abstractmethod
@@ -221,8 +227,13 @@ class MetaResultsModel(object):
 
 
 class MetaEntrezModel(object):
-    started = Event()
-    """Responsible for initializing the Entrez email"""
+    seq_loaded = Event()
+    """Fired when a sequence is loaded from the Entrez triad into the
+    SeqInput triad. Callbacks should look like:
+
+    .. function:: callback()
+    """
+
     @abstractmethod
     def search(self, text):
         """Search Entrez database.
@@ -277,6 +288,7 @@ class AppModel(MetaAppModel):
 
     def register_for_events(self):
         self.seq_input_model.islands_computed.append(self.islands_computed)
+        self.entrez_model.seq_loaded.append(self.seq_loaded)
 
     def run(self, argv):
         author_strings = []
@@ -402,3 +414,4 @@ class EntrezModel(MetaEntrezModel):
 
     def load_seq(self, seq):
         self.seq_input_model.file_loaded(seq)
+        self.seq_loaded()
