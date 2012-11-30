@@ -5,11 +5,17 @@ Todo
 
 .. todo::
 
-   Sean - Remove some redundancy in valid algorithm tests in ``test_results.py``.
+   Add lots more tests for algorithms.
 
 .. todo::
 
-   Add lots more tests for algorithms.
+   Dock the Entrez view with the tab widgets.
+
+.. todo::
+
+   Clicking on a search result in Entrez should load the sequence into
+   the Entrez view, but not the SeqInputView. Clicking load should
+   then load it.
 
 .. todo::
 
@@ -17,8 +23,24 @@ Todo
 
 .. todo::
 
-   Add mnemonics and buddy labels, etc. to fields and labels. Some are
-   there but go through and check.
+   Loading a file or a sequence from Entrez should prompt if
+   overwriting a sequence currently typed in.
+
+.. todo::
+
+   Handle no Internet on the Entrez view.
+
+.. todo::
+
+   Switch assert mock calls to Gray's new style.
+
+.. todo::
+
+   Throttle calls to ESpell.
+   
+.. todo::
+
+   Refactor error shower code as shown in the Presenter First paper.
 
 .. todo::
 
@@ -35,19 +57,15 @@ Todo
 
 .. todo::
 
-   C-based extension model implementing sliding window.
-
-.. todo::
-
    Decrease the cyclomatic complexity of the Python accumulator algorithm.
 
 .. todo::
 
-   Entrez database search (new MVP triad)
+   Refine global sequence text edit to have an auto-zoom.
 
 .. todo::
 
-   Refine global sequence text edit to have an auto-zoom.
+   C-based extension model implementing sliding window.
 
 .. todo::
 
@@ -62,20 +80,8 @@ Todo
 
 .. todo::
 
-   Sean - Distribution with pyinstaller.
-
-.. todo::
-
-   Buck up and run the program on Windows.
-
-.. todo::
-
    Figure out why flake8>1.5 is not working with NOQA comments. For
    now we are just staying at flake8==1.5.
-
-.. todo::
-
-   Make documentation organization nicer.
 
 .. todo::
 
