@@ -387,33 +387,59 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         """
         super(EntrezView, self).__init__(parent)
 
-        # Layout
-        self.layout = QtGui.QFormLayout(self)
+        self.top_layout = QtGui.QVBoxLayout(self)
+
+        # Top Search Form
+        self.search_layout = QtGui.QFormLayout()
         self.query_input = QtGui.QLineEdit(self)
         self.query_input.textChanged.connect(self._query_input_changed)
-        self.layout.addRow('&Query', self.query_input)
+        self.search_layout.addRow('&Query', self.query_input)
 
         self.suggestion_display = QtGui.QLabel(self)
-        self.layout.addRow('Suggested Query', self.suggestion_display)
-
-        self.submit_button = QtGui.QPushButton('Search', self)
-        self.submit_button.clicked.connect(self._submit_clicked)
-        self.layout.addRow(self.submit_button)
+        self.search_layout.addRow('&Suggested Query', self.suggestion_display)
 
         self.query_translation_display = QtGui.QLabel(self)
-        self.layout.addRow('Query Translation', self.query_translation_display)
+        self.search_layout.addRow(
+            'Query &Translation', self.query_translation_display)
 
-        self.result_output = QtGui.QListWidget(self)
-        self.result_output.currentRowChanged.connect(self._result_selected)
-        self.layout.addRow('Results', self.result_output)
+        self.submit_button = QtGui.QPushButton('Se&arch', self)
+        self.submit_button.clicked.connect(self._submit_clicked)
+        self.search_layout.addRow(self.submit_button)
+        self.top_layout.addLayout(self.search_layout)
 
+        # Bottom Results Form
+        self.results_splitter = QtGui.QSplitter(self)
+        ## Left Side Results List
+        self.results_list_container = QtGui.QWidget(self)
+        self.results_list_layout = QtGui.QVBoxLayout(
+            self.results_list_container)
+        self.results_list_label = QtGui.QLabel('Res&ults', self)
+        self.results_list_layout.addWidget(self.results_list_label)
+        self.results_list = QtGui.QListWidget(self)
+        self.results_list_label.setBuddy(self.results_list)
+        self.results_list.currentRowChanged.connect(self._result_selected)
+        self.results_list_layout.addWidget(self.results_list)
+        self.results_splitter.addWidget(self.results_list_container)
+
+        self.seq_display_container = QtGui.QWidget(self)
+        self.seq_display_layout = QtGui.QVBoxLayout(self.seq_display_container)
+        self.seq_display_label = QtGui.QLabel('Seque&nce', self)
+        self.seq_display_layout.addWidget(self.seq_display_label)
         self.seq_display = SeqTextEdit(self)
+        self.seq_display_label.setBuddy(self.seq_display)
         self.seq_display.setReadOnly(True)
-        self.layout.addRow('Sequence', self.seq_display)
+        self.seq_display_layout.addWidget(self.seq_display)
+        self.results_splitter.addWidget(self.seq_display_container)
+        # Set self.seq_display_layout to have a stretch factor of
+        # 1. The idea is that the sequence text area should be bigger
+        # than the results list text area.
+        self.results_splitter.setStretchFactor(1, 1)
+
+        self.top_layout.addWidget(self.results_splitter, 1)
 
         self.load_button = QtGui.QPushButton('Load', self)
         self.load_button.clicked.connect(self._load_clicked)
-        self.layout.addRow(self.load_button)
+        self.top_layout.addWidget(self.load_button)
 
     def set_suggestion(self, suggestion):
         self.suggestion_display.setText(suggestion)
@@ -425,8 +451,8 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
         self.seq_display.setPlainText(seq_str)
 
     def set_result(self, results):
-        self.result_output.clear()
-        self.result_output.addItems(results)
+        self.results_list.clear()
+        self.results_list.addItems(results)
 
     def _get_query(self):
         """Return the query widget's entered text.
