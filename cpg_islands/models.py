@@ -386,7 +386,7 @@ class ResultsModel(MetaResultsModel):
 
 class EntrezModel(MetaEntrezModel):
     def __init__(self, seq_input_model):
-        Entrez.email = 'gray.gwizdz@gmail.com'
+        Entrez.email = metadata.emails[0]
         self.seq_input_model = seq_input_model
         self._last_loaded_id_list = []
         self._last_loaded_seq_record = SeqRecord(
