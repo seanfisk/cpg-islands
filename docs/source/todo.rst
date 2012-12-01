@@ -9,9 +9,8 @@ Todo
 
 .. todo::
 
-   Clicking on a search result in Entrez should load the sequence into
-   the Entrez view, but not the SeqInputView. Clicking load should
-   then load it.
+   In the Entrez view, load sequence id (hyperlinked to NCBI web page)
+   and description for each record when it is selected.
 
 .. todo::
 
