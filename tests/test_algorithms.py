@@ -124,3 +124,11 @@ class TestAlgorithms:
         computed = algorithm(make_seq_record(seq_str), 5, 0.5, 0.6)
         expected = make_algo_results(seq_str, [(10, 18, 0.625,  4 / 3)])
         assert computed == expected
+
+    class TestGCRatioLimit:
+        def test_island_at_end(self, algorithm):
+            seq_str = 'GCATAACGGTAATCTATCGTATCATATT'
+            computed = algorithm(make_seq_record(seq_str), 2, 0.5, 0.6)
+            expected = make_algo_results(
+                seq_str, [(6, 12, 0.5, 3), (17, 21, 0.5, 4)])
+            assert computed == expected
