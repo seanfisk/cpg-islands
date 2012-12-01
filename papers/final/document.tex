@@ -30,13 +30,13 @@ The software is hosted on \href{https://github.com/seanfisk/cpg-islands/}{GitHub
 \section{Introduction}
 
 Finding CpG islands often serves as an introduction to programming in the health sciences. While many different implementations of programs that find CpG islands exist, it was difficult to find a valid implementation. After failing to find an suitable implementation to verify our implementation against, we decided to focus on the shortcomings of other projects. Many times there would be no source code or documentation, which prevented us from comparing our implementation to a previous paper. When comparable source code was obtainable, it was poorly maintained or unreadable. Our focus shifted to having a well tested and documented implementation of a CpG island finder, rather than just another forgotten program.
+    
+\section{CpG Islands}
+
+Before discussing best practices, an introduction to CpG islands is needed. CpG islands are present in the promoter and exonic regions of approximately 40\% of mammalian genes. The locations of these CpG islands can be a great indicator of promoter regions, which assists biologists in mapping genomes.
 
 \begin{equation}
-\sum x+ y =Z\label{eq:01}
-\end{equation}
-    
-\begin{equation}
-\sum x+ y =Z\label{eq:02}
+    \textit{observed to expected} = \frac{\sum CpG}{(\frac{\sum G * \sum C}{\textit{window length}})} \label{eq:01}
 \end{equation}
 
 \section{Methodology}
@@ -71,34 +71,31 @@ This project was written using the Python programming language, along with sever
     The combination of these tools allowed us to continuously integrate our working implementation while adding new features.
 
 \paragraph{Biopython\textcolon}
-Biopython is a set of scientific libraries for the Python programming language. Biopython is especially 1
+Biopython is a set of scientific libraries for the Python programming language. Biopython is especially well suited for analyzing genetic sequences. Complex functions like sequence annotation, parsing sequence files are supported. Biopython was used in this project for sequence representation, labeling CpG islands, loading sequences from GenBank files, and searching the Entrez database for sequences.
+    
+\paragraph{Qt, PySide\textcolon}
+Qt is a cross-platform framework used primarily for creating graphical user interfaces. PySide is a library with bindings to the Qt framework, which allowed us to develop this program with one code base for multiple platforms.
 
 \paragraph{git\textcolon} 
-Text Text Text Text Text Text  Text Text.
+git is a distributed version control tool for source code. A user can have local branches of a code repository without affecting any other repositiories. Using this tool allowed us to add new tests and features to the program without having to share a central repository.
 
 \paragraph{GitHub\textcolon} 
-Text Text Text Text Text Text  Text Text.
+GitHub is an online software development community for hosting git repositories. Open source project hosting is free, which allowed us to work on this project independently.
+    
+\paragraph{Travis-CI\textcolon}
+Travis-CI is a continuous integration service for open source projects. Travis-CI will integrate with any GitHub repository and run a test suite to verify a build has not broken.
 
 \paragraph{pytest\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{mock\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{coverage.py, pytest-cov\textcolon} 
-Text Text Text Text Text Text  Text Text.
+pytest is a unit testing framework used to create test suites for Python programs. pytest was used to create coverage reports detailing our source code, and running the test suite.
 
 \paragraph{flake8\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{Travis-CI\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{Sphinx, docutils\textcolon} 
-Text Text Text Text Text Text  Text Text.
+flake8 is a syntax checker for Python that uses the PyFlakes and pep8 modules. It will check any source files for runtime errors and ensure all code meets pep8 coding standards.
+    
+\paragraph{Sphinx, docutils\textcolon}
+Sphinx and docutils are documentation generators which will take source code documentation and convert it into many different formats. Using these tools created our documentation while we added new code to the repository automatically.
 
 \paragraph{Read the Docs\textcolon} 
-Text Text Text Text Text Text  Text Text.
+Read the Docs is a site that will host documentation for projects. We configured our GitHub repository with a post-commit hook, which would rebuild the documentation from our source code after each change to the online repository.
 
 \section{Results}
 
