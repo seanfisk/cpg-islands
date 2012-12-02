@@ -5,6 +5,7 @@
 \usepackage{natbib}
 \bibpunct{(}{)}{;}{a}{,}{,}
 \usepackage{csquotes}
+\usepackage{minted}
 
 \begin{document}
 \firstpage{1}
@@ -92,6 +93,64 @@ versus CpGcluster, and determined that Takai-Jones was more accurate
 \citep{pmid19232104}. For this reason, we decided to implement the
 Takai-Jones definition as well as giving the option to change the
 parameters.
+
+After settling on giving the option to choose between the
+Gardiner-Frommer and Takai-Jones parameters, choosing the specific way
+to implement these criteria was once again a challenge. Since CpG
+islands are a commonly addressed problem, we decided to attempt to
+match our results with an existing implementation. We identified a
+number of tools that claimed to solve the CpG islands
+problem. However, we decided that source code for the original
+implementation was necessary in order to properly match the
+results. We were therefore able to narrow it down to three: the
+Sequence Manipulation Suite, second edition (SMS2), the European
+Molecular Biology Open Software Suite (EMBOSS), and the Perl script
+which accompanied and was published alongside the paper by Takai and
+Jones.
+
+\subsubsection{SMS2}
+
+SMS2 is a \textquote[\cite{sms2}]{collection of JavaScript programs
+  for generating, formatting, and analyzing short DNA and protein
+  sequences}. SMS2 provided a 200 base fixed-size sliding window
+implementation with accumulating counts. The fixed-size window is
+different than the typical greedy window implementation in that it
+will only find islands of a certain size, not greater to or equal than
+that size. This is a disadvantage from a practical standpoint because
+windows such as 304-504, 305-505, 306-606, etc. are rarely useful in
+practice. In addition, analysis of the source code found a so-called
+``of-by-one'' error in the code. When calculating the CpG count for
+the first window, a CpG formed by a C inside the window and a G
+outside the window was included in the window's count. The offending
+code is as follows:
+
+\begin{minted}[frame=single,label=cpg\_islands.js,linenos=true]{javascript}
+// ...
+//determine base counts for first window
+for (var i = 0; i < windowSize; i++) {
+    if (dnaSequence.charAt(i) == "g") {
+        numG = numG + 1;
+    }
+    if (dnaSequence.charAt(i) == "c") {
+        numC = numC + 1;
+        if (dnaSequence.charAt(i + 1)
+            == "g") {
+            numCG = numCG + 1;
+            numG = numG + 1;
+            i = i + 1;
+        }
+    }
+}
+// ...
+\end{minted}
+
+The last time through the loop, \verb|i = windowSize - 1|.
+This means that in line 9,
+\verb|dnaSequence.charAt(i + 1)|
+retrieves a character which is \emph{outside} the window.
+
+Given the fact that SMS2 uses fixed-size windows and errors were found
+in the code, we decided not to attempt to match its results.
 
 \section{Tools}
 
