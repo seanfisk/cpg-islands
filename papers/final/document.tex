@@ -3,6 +3,8 @@
 \pubyear{2012}
 
 \usepackage{natbib}
+\bibpunct{(}{)}{;}{a}{,}{,}
+\usepackage{csquotes}
 
 \begin{document}
 \firstpage{1}
@@ -78,8 +80,18 @@ CGIs. Two common definitions are provided. The first, defined by
 Gardiner and Frommer, defines a CGI as a region of at least 200 base
 pairs containing a GC ratio of at least 50\% and an observed to
 expected CpG ratio of at least 0.6. The second definition, revised by
-Takai and Jones, defines a CGI as a region of at least 500 base pairs containing a GC ratio of at least 60\% and an observed to
+Takai and Jones, defines a CGI as a region of at least 500 base pairs containing a GC ratio of at least 55\% and an observed to
 expected CpG ratio of at least 0.65 \citep{pmid11891299}.
+
+Another algorithm which can be used to identify CGIs is called
+CpGcluster. Instead of the using the traditional criteria, CpGcluster
+is \textquote[\cite{pmid17038168}]{based on the physical distance
+  between neighboring CpGs on the chromosome}. Han and Zhoa later
+compared the relative accuracy of the Takai-Jones implementation
+versus CpGcluster, and determined that Takai-Jones was more accurate
+\citep{pmid19232104}. For this reason, we decided to implement the
+Takai-Jones definition as well as giving the option to change the
+parameters.
 
 \section{Tools}
 
