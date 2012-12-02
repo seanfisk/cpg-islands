@@ -2,13 +2,15 @@
 \copyrightyear{2012}
 \pubyear{2012}
 
+\usepackage{natbib}
+
 \begin{document}
 \firstpage{1}
 
 \title[Applying Best Practices]{Applying Best Practices to BioInformatics Software}
 \author[Sample \textit{et~al}]{Sean Fisk\,$^{1,*}$, Gray Gwizdz\,$^{2}$ \footnote{to whom correspondence should be addressed}}
 \address{$^{1}$Grand Valley State University\\
-$^{2}$Grand Valley State University}
+  $^{2}$Grand Valley State University}
 
 \history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
 
@@ -18,35 +20,76 @@ $^{2}$Grand Valley State University}
 
 \begin{abstract}
 
-\section{Summary}
-CpG islands are areas of a DNA sequence rich in the nucleotides Cytosine and Guanine. These islands are important because they are often observed in the promoter regions of DNA. The goal of this project to develop a program to analyze and visualize DNA for CpG islands. When provided with a DNA sequence, the program will provide a graphical visualization of CpG islands within sequence.
+  \section{Summary}
+  CpG islands are areas of a DNA sequence rich in the nucleotides
+  Cytosine and Guanine. These islands are important because they are
+  often observed in the promoter regions of DNA. The goal of this
+  project to develop a program to analyze and visualize DNA for CpG
+  islands. When provided with a DNA sequence, the program will provide a
+  graphical visualization of CpG islands within sequence.
 
-\section{Availability}
-The software is hosted on \href{https://github.com/seanfisk/cpg-islands/}{GitHub}, while documentation is hosted on \href{https://cpg-islands.readthedocs.org/en/latest/}{ReadTheDocs}. CpG Islands is free software licensed under the \href{http://www.gnu.org/licenses/gpl.html#content}{GNU General Public License version 3}.
+  \section{Availability}
+  The software is hosted on
+  \href{https://github.com/seanfisk/cpg-islands/}{GitHub}, while
+  documentation is hosted on
+  \href{https://cpg-islands.readthedocs.org/en/latest/}{ReadTheDocs}. CpG
+  Islands is free software licensed under the
+  \href{http://www.gnu.org/licenses/gpl.html#content}{GNU General Public
+    License version 3}.
 
-\section{Contact} \href{gwizdzg@mail.gvsu.edu}{gwizdzg@mail.gvsu.edu}, \href{fiskse@mail.gvsu.edu}{fiskse@mail.gvsu.edu}
+  \section{Contact} \href{gwizdzg@mail.gvsu.edu}{gwizdzg@mail.gvsu.edu}, \href{fiskse@mail.gvsu.edu}{fiskse@mail.gvsu.edu}
 \end{abstract}
 
 \section{Introduction}
 
-Finding CpG islands often serves as an introduction to programming in the health sciences. While many different implementations of programs that find CpG islands exist, it was difficult to find a valid implementation. After failing to find an suitable implementation to verify our implementation against, we decided to focus on the shortcomings of other projects. Many times there would be no source code or documentation, which prevented us from comparing our implementation to a previous paper. When comparable source code was obtainable, it was poorly maintained or unreadable. Our focus shifted to having a well tested and documented implementation of a CpG island finder, rather than just another forgotten program.
+Finding CpG islands (CGI) often serves as an introduction to
+programming in the health sciences. While many different
+implementations of programs that find CGIs exist, it was difficult to
+find a valid implementation. After failing to find an suitable
+implementation to verify our implementation against, we decided to
+focus on the shortcomings of other projects. Many times there would be
+no source code or documentation, which prevented us from comparing our
+implementation to a previous paper. When comparable source code was
+obtainable, it was poorly maintained or unreadable. Our focus shifted
+to having a well tested and documented implementation of a CGIs
+finder, rather than just another forgotten program.
 
 \begin{equation}
-\sum x+ y =Z\label{eq:01}
+  \sum x+ y =Z\label{eq:01}
 \end{equation}
-    
+
 \begin{equation}
-\sum x+ y =Z\label{eq:02}
+  \sum x+ y =Z\label{eq:02}
 \end{equation}
 
 \section{Methodology}
-    
-    Test-Driven Development served as a basic methodology when desiging our application. In order to add a new feature to the implementation, the first step is writing a test that described the new feature. By writing the test before adding the feature, the test is guaranteed to fail. This may seem like a problem, but it actually is quite helpful. It is often better to think about a program in terms of results, rather than how it should be designed. Once the test has been written, the new feature is added to the build to pass the test. Creating a test before writing any function may seem like overhead, but the test remains valid indefinitely. If a test breaks as a result of changes to an unrelated section of code, you will be alerted next time the test suite is ran.\\
-    
-    When creating a program with a graphical user interface, there are several different software development approaches that a developer can take. One of the most common paradigms is a Model-View-Controller architecture. The model holds the application logic and data, the controller is responsible for handling input from the user, and the view represents output from the program. While this paradigm is highly successful, it may not be the best approach for Test-Driven Development. A slight variation of the Model-View-Controller style, Model-View-Presenter, focuses on facilitating unit tests. Combining Test-Driven Development with a Model-View-Presenter design pattern leads to a software development approach known as Presenter First.\\
-    
-    Presenter First has proven to be an effective technique for scaling graphical applications with Test-Driven Development. With the Presenter-First methodology, program functionality is driven by user stories. The user stories are first designed as tests for the presenter, with features to implement them being added to the model. New features for the model require failing tests before creation, ensuring that the minimal solution to solve the problem is written.
-    
+
+Test-Driven Development served as a basic methodology when desiging our application. In order to add a new feature to the implementation, the first step is writing a test that described the new feature. By writing the test before adding the feature, the test is guaranteed to fail. This may seem like a problem, but it actually is quite helpful. It is often better to think about a program in terms of results, rather than how it should be designed. Once the test has been written, the new feature is added to the build to pass the test. Creating a test before writing any function may seem like overhead, but the test remains valid indefinitely. If a test breaks as a result of changes to an unrelated section of code, you will be alerted next time the test suite is ran.\\
+
+When creating a program with a graphical user interface, there are
+several different software development approaches that a developer can
+take. One of the most common paradigms is a Model-View-Controller
+architecture. The model holds the application logic and data, the
+controller is responsible for handling input from the user, and the
+view represents output from the program. While this paradigm is highly
+successful, it may not be the best approach for Test-Driven
+Development. A slight variation of the Model-View-Controller style,
+Model-View-Presenter, focuses on facilitating unit tests. Combining
+Test-Driven Development with a Model-View-Presenter design pattern
+leads to a software development approach known as Presenter First. \citep{Alles:2006:PFO:1155439.1155482}\\
+
+Presenter First has proven to be an effective technique for scaling graphical applications with Test-Driven Development. With the Presenter-First methodology, program functionality is driven by user stories. The user stories are first designed as tests for the presenter, with features to implement them being added to the model. New features for the model require failing tests before creation, ensuring that the minimal solution to solve the problem is written.
+
+\subsection{Algorithms}
+
+Choosing an algorithm to locate CGIs was a somewhat difficult
+task, as there is very little agreement as to the definition of
+CGIs. Two common definitions are provided. The first, defined by
+Gardiner and Frommer, defines a CGI as a region of at least 200 base
+pairs containing a GC ratio of at least 50\% and an observed to
+expected CpG ratio of at least 0.6. The second definition, revised by
+Takai and Jones, defines a CGI as a region of at least 500 base pairs containing a GC ratio of at least 60\% and an observed to
+expected CpG ratio of at least 0.65 \citep{pmid11891299}.
 
 \section{Tools}
 
@@ -67,8 +110,8 @@ This project was written using the Python programming language, along with sever
 \item Read the Docs for documentation hosting
 \item shovel for running miscellaneous tasks
 \end{itemize}
-    
-    The combination of these tools allowed us to continuously integrate our working implementation while adding new features.
+
+The combination of these tools allowed us to continuously integrate our working implementation while adding new features.
 
 \paragraph{Biopython\textcolon}
 Biopython is a set of scientific libraries for the Python programming language. Biopython is especially 1
@@ -106,46 +149,14 @@ Text Text Text Text Text Text  Text Text.
 
 \section{Conclusion}
 
-%\bibliographystyle{natbib}
-%\bibliographystyle{achemnat}
-%\bibliographystyle{plainnat}
-%\bibliographystyle{abbrv}
-%\bibliographystyle{bioinformatics}
-%
-%\bibliographystyle{plain}
-%
-%\bibliography{Document}
+% \bibliographystyle{natbib}
+% \bibliographystyle{achemnat}
+\bibliographystyle{plainnat}
+% \bibliographystyle{abbrv}
+% \bibliographystyle{bioinformatics}
+% 
+% \bibliographystyle{plain}
+% 
+\bibliography{citations}
 
-
-\begin{thebibliography}{}
-\bibitem[Bofelli {\it et~al}., 2000]{Boffelli03} Bofelli,F., Name2, Name3 (2003) Article title, {\it Journal Name}, {\bf 199}, 133-154.
-
-\bibitem[Bag {\it et~al}., 2001]{Bag01} Bag,M., Name2, Name3 (2001) Article title, {\it Journal Name}, {\bf 99}, 33-54.
-
-\bibitem[Yoo \textit{et~al}., 2003]{Yoo03}
-Yoo,M.S. \textit{et~al}. (2003) Oxidative stress regulated genes
-in nigral dopaminergic neurnol cell: correlation with the known
-pathology in Parkinson's disease. \textit{Brain Res. Mol. Brain
-Res.}, \textbf{110}(Suppl. 1), 76--84.
-
-\bibitem[Lehmann, 1986]{Leh86}
-Lehmann,E.L. (1986) Chapter title. \textit{Book Title}. Vol.~1, 2nd edn. Springer-Verlag, New York.
-
-\bibitem[Crenshaw and Jones, 2003]{Cre03}
-Crenshaw, B.,III, and Jones, W.B.,Jr (2003) The future of clinical
-cancer management: one tumor, one chip. \textit{Bioinformatics},
-doi:10.1093/bioinformatics/btn000.
-
-\bibitem[Auhtor \textit{et~al}. (2000)]{Aut00}
-Auhtor,A.B. \textit{et~al}. (2000) Chapter title. In Smith, A.C.
-(ed.), \textit{Book Title}, 2nd edn. Publisher, Location, Vol. 1, pp.
-???--???.
-
-\bibitem[Bardet, 1920]{Bar20}
-Bardet, G. (1920) Sur un syndrome d'obesite infantile avec
-polydactylie et retinite pigmentaire (contribution a l'etude des
-formes cliniques de l'obesite hypophysaire). PhD Thesis, name of
-institution, Paris, France.
-
-\end{thebibliography}
 \end{document}
