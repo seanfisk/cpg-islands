@@ -18,6 +18,12 @@ Todo
 
 .. todo::
 
+   When searching again on the Entrez view, or computing again on the
+   Results view, stale data is left in the forms. They should be clear
+   when a new search/analysis is performed.
+
+.. todo::
+
    Rename ``file_loaded`` event to something that makes more sense.
 
 .. todo::
