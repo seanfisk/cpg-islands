@@ -29,6 +29,8 @@ The following abbreviations are used consistently throughout the application (or
 +-------------------------------+------------+
 |statistics                     |stats       |
 +-------------------------------+------------+
+|description                    |desc        |
++-------------------------------+------------+
 |presenter                      |pres        |
 +-------------------------------+------------+
 

@@ -6,6 +6,8 @@
 """:mod:`cpg_islands.views.qt` --- Views based on Q toolkit
 """
 
+from xml.sax import saxutils
+
 from PySide import QtGui, QtCore
 
 from cpg_islands import metadata
@@ -13,6 +15,15 @@ from cpg_islands.views import (BaseAppView,
                                BaseSeqInputView,
                                BaseResultsView,
                                BaseEntrezView)
+
+
+class LeftFormLayout(QtGui.QFormLayout):
+    """A form whose contents are left-aligned. This overrides the
+    default Mac OS X behavior for QFormLayout, however, it looks more
+    natural with our application."""
+    def __init__(self, parent=None):
+        super(LeftFormLayout, self).__init__(parent)
+        self.setFormAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
 
 
 class SeqTextEdit(QtGui.QPlainTextEdit):
@@ -243,7 +254,7 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.top_layout = QtGui.QVBoxLayout(self)
 
         # Global statistics
-        self.global_stats_layout = QtGui.QFormLayout()
+        self.global_stats_layout = LeftFormLayout()
         self.algo_name_label = StatsLabel(self)
         self.exec_time_label = StatsLabel(self)
         self.global_stats_layout.addRow(
@@ -279,7 +290,7 @@ class ResultsView(QtGui.QWidget, BaseResultsView):
         self.subseq_container = QtGui.QWidget(self)
         self.subseq_layout = QtGui.QVBoxLayout(self.subseq_container)
         ## Subseq stats
-        self.subseq_stats_layout = QtGui.QFormLayout()
+        self.subseq_stats_layout = LeftFormLayout()
         self.subseq_start = StatsLabel(self)
         self.subseq_stats_layout.addRow('S&tart Index:', self.subseq_start)
         self.subseq_end = StatsLabel(self)
@@ -423,6 +434,18 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
 
         self.seq_display_container = QtGui.QWidget(self)
         self.seq_display_layout = QtGui.QVBoxLayout(self.seq_display_container)
+        self.seq_info_layout = LeftFormLayout()
+        self.seq_locus_display = QtGui.QLabel(self)
+        self.seq_locus_display.setOpenExternalLinks(True)
+        self.seq_info_layout.addRow(
+            QtGui.QLabel(
+                "Click the locus to visit the sequence on NCBI's website.",
+                self))
+        self.seq_info_layout.addRow(
+            '&Locus (NCBI identifier):', self.seq_locus_display)
+        self.seq_desc_display = QtGui.QLabel(self)
+        self.seq_info_layout.addRow('&Description:', self.seq_desc_display)
+        self.seq_display_layout.addLayout(self.seq_info_layout)
         self.seq_display_label = QtGui.QLabel('Seque&nce', self)
         self.seq_display_layout.addWidget(self.seq_display_label)
         self.seq_display = SeqTextEdit(self)
@@ -446,6 +469,17 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
 
     def set_query_translation(self, query_translation):
         self.query_translation_display.setText(query_translation)
+
+    def set_seq_locus(self, locus, ncbi_url):
+        # Do the right thing and escape these
+        # fields. `saxutils.quoteattr()' automatically adds quotes
+        # around the text for you.
+        self.seq_locus_display.setText('<a href={0}>{1}</a>'.format(
+            saxutils.quoteattr(ncbi_url),
+            saxutils.escape(locus)))
+
+    def set_seq_desc(self, desc):
+        self.seq_desc_display.setText(desc)
 
     def set_selected_seq(self, seq_str):
         self.seq_display.setPlainText(seq_str)

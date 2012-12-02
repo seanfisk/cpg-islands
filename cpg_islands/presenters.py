@@ -209,8 +209,12 @@ class EntrezPresenter(object):
         :param index: list index of selected item on view
         :type index: :class:`int`
         """
-        result = self.model.get_seq(index)
-        self.view.set_selected_seq(str(result.seq))
+        seq_record = self.model.get_seq_record(index)
+        self.view.set_seq_locus(
+            seq_record.id,
+            'http://www.ncbi.nlm.nih.gov/nuccore/{0}'.format(seq_record.id))
+        self.view.set_seq_desc(seq_record.description)
+        self.view.set_selected_seq(str(seq_record.seq))
 
     def _query_changed(self, query):
         """Handle user suggestions.

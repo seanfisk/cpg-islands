@@ -37,7 +37,7 @@ class TestEntrezModel:
             call.espell(db='pubmed', term=sentinel.text),
             call.read(sentinel.handle)]
 
-    def test_get_seq(self, model):
+    def test_get_seq_record(self, model):
         with patch('cpg_islands.models.Entrez') as mock_entrez:
             with patch('cpg_islands.models.SeqIO') as mock_seqio:
                 # call previously necessary methods
@@ -50,7 +50,7 @@ class TestEntrezModel:
                 handle = MagicMock()
                 mock_entrez.efetch.return_value = handle
                 mock_seqio.read.return_value = sentinel.record
-                record = model.get_seq(2)
+                record = model.get_seq_record(2)
         assert record == sentinel.record
         # We don't care about the things that were done with the
         # Entrez module earlier in `model.search()', so just assert
@@ -74,7 +74,7 @@ class TestEntrezModel:
                         'QueryTranslation': sentinel._}
                     model.search(sentinel._)
                     mock_seqio.read.return_value = make_seq_record(seq_str)
-                    model.get_seq(2)
+                    model.get_seq_record(2)
 
                     model.load_seq()
             assert model.seq_input_model.mock_calls == [

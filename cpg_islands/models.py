@@ -257,7 +257,7 @@ class MetaEntrezModel(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_seq(self, index):
+    def get_seq_record(self, index):
         """Pull sequence based on index.
 
         :param index: the index of the sequence
@@ -403,7 +403,7 @@ class EntrezModel(MetaEntrezModel):
         result = Entrez.read(handle)
         return result['CorrectedQuery']
 
-    def get_seq(self, index):
+    def get_seq_record(self, index):
         handle = Entrez.efetch(
             db='nucleotide', id=self._last_loaded_id_list[index],
             rettype='gb', retmode='text')

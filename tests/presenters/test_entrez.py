@@ -9,7 +9,7 @@ from tests.helpers import make_seq_record
 
 @pytest.fixture
 def presenter():
-    mock_model = create_autospec(MetaEntrezModel, spec_set=False)
+    mock_model = create_autospec(MetaEntrezModel, spec_set=True)
     mock_view = create_autospec(BaseEntrezView, spec_set=True)
     return EntrezPresenter(mock_model, mock_view)
 
@@ -38,10 +38,20 @@ class TestEntrezPresenter:
 
     def test_user_selected(self, presenter):
         seq_str = 'ATATACGCGCATATA'
-        presenter.model.get_seq.return_value = make_seq_record(seq_str)
+        seq_id = 'NG_032827.2'
+        seq_desc = "It's a pretty cool sequence"
+        seq_record = make_seq_record(seq_str)
+        seq_record.id = seq_id
+        seq_record.description = seq_desc
+        presenter.model.get_seq_record.return_value = seq_record
         presenter._user_selected(sentinel.index)
-        assert presenter.model.mock_calls == [call.get_seq(sentinel.index)]
-        assert presenter.view.mock_calls == [call.set_selected_seq(seq_str)]
+        assert presenter.model.mock_calls == [
+            call.get_seq_record(sentinel.index)]
+        assert presenter.view.mock_calls == [
+            call.set_seq_locus(
+                seq_id, 'http://www.ncbi.nlm.nih.gov/nuccore/NG_032827.2'),
+            call.set_seq_desc(seq_desc),
+            call.set_selected_seq(seq_str)]
 
     def test_user_changed(self, presenter):
         presenter.model.suggest.return_value = sentinel.suggestion

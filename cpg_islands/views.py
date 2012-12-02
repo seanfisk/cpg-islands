@@ -213,6 +213,25 @@ class BaseEntrezView(object):
         """
         raise NotImplementedError()
 
+    def set_seq_locus(self, locus, ncbi_url):
+        """Set the selected sequence's locus and URL to access on
+        NCBI. Basically, identify the sequence on NCBI.
+
+        :param locus: sequence's locus
+        :type locus: :class:`str`
+        :param ncbi_url: URL to sequence on NCBI
+        :type ncbi_url: :class:`str`
+        """
+        raise NotImplementedError()
+
+    def set_seq_desc(self, desc):
+        """Set the selected sequence's description.
+
+        :param desc: sequence's description
+        :type desc: :class:`str`
+        """
+        raise NotImplementedError()
+
     def set_selected_seq(self, seq_str):
         """Set the selected sequence.
 
