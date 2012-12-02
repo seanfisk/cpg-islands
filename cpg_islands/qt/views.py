@@ -82,9 +82,9 @@ class AppView(QtGui.QMainWindow, BaseAppView):
         self.seq_input_view = seq_input_view
         self.results_view = results_view
         self.tab_widget = QtGui.QTabWidget(self)
-        self.tab_widget.addTab(self.entrez_view, 'Entre&z')
+        self.tab_widget.addTab(self.entrez_view, 'Entre&z Search')
         self.tab_widget.addTab(self.seq_input_view, '&Sequence Input')
-        self.tab_widget.addTab(self.results_view, '&Results')
+        self.tab_widget.addTab(self.results_view, 'Analysis &Results')
         self.tab_widget.setCurrentWidget(self.seq_input_view)
         self.setCentralWidget(self.tab_widget)
 
