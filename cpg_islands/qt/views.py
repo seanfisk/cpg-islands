@@ -445,6 +445,8 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
             '&Locus (NCBI identifier):', self.seq_locus_display)
         self.seq_desc_display = QtGui.QLabel(self)
         self.seq_info_layout.addRow('&Description:', self.seq_desc_display)
+        self.seq_len_display = QtGui.QLabel(self)
+        self.seq_info_layout.addRow('Len&gth:', self.seq_len_display)
         self.seq_display_layout.addLayout(self.seq_info_layout)
         self.seq_display_label = QtGui.QLabel('Seque&nce', self)
         self.seq_display_layout.addWidget(self.seq_display_label)
@@ -480,6 +482,9 @@ class EntrezView(QtGui.QWidget, BaseEntrezView):
 
     def set_seq_desc(self, desc):
         self.seq_desc_display.setText(desc)
+
+    def set_seq_len(self, len_str):
+        self.seq_len_display.setText(len_str)
 
     def set_selected_seq(self, seq_str):
         self.seq_display.setPlainText(seq_str)

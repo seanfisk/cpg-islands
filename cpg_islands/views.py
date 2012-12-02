@@ -232,6 +232,14 @@ class BaseEntrezView(object):
         """
         raise NotImplementedError()
 
+    def set_seq_len(self, len_str):
+        """Set the length of the sequence.
+
+        :param len: sequence length as a string
+        :type len: :class:`str`
+        """
+        raise NotImplementedError()
+
     def set_selected_seq(self, seq_str):
         """Set the selected sequence.
 

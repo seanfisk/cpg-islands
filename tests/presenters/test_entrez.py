@@ -51,6 +51,7 @@ class TestEntrezPresenter:
             call.set_seq_locus(
                 seq_id, 'http://www.ncbi.nlm.nih.gov/nuccore/NG_032827.2'),
             call.set_seq_desc(seq_desc),
+            call.set_seq_len('15 bases'),
             call.set_selected_seq(seq_str)]
 
     def test_user_changed(self, presenter):

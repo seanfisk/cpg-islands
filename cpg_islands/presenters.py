@@ -214,6 +214,7 @@ class EntrezPresenter(object):
             seq_record.id,
             'http://www.ncbi.nlm.nih.gov/nuccore/{0}'.format(seq_record.id))
         self.view.set_seq_desc(seq_record.description)
+        self.view.set_seq_len('{0} bases'.format(len(seq_record.seq)))
         self.view.set_selected_seq(str(seq_record.seq))
 
     def _query_changed(self, query):
