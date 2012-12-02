@@ -38,7 +38,6 @@ class TestEntrezPresenter:
 
     def test_user_selected(self, presenter):
         seq_str = 'ATATACGCGCATATA'
-        presenter.model._results = {'IdList': [seq_str]}
         presenter.model.get_seq.return_value = make_seq_record(seq_str)
         presenter._user_selected(sentinel.index)
         assert presenter.model.mock_calls == [call.get_seq(sentinel.index)]

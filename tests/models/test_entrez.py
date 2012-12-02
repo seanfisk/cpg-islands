@@ -40,26 +40,43 @@ class TestEntrezModel:
     def test_get_seq(self, model):
         with patch('cpg_islands.models.Entrez') as mock_entrez:
             with patch('cpg_islands.models.SeqIO') as mock_seqio:
+                # call previously necessary methods
+                mock_entrez.read.return_value = {
+                    'IdList': [sentinel._, sentinel._,
+                               sentinel.chosen_id, sentinel._],
+                    'QueryTranslation': sentinel._}
+                model.search(sentinel._)
+
                 handle = MagicMock()
                 mock_entrez.efetch.return_value = handle
                 mock_seqio.read.return_value = sentinel.record
-                model._last_loaded_id_list = [
-                    sentinel.unused, sentinel.unused,
-                    sentinel.chosen_id, sentinel.unused]
                 record = model.get_seq(2)
         assert record == sentinel.record
-        assert mock_entrez.mock_calls == call.efetch(
+        # We don't care about the things that were done with the
+        # Entrez module earlier in `model.search()', so just assert
+        # that `Entrez.efetch()' has been called correctly.
+        mock_entrez.efetch.assert_called_once_with(
             db='nucleotide',
             id=sentinel.chosen_id,
             rettype='gb',
-            retmode='text').close().call_list()
+            retmode='text')
         assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
 
     class TestLoadSeq:
         def test_file_loaded_called(self, model):
             seq_str = 'ATATGCGCATATA'
-            model._last_loaded_seq_record = make_seq_record(seq_str)
-            model.load_seq()
+            with patch('cpg_islands.models.Entrez') as mock_entrez:
+                with patch('cpg_islands.models.SeqIO') as mock_seqio:
+                    # call previously necessary methods
+                    mock_entrez.read.return_value = {
+                        'IdList': [sentinel._, sentinel._,
+                                   sentinel._, sentinel._],
+                        'QueryTranslation': sentinel._}
+                    model.search(sentinel._)
+                    mock_seqio.read.return_value = make_seq_record(seq_str)
+                    model.get_seq(2)
+
+                    model.load_seq()
             assert model.seq_input_model.mock_calls == [
                 call.file_loaded(seq_str)]
 
