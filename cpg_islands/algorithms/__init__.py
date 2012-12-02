@@ -194,7 +194,7 @@ class MetaAlgorithm(object):
 class SlidingWindowPythonAlgorithm(MetaAlgorithm):
     @property
     def name(self):
-        return 'Sliding Window (Python)'
+        return 'Sliding Window'
 
     def algorithm(
             self, seq_record, island_size, min_gc_ratio,
@@ -264,7 +264,7 @@ class SlidingWindowPythonAlgorithm(MetaAlgorithm):
 class AccumulatingSlidingWindowPythonAlgorithm(MetaAlgorithm):
     @property
     def name(self):
-        return 'Accumulating Sliding Window (Python)'
+        return 'Accumulating Sliding Window'
 
     # NOQA is here right now to stop flake8 from whining about the
     # cyclomatic complexity of this function, which it reports as
