@@ -9,8 +9,8 @@ Todo
 
 .. todo::
 
-   In the Entrez view, load sequence id (hyperlinked to NCBI web page)
-   and description for each record when it is selected.
+   Re-factor the Entrez model to something more elegant. It's sort of
+   a mess.
 
 .. todo::
 

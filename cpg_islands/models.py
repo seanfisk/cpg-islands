@@ -385,18 +385,26 @@ class ResultsModel(MetaResultsModel):
 
 
 class EntrezModel(MetaEntrezModel):
+    # TODO: This class is probably unnecessarily complicated.
     def __init__(self, seq_input_model):
         Entrez.email = metadata.emails[0]
         self.seq_input_model = seq_input_model
-        self._last_loaded_id_list = []
+        self._id_list_cache = []
         self._last_loaded_seq_record = SeqRecord(
-            Seq('', IUPAC.unambiguous_dna))
+            seq=Seq('', IUPAC.unambiguous_dna))
+        self._seq_record_cache = {}
 
     def search(self, text):
         handle = Entrez.esearch(db='nucleotide', term=text)
         results = Entrez.read(handle)
-        self._last_loaded_id_list = results['IdList']
-        return (self._last_loaded_id_list, results['QueryTranslation'])
+        self._id_list_cache = results['IdList']
+        # Clear the cache of seq records on a new search. While it
+        # would be helpful to keep all records ever loaded cached,
+        # that would continue to eat up more memory as more records
+        # were loaded. If the search is used frequently, this memory
+        # footprint could be quite significant.
+        self._seq_record_cache.clear()  # TODO: This should be tested.
+        return (self._id_list_cache, results['QueryTranslation'])
 
     def suggest(self, text):
         handle = Entrez.espell(db='pubmed', term=text)
@@ -404,13 +412,24 @@ class EntrezModel(MetaEntrezModel):
         return result['CorrectedQuery']
 
     def get_seq_record(self, index):
-        handle = Entrez.efetch(
-            db='nucleotide', id=self._last_loaded_id_list[index],
-            rettype='gb', retmode='text')
-        self._last_loaded_seq_record = SeqIO.read(handle, 'genbank')
-        handle.close()
+        # TODO: This should do more error checking to make sure that
+        # an id list is actually cached.
+        entrez_id = self._id_list_cache[index]
+        try:
+            seq_record = self._seq_record_cache[entrez_id]
+        except KeyError:
+            handle = Entrez.efetch(
+                db='nucleotide', id=entrez_id,
+                rettype='gb', retmode='text')
+            seq_record = SeqIO.read(handle, 'genbank')
+            handle.close()
+            self._seq_record_cache[entrez_id] = seq_record
+        self._last_loaded_seq_record = seq_record
         return self._last_loaded_seq_record
 
     def load_seq(self):
+        # TODO: This should do more error checking to check that a
+        # sequence has actually been loaded. Actually, it should
+        # probably load the sequence by index like get_seq_record.
         self.seq_input_model.file_loaded(str(self._last_loaded_seq_record.seq))
         self.seq_loaded()

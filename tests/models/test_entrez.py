@@ -37,30 +37,63 @@ class TestEntrezModel:
             call.espell(db='pubmed', term=sentinel.text),
             call.read(sentinel.handle)]
 
-    def test_get_seq_record(self, model):
-        with patch('cpg_islands.models.Entrez') as mock_entrez:
-            with patch('cpg_islands.models.SeqIO') as mock_seqio:
-                # call previously necessary methods
-                mock_entrez.read.return_value = {
-                    'IdList': [sentinel._, sentinel._,
-                               sentinel.chosen_id, sentinel._],
-                    'QueryTranslation': sentinel._}
-                model.search(sentinel._)
+    class TestGetSeqRecord:
+        def test_normal_use(self, model):
+            with patch('cpg_islands.models.Entrez') as mock_entrez:
+                with patch('cpg_islands.models.SeqIO') as mock_seqio:
+                    # call previously necessary methods
+                    mock_entrez.read.return_value = {
+                        'IdList': [sentinel._, sentinel._,
+                                   sentinel.chosen_id, sentinel._],
+                        'QueryTranslation': sentinel._}
+                    model.search(sentinel._)
 
-                handle = MagicMock()
-                mock_entrez.efetch.return_value = handle
-                mock_seqio.read.return_value = sentinel.record
-                record = model.get_seq_record(2)
-        assert record == sentinel.record
-        # We don't care about the things that were done with the
-        # Entrez module earlier in `model.search()', so just assert
-        # that `Entrez.efetch()' has been called correctly.
-        mock_entrez.efetch.assert_called_once_with(
-            db='nucleotide',
-            id=sentinel.chosen_id,
-            rettype='gb',
-            retmode='text')
-        assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
+                    handle = MagicMock()
+                    mock_entrez.efetch.return_value = handle
+                    mock_seqio.read.return_value = sentinel.record
+                    record = model.get_seq_record(2)
+            assert record == sentinel.record
+            # We don't care about the things that were done with the
+            # Entrez module earlier in `model.search()', so just assert
+            # that `Entrez.efetch()' has been called correctly.
+            mock_entrez.efetch.assert_called_once_with(
+                db='nucleotide',
+                id=sentinel.chosen_id,
+                rettype='gb',
+                retmode='text')
+            assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
+
+        def test_cache(self, model):
+            """When get_seq_record is called multiple times to fetch
+            the same seq record, it should not go out to Entrez after
+            the first time. It should cache the results."""
+            with patch('cpg_islands.models.Entrez') as mock_entrez:
+                with patch('cpg_islands.models.SeqIO') as mock_seqio:
+                    # call previously necessary methods
+                    mock_entrez.read.return_value = {
+                        'IdList': [sentinel._, sentinel._,
+                                   sentinel.chosen_id, sentinel._],
+                        'QueryTranslation': sentinel._}
+                    model.search(sentinel._)
+
+                    handle = MagicMock()
+                    mock_entrez.efetch.return_value = handle
+                    mock_seqio.read.return_value = sentinel.record
+
+                    index = 2
+                    record = model.get_seq_record(index)
+                    assert record == sentinel.record
+                    record = model.get_seq_record(index)
+                    assert record == sentinel.record
+
+            # Should be called once and only once.
+            mock_entrez.efetch.assert_called_once_with(
+                db='nucleotide',
+                id=sentinel.chosen_id,
+                rettype='gb',
+                retmode='text')
+            # Should be called once and only once.
+            assert mock_seqio.mock_calls == [call.read(handle, 'genbank')]
 
     class TestLoadSeq:
         def test_file_loaded_called(self, model):
