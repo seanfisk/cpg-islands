@@ -12,7 +12,7 @@ env = Environment(ENV=os.environ)
 env['TEXMFHOME'] = os.path.join(os.environ['HOME'], 'texmf')
 
 # Add shell escape for minted.
-env['PDFLATEXFLAGS'] = '-shell-escape'
+env.AppendUnique(PDFLATEXFLAGS='-shell-escape')
 
 final_paper_pdf = env.PDF('document.tex')
 Default(final_paper_pdf)
