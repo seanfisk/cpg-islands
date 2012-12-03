@@ -167,7 +167,42 @@ CGIs with differing algorithms: \texttt{cpgplot}, \texttt{cpgreport},
 documentation, ``\texttt{cpgplot} and \texttt{newcpgreport} use a
 sliding window within which the Observed/Expected ratio of CpG is
 calculated.'' In addition, it is mentioned that
-\textquote[\cite{emboss64docs}]{For most purposes you should probably use \texttt{newcpgreport} rather than \texttt{cpgreport}.}.
+\textquote[\cite{emboss64docs}]{For most purposes you should probably
+  use \texttt{newcpgreport} rather than \texttt{cpgreport}.}. With
+that, we decided to focus our efforts on duplicating
+\texttt{newcpgreport}.
+
+The algorithm used by \textt{newcpgreport} uses averages over
+sub-windows and is quite complex. In addition, we identified another
+potential ``off-by-one error'' in the code. The potential error is
+shown in this snippet:
+
+\begin{minted}[frame=single,label=newcpgreport.c,linenos=true]{c}
+static ajint avwindow = 10;
+// ...
+sumpc = sumobsexp = 0.0;
+// ...
+// `shift' is usually 1
+for(i=pos;i<=(pos+avwindow*shift);++i)
+{
+    sumpc += xypc[i];
+    sumobsexp += obsexp[i];
+}
+avpc = sumpc/(float)avwindow;
+avobsexp = sumobsexp/(float)avwindow;
+\end{minted}
+
+Some of the variables are not shown. However, after close observation
+(and debugging), it is apparent that the loop is executed 11 times,
+one for each \verb|i = pos| \emph{through} \verb|i = pos + 10|. The
+sums are subsequently divided by 10, which is not a calculation of a
+\emph{true} average.
+
+Given the complexity of the algorithm and the aforementioned potential
+error, we decided not to attempt to match the output of the EMBOSS
+suite.
+
+\subsubsection{Takai-Jones Perl script}
 
 \section{Tools}
 
