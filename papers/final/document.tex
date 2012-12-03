@@ -49,15 +49,17 @@ Finding CpG islands often serves as an introduction to programming in the health
     
 \section{CpG Islands}
 
-Before discussing best practices, an introduction to CpG islands is needed. CpG islands are present in the promoter and exonic regions of approximately 40\% of mammalian genes. The locations of these CpG islands can be a great indicator of promoter regions, which assists biologists in mapping genomes.
+Before discussing best practices, an introduction to CpG islands is needed. A CpG island is a portion of a genome with a large count of Cytosine nucleotides and Guanine nucleotides. CpG islands will have a much higher occurrence of Cytosine and Guanine nucleotides than other parts of the genome by their nature. A CpG is a Cytosine nucleotide followed immediately by a Guanine nucleotide. By counting the amount of CpGs and comparing them to an expected amount of CpGs based on the count of Cytosine nucleotides and Guanine nucleotides, we can determine if a portion of a sequence is a CpG island. A high observed to expected ratio is usually the most important attribute in determining if a portion of a sequence is a CpG island. The equation for calculating an observed to expected ratio for a can be seen in Figure 1.
 
 \begin{equation}
     \textit{observed to expected} = \frac{\sum CpG}{(\frac{\sum G * \sum C}{\textit{window length}})} \label{eq:01}
 \end{equation}
+      
+CpG islands are present in the promoter regions of approximately 40\% of mammalian genes \citep{pmid11891299}. Methylation of promoter CpG islands have been associated with many interesting genomic attributes, such as gene silencing, X-chromosome inactivation, as well as carcinogenesis. By locating CpG islands, scientists should be able spend less time mapping genes onto genomes by paying explicit attention to CpG islands when observing changes in genes.
 
 \section{Methodology}
 
-Test-Driven Development served as a basic methodology when desiging our application. In order to add a new feature to the implementation, the first step is writing a test that described the new feature. By writing the test before adding the feature, the test is guaranteed to fail. This may seem like a problem, but it actually is quite helpful. It is often better to think about a program in terms of results, rather than how it should be designed. Once the test has been written, the new feature is added to the build to pass the test. Creating a test before writing any function may seem like overhead, but the test remains valid indefinitely. If a test breaks as a result of changes to an unrelated section of code, you will be alerted next time the test suite is ran.\\
+Test-Driven Development served as a basic methodology when designing our application. In order to add a new feature to the implementation, the first step is writing a test that described the new feature. By writing the test before adding the feature, the test is guaranteed to fail. This may seem like a problem, but it actually is quite helpful. It is often better to think about a program in terms of results, rather than how it should be designed. Once the test has been written, the new feature is added to the build to pass the test. Creating a test before writing any function may seem like overhead, but the test remains valid indefinitely. If a test breaks as a result of changes to an unrelated section of code, you will be alerted next time the test suite is ran.\\
 
 When creating a program with a graphical user interface, there are
 several different software development approaches that a developer can
@@ -71,7 +73,7 @@ Model-View-Presenter, focuses on facilitating unit tests. Combining
 Test-Driven Development with a Model-View-Presenter design pattern
 leads to a software development approach known as Presenter First. \citep{Alles:2006:PFO:1155439.1155482}\\
 
-Presenter First has proven to be an effective technique for scaling graphical applications with Test-Driven Development. With the Presenter-First methodology, program functionality is driven by user stories. The user stories are first designed as tests for the presenter, with features to implement them being added to the model. New features for the model require failing tests before creation, ensuring that the minimal solution to solve the problem is written.
+Presenter First has proven to be an effective technique for scaling graphical applications with Test-Driven Development. With the Presenter-First methodology, program functionality is driven by user stories. The user stories are first designed as tests for the presenter, with features to implement the user story being added to the model. New features for the model require failing tests before creation, ensuring that the minimal solution to solve the problem is written.
 
 \subsection{Algorithms}
 
@@ -123,7 +125,7 @@ practice. In addition, analysis of the source code found a so-called
 the first window, a CpG formed by a C inside the window and a G
 outside the window was included in the window's count. The offending
 code is as follows:
-
+\pagebreak
 \begin{minted}[frame=single,label=cpg\_islands.js,linenos=true]{javascript}
 // ...
 //determine base counts for first window
@@ -172,10 +174,10 @@ This project was written using the Python programming language, along with sever
 \item shovel for running miscellaneous tasks
 \end{itemize}
 
-The combination of these tools allowed us to continuously integrate our working implementation while adding new features.
+The combination of these tools allowed us to continuously integrate our working implementation while adding new features. By using these tools we were able to enforce strict design standards with minimal setup or logic overhead.
 
 \paragraph{Biopython\textcolon}
-Biopython is a set of scientific libraries for the Python programming language. Biopython is especially well suited for analyzing genetic sequences. Complex functions like sequence annotation, parsing sequence files are supported. Biopython was used in this project for sequence representation, labeling CpG islands, loading sequences from GenBank files, and searching the Entrez database for sequences.
+      Biopython is a set of open source scientific libraries for the Python programming language \citep{pmid19304878}. Biopython is especially well suited for analyzing genetic sequences. Complex functions like sequence annotation, parsing sequence files are supported. Biopython was used in this project for sequence representation, labeling CpG islands, loading sequences from GenBank files, and interfacing with the Entrez database.\\
     
 \paragraph{Qt, PySide\textcolon}
 Qt is a cross-platform framework used primarily for creating graphical user interfaces. PySide is a library with bindings to the Qt framework, which allowed us to develop this program with one code base for multiple platforms.
@@ -184,7 +186,7 @@ Qt is a cross-platform framework used primarily for creating graphical user inte
 git is a distributed version control tool for source code. A user can have local branches of a code repository without affecting any other repositiories. Using this tool allowed us to add new tests and features to the program without having to share a central repository.
 
 \paragraph{GitHub\textcolon} 
-GitHub is an online software development community for hosting git repositories. Open source project hosting is free, which allowed us to work on this project independently.
+GitHub is an online software development community for hosting git repositories. Open source project hosting is free, which allowed us to make contributions to the build independently.
     
 \paragraph{Travis-CI\textcolon}
 Travis-CI is a continuous integration service for open source projects. Travis-CI will integrate with any GitHub repository and run a test suite to verify a build has not broken.
@@ -200,12 +202,13 @@ Sphinx and docutils are documentation generators which will take source code doc
 
 \paragraph{Read the Docs\textcolon} 
 Read the Docs is a site that will host documentation for projects. We configured our GitHub repository with a post-commit hook, which would rebuild the documentation from our source code after each change to the online repository.
+      
+\subsection{Entrez}
 
-\section{Results}
-
-
+While the program is able to find CpG islands, it did not address the problem of where to obtain sequences. NCBI hosts several different databases holding genomic information, so integrating the Entrez database search into our application seemed natural. Entrez has an API for many useful functions including keyword searches, query suggestions as well as the ability to download sequence data. Biopython provides an easy interface to these functionalities, allowing us to integrate all of the sequences hosted on the Entrez nucleotide database into our program without including additional libraries. Calls are made through a simple web API, allowing users to quickly find CpG islands without having to download sequence data separately. A suggested query will update as users type, allowing them to check for spelling errors. After submitting a query to Entrez, a list of identification numbers are returned along with the boolean search query that Entrez searched. A list of numbers is not particulary helpful after searching, but other data cannot be populated until a sequence is selected. After a user selects a sequence from the list, metadata about the sequence including the locus and length is pulled from Entrez. After a user has found a sequence they would like to analyze, they simply click the load button and the sequence is loaded into the sequence input view.
 
 \section{Conclusion}
+The goal of this project was to have a well-tested, usable program for finding CpG islands. Developing a graphical-user interface is far more usable for any biologists compared to a command line version. Using a greedy algorithm to determine islands compared to a fixed window size gives a biologist better information about the island. The program has a test suite of more than 80 tests checking program functionality, and hosted documentation for functions in the program. The development methodology and focusing on best practices has made this program an incredible success.
 
 % \bibliographystyle{natbib}
 % \bibliographystyle{achemnat}
