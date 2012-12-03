@@ -323,6 +323,44 @@ sequence \dnaseq{ATTCGGTA} with the following parameters:
   \end{dot2tex}
 \end{figure}
 
+\subsubsection{Testing}
+
+Our sliding window implementation is tested with many test
+cases. These test cases test that the correct islands were found in
+addition to computation of the correct statistics for each
+island. Since the algorithm was developed with Test-Driven
+Development, only code which would cause the test cases to pass has
+been added to the algorithm. This keeps it free of any unnecessary
+logic and as simple as possible. Although these tests do not prove the
+\textit{usefulness} of the results, the do prove the
+\textit{correctness} of the results to our specifications, which is
+more than can be said for other implementations with no tests
+whatsoever.
+
+\subsubsection{Accelerating the Algorithm}
+
+Our original sliding window algorithm re-computes counts and ratios
+for each new window that it reads. This makes the algorithm very
+simple, but also very slow. In addition to this basic sliding window algorithm, we also developed
+an algorithm we called the ``accumulating sliding window.'' This
+algorithm keeps track of counts of C's, G's, and CpG's between
+windows. When the window is moved, deltas for each count are
+calculated based on the added or lost bases. This makes the algorithm
+much faster.
+
+Given that this algorithm is much faster, what was the point of
+creating the basic sliding window algorithm? First, the basic sliding
+window is much simpler and allowed us to get experience programming
+algorithms in this category. Furthermore, we were able to re-use the
+exact same tests from the basic sliding window for the accumulating
+sliding window. Not only does this verify the correctness of both
+algorithms, it also verifies that they are producing the exact same
+results.
+
+In the future, we hope duplicate these algorithms in Cython
+\citep{behnel2010cython}, a language generates efficient C code from
+Python-like code, for even faster execution.
+
 \section{Tools}
 
 This project was written using the Python programming language, along with several other tools and libraries.
