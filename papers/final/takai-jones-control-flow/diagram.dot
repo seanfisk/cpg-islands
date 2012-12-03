@@ -1,8 +1,7 @@
 // This is a control flow graph of the Takai-Jones script taking
-// `last' commands (basically gotos) into account. It is the official
-// version produced by us.
+// `last' commands (basically gotos) into account.
 digraph CpGTakaiJones {
-        // node [style=filled,fillcolor=lightgray];
+        node [style=filled,fillcolor=lightgray];
         start [label="Start"];
 
         w1p [label="While 1 Predicate"];

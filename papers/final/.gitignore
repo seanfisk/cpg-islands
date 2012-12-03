@@ -35,7 +35,3 @@
 
 *.fls
 *.pdf
-
-# dot2tex
-/document-dot2tex-fig*.dot
-/document-dot2tex-fig*.tex

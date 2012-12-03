@@ -4,11 +4,14 @@
 
 \usepackage{tikz}
 \usetikzlibrary{decorations,arrows,shapes}
-\usepackage[autosize]{dot2texi}
+\usepackage[autosize,outputdir={dot2tex_graphs/}]{dot2texi}
+% \usepackage{dot2texi}
 \usepackage{csquotes}
 \usepackage{minted}
 \usepackage{natbib}
 \bibpunct{(}{)}{;}{a}{,}{,}
+\usepackage{fancyref}
+% \usepackage{hyperref}
 
 \begin{document}
 \firstpage{1}
@@ -208,7 +211,7 @@ suite.
 \subsubsection{Takai-Jones Perl script}
 
 \begin{figure}[H]
-  \label{fig:tj-perl-flow}
+  \label{fig:tj-flow}
   \caption{Takai-Jones Perl script control flow diagram}
   \begin{dot2tex}[scale=0.3]
     \input{takai-jones-control-flow/diagram.dot}
