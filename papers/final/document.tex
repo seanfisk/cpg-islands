@@ -2,16 +2,18 @@
 \copyrightyear{2012}
 \pubyear{2012}
 
+% For unknown reasons, adding hyperref or bookmark pushes the
+% grayed-out text `BIOINFORMATICS' down into the title. Actually,
+% recently it is causing pdflatex to error out.  \usepackage{hyperref}
+% \usepackage{bookmark}
 \usepackage{tikz}
 \usetikzlibrary{decorations,arrows,shapes}
 \usepackage[autosize,outputdir={dot2tex_graphs/}]{dot2texi}
-% \usepackage{dot2texi}
 \usepackage{csquotes}
 \usepackage{minted}
 \usepackage{natbib}
 \bibpunct{(}{)}{;}{a}{,}{,}
 \usepackage{fancyref}
-% \usepackage{hyperref}
 
 \begin{document}
 \firstpage{1}
@@ -210,8 +212,31 @@ suite.
 
 \subsubsection{Takai-Jones Perl script}
 
+The script and website produced alongside of the seminal paper by
+Takai and Jones is probably the best known CGI finder. This Perl script was
+used to produce the results of their paper, and is available online as
+well. It uses a greedy sliding
+window approach, which is exactly the type of approach we wanted to
+take. The script which runs the web site appears to be different than
+the source code offered for download. However, since we could not obtain
+the code that runs the web site, we opted to attempt to base our
+algorithm on the Perl script available for download.
+
+We immediately encountered problems with this. The program itself is
+extremely complicated. In fact, drawing a control flow diagram of the
+script's main algorithm logic yields the diagram in
+\fref{fig:tj-control-flow}. If the complexity of this algorithm is
+measured as shown by \cite{McCabe:1976:CM:1313324.1313586}, the result
+is a cyclomatic complexity of 12. This is two more than the max
+complexity of 10 recommended by McCabe. Due to the confusing nature of
+this code, we decided that it would be too difficult to replicate, and
+too difficult to test. \textit{Full disclosure: Our accumulating
+  sliding window algorithm currently has a cyclomatic complexity of
+  13. However, our simpler, ``regular'' sliding window algorithm has a
+  cyclomatic complexity of 8.}
+
 \begin{figure}[H]
-  \label{fig:tj-flow}
+  \label{fig:tj-control-flow}
   \caption{Takai-Jones Perl script control flow diagram}
   \begin{dot2tex}[scale=0.3]
     \input{takai-jones-control-flow/diagram.dot}
