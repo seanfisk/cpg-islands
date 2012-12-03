@@ -3,13 +3,10 @@
 
 .PHONY: all clean
 
-all: diagram.png diagram-nogoto.png
+all: diagram.png
 
 diagram.png: diagram.dot
 	dot -Tpng diagram.dot -o diagram.png
 
-diagram-nogoto.png: diagram-nogoto.dot
-	dot -Tpng diagram-nogoto.dot -o diagram-nogoto.png
-
 clean:
-	rm *.png
+	rm diagram.png

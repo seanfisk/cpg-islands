@@ -1,0 +1,13 @@
+M = E - N + 2P
+E: # edges
+N: # nodes
+P: # connected components
+
+E = 47
+calculated with: ack '\->' diagram.dot | wc -l
+N = 37
+calculated with: ack '\[label' diagram.dot | wc -l
+P = 1
+
+M = 47 - 37 + 2 * 1
+M = 12

@@ -10,7 +10,7 @@ digraph CpGTakaiJones {
 
         w2p [label="While 2 Predicate"];
         w2b [label="While 2 Body"];
-        w2e [label="While 2 End"];
+        w2e_enddefinition [label="While 2 End / enddefinition"];
 
         w3p [label="While 3 Predicate"];
         w3b [label="While 3 Body"];
@@ -28,8 +28,6 @@ digraph CpGTakaiJones {
         i2b [label="If 2 Body"];
         e2b [label="Else 2 Body"];
         i2e [label="If 2 End"];
-
-        enddefinition [label="enddefinition label"];
 
         i3p [label="If 3 Predicate"];
         i3b [label="If 3 Body"];
@@ -63,10 +61,9 @@ digraph CpGTakaiJones {
         i2p -> e2b
         i2b -> i2e
         e2b -> i2e
-        i2e -> enddefinition
-        enddefinition -> w2p
+        i2e -> w2p
         w2p -> w2b
-        w2p -> w2e
+        w2p -> w2e_enddefinition
         w2b -> i3p
         i3p -> i3b
         i3p -> i3e
@@ -84,8 +81,8 @@ digraph CpGTakaiJones {
         i5p -> ei5_1b
         i5p -> ei5_2b
         i5p -> e5b
-        i5b  -> enddefinition
-        ei5_1b -> enddefinition
+        i5b  -> w2e_enddefinition
+        ei5_1b -> w2e_enddefinition
         ei5_2b -> i5e
         e5b -> i5e
         i5e -> w4e
@@ -97,8 +94,8 @@ digraph CpGTakaiJones {
         i6p -> e6b
         i6b -> i6e
         e6b -> i6e
-        i6e -> w2e
-        w2e -> i1e
+        i6e -> w2e_enddefinition
+        w2e_enddefinition -> i1e
         i1e -> w1e
         w1e -> end
 }
