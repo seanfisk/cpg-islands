@@ -10,6 +10,7 @@
 \usepackage{natbib}
 \bibpunct{(}{)}{;}{a}{,}{,}
 \usepackage{fancyref}
+\usepackage{needspace}
 \usepackage{xcolor}
 % For unknown reasons, adding hyperref or bookmark pushes the
 % grayed-out text `BIOINFORMATICS' down into the title. Actually,
@@ -184,6 +185,7 @@ the first window, a CpG formed by a C inside the window and a G
 outside the window was included in the window's count. The code which
 presents this is as follows:
 
+\needspace{17\baselineskip}
 \begin{minted}[frame=single,label=cpg\_islands.js,linenos=true]{javascript}
 // ...
 //determine base counts for first window
@@ -234,6 +236,7 @@ sub-windows and is quite complex. In addition, we identified another
 potential ``off-by-one error'' in the code. The potential error is
 shown in this snippet:
 
+\needspace{12\baselineskip}
 \begin{minted}[frame=single,label=newcpgreport.c,linenos=true]{c}
 static ajint avwindow = 10;
 // ...
@@ -274,16 +277,19 @@ Perl script available for download.
 We immediately encountered problems with this. The program itself is
 extremely complicated. In fact, drawing a control flow diagram of the
 script's main algorithm logic yields the diagram in
-\fref{fig:tj-control-flow}. If the complexity of this algorithm is
-measured as shown by \cite{McCabe:1976:CM:1313324.1313586}, the result
-is a cyclomatic complexity of 12. This is two more than the max
-complexity of 10 recommended by McCabe. Due to the confusing nature of
-this code, we decided that it would be too difficult to replicate, and
-too difficult to test. \textit{Full disclosure: Our accumulating
-  sliding window algorithm currently has a cyclomatic complexity of
-  13. However, our simpler, ``regular'' sliding window algorithm has a
-  cyclomatic complexity of 8. We do have the opinion that our code is
-  somewhat cleaner, and the fact that it is tested.}
+\fref{fig:tj-control-flow}. The cyclomatic complexity of this program
+can be computed very simply from the diagram by counting the
+\textquote[\cite{McCabe:1976:CM:1313324.1313586}]{maximum number of
+  linearly independent circuits} in the diagram, which yields 12. This
+is two more than the max complexity of 10 recommended by McCabe. Due
+to the confusing nature of this code, we decided that it would be too
+difficult to replicate, and too difficult to test. \textit{Full
+  disclosure: Our accumulating sliding window algorithm currently has
+  a cyclomatic complexity of 13. However, our simpler, ``regular''
+  sliding window algorithm has a cyclomatic complexity of 8. We do
+  have the opinion that our code is somewhat cleaner, and the fact
+  that it is tested. For an unbiased measurement, please reference the
+  actual code.}
 
 \subsection{Our Implementation}
 
