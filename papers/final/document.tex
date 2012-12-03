@@ -2,10 +2,6 @@
 \copyrightyear{2012}
 \pubyear{2012}
 
-% For unknown reasons, adding hyperref or bookmark pushes the
-% grayed-out text `BIOINFORMATICS' down into the title. Actually,
-% recently it is causing pdflatex to error out.  \usepackage{hyperref}
-% \usepackage{bookmark}
 \usepackage{tikz}
 \usetikzlibrary{decorations,arrows,shapes}
 \usepackage[autosize,outputdir={dot2tex_graphs/}]{dot2texi}
@@ -14,6 +10,17 @@
 \usepackage{natbib}
 \bibpunct{(}{)}{;}{a}{,}{,}
 \usepackage{fancyref}
+\usepackage{xcolor}
+% For unknown reasons, adding hyperref or bookmark pushes the
+% grayed-out text `BIOINFORMATICS' down into the title. Actually,
+% recently it is causing pdflatex to error out.
+% \usepackage[implicit=false]{hyperref}
+% \usepackage{bookmark}
+
+% Custom commands
+\newcommand{\dnaseq}[1]{\texttt{#1}}
+\newcommand{\match}[1]{\textcolor{green}{#1}}
+\newcommand{\nomatch}[1]{\textcolor{red}{#1}}
 
 \begin{document}
 \firstpage{1}
@@ -234,6 +241,80 @@ too difficult to test. \textit{Full disclosure: Our accumulating
   sliding window algorithm currently has a cyclomatic complexity of
   13. However, our simpler, ``regular'' sliding window algorithm has a
   cyclomatic complexity of 8.}
+
+After investigating these possibilities, we decided to create an
+algorithm on our own, with two distinct goals:
+
+\begin{itemize}
+\item \textbf{Simplicity} - the algorithm should be easy to understand
+\item \textbf{Testability} - the algorithm should be completely tested, and
+  developed using Test-Driven Development
+\end{itemize}
+
+The latter goal was of particular importance because we believed that
+it could solve some of the problems encountered in the other
+implementations.
+
+\subsubsection{Implementation}
+
+Our algorithm has a very simple mode of operation:
+
+\begin{enumerate}
+\item Identify a subsequence meeting the minimum criteria of an island.
+\item Continue adding bases until the island no longer meets the
+  minimum criteria.
+\item Record the largest subsequence found that meets the minimum criteria.
+\item Continue from the beginning of the algorithm with a subsequence
+  starting at the first base not in the identified island.
+\end{enumerate}
+
+An example of the algorithm in action follows. We will analyze the
+sequence \dnaseq{ATTCGGTA} with the following parameters:
+
+\begin{eqnarray*}
+  \mbox{min\_island\_size} = 4 \\
+  \mbox{min\_gc\_ratio} = 0.5 \\
+  \mbox{min\_obs\_exp\_cpg\_ratio} = 0.6 \\
+\end{eqnarray*}
+
+\begin{enumerate}
+\item Begin by extracting the minimum island size:
+  \dnaseq{\nomatch{ATTC}GGTA}. Since the GC ratio is 25\%, there is
+  no need to computed anything else. It is not an island.
+\item Move both the start and end pointers ahead by one.
+\item The next subsequence, \dnaseq{A\match{TTCG}GTA}, is an island:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 1}{4} \\
+    \mbox{gc\_ratio} = 0.5 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 1}{4}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 4
+  \end{eqnarray*}
+\item Add one more base: \dnaseq{A\match{TTCGG}TA}. Still an island:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 2}{5} \\
+    \mbox{gc\_ratio} = 0.6 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 2}{5}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 2.5
+  \end{eqnarray*}
+\item Add another base: \dnaseq{A\match{TTCGGT}A}. Still an island,
+  but just barely:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 2}{6} \\
+    \mbox{gc\_ratio} = 0.5 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 2}{6}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 3
+  \end{eqnarray*}
+\item The next subsequence is no longer a match: \dnaseq{A\nomatch{TTCGGTA}}:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 2}{7} \\
+    \mbox{gc\_ratio} \approx 0.43 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 2}{7}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 3.5
+  \end{eqnarray*}
+\item Therefore, we record \dnaseq{A\match{TTCGGT}A} as an island. The
+  rest of the sequence is not long enough to form another island, so
+  we are done.
+\end{enumerate}
 
 \begin{figure}[H]
   \label{fig:tj-control-flow}
