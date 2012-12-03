@@ -59,43 +59,43 @@
 
 \section{Introduction}
 
-Finding CpG islands often serves as an introduction to programming in
-the health sciences. While many different implementations of programs
-that find CpG islands exist, it was difficult to find a completely
-valid and usable implementation. After failing to find an suitable
-implementation to against which to verify our implementation, we
-decided create our own, using knowledge of best practices we have
-learned through our education and and through our jobs. Our focus
-shifted to having a well-tested and documented implementation of a CpG
-island finder, rather than just another forgotten program.
+Finding CpG islands (CGIs) often serves as an introduction to
+programming in the health sciences. While many different
+implementations of programs that find CGIs exist, it was difficult to
+find a completely valid and usable implementation. After failing to
+find an suitable implementation to against which to verify our
+implementation, we decided create our own, using knowledge of best
+practices we have learned through our education and and through our
+jobs. Our focus shifted to having a well-tested and documented
+implementation of a CGI finder, rather than just another forgotten
+program.
     
 \section{Background}
 
-Before discussing best practices, an introduction to CpG islands is
-necessary. A CpG island is a portion of a genome with a large count of
-Cytosine and Guanine nucleotides. CpG islands will have a
-much higher occurrence of Cytosine and Guanine nucleotides than other
-parts of the genome by their nature. A CpG is a Cytosine nucleotide
-followed immediately by a Guanine nucleotide. By counting the amount
-of CpGs and comparing them to an expected amount of CpGs based on the
-count of Cytosine nucleotides and Guanine nucleotides, we can
-determine if a portion of a sequence is a CpG island. A high observed
-to expected ratio is usually the most important attribute in
-determining if a portion of a sequence is a CpG island. The equation
-for calculating an observed to expected ratio for a can be seen in
-Figure 1.
+Before discussing best practices, an introduction to CGIs is
+necessary. A CGI is a portion of a genome with a large count of
+Cytosine and Guanine nucleotides. CGIs will have a much higher
+occurrence of Cytosine and Guanine nucleotides than other parts of the
+genome by their nature. A CpG is a Cytosine nucleotide followed
+immediately by a Guanine nucleotide. By counting the amount of CpGs
+and comparing them to an expected amount of CpGs based on the count of
+Cytosine nucleotides and Guanine nucleotides, we can determine if a
+portion of a sequence is a CGI. A high observed to expected ratio is
+usually the most important attribute in determining if a portion of a
+sequence is a CGI. The equation for calculating an observed to
+expected ratio for a can be seen in Figure 1.
 
 \begin{equation}
     \textit{observed to expected} = \frac{\sum CpG}{(\frac{\sum G * \sum C}{\textit{window length}})} \label{eq:01}
 \end{equation}
       
-CpG islands are present in the promoter regions of approximately 40\%
-of mammalian genes \citep{pmid11891299}. Methylation of promoter CpG
-islands have been associated with many interesting genomic attributes,
-such as gene silencing, X-chromosome inactivation, as well as
-carcinogenesis. By locating CpG islands, scientists can spend less
-time mapping genes onto genomes by paying explicit attention to CpG
-islands when observing changes in genes.
+CGIs are present in the promoter regions of approximately 40\% of
+mammalian genes \citep{pmid11891299}. Methylation of promoter CGIs
+have been associated with many interesting genomic attributes, such as
+gene silencing, X-chromosome inactivation, as well as
+carcinogenesis. By locating CGIs, scientists can spend less time
+mapping genes onto genomes by paying explicit attention to CGIs when
+observing changes in genes.
 
 \section{Development}
 
@@ -123,8 +123,8 @@ slight variation of the Model-View-Controller architecture is the
 Model-View-Presenter (MVP) architecture. MVP focuses on even stricter
 separation between the display of information and business
 logic. Combining Test-Driven Development with a Model-View-Presenter
-design pattern
-leads to a software development approach known as Presenter First. 
+design pattern leads to a software development approach known as
+Presenter First.
 
 Presenter First \citep{Alles:2006:PFO:1155439.1155482} has proven to
 be an effective technique for scaling graphical applications with
@@ -149,26 +149,24 @@ expected CpG ratio of at least 0.65 \citep{pmid11891299}.
 Another algorithm which can be used to identify CGIs is called
 CpGcluster. Instead of the using the traditional criteria, CpGcluster
 is \textquote[\cite{pmid17038168}]{based on the physical distance
-  between neighboring CpGs on the chromosome}. Han and Zhoa later
-compared the relative accuracy of the Takai-Jones implementation
-versus CpGcluster, and determined that Takai-Jones was more accurate
-\citep{pmid19232104}. For this reason, we decided to implement the
-Takai-Jones definition as well as giving the option to change the
-parameters.
+  between neighboring CpGs on the chromosome}. \citep{pmid19232104}
+later compared the relative accuracy of the Takai-Jones implementation
+versus CpGcluster, and determined that Takai-Jones was more
+accurate. For this reason, we decided to implement the Takai-Jones
+definition as well as giving the option to change the parameters.
 
 After settling on giving the option to choose between the
 Gardiner-Frommer and Takai-Jones parameters, choosing the specific way
-to implement these criteria was once again a challenge. Since CpG
-islands are a commonly addressed problem, we decided to attempt to
+to implement these criteria was once again a challenge. Since location
+of CGIs is a commonly addressed problem, we decided to attempt to
 match our results with an existing implementation. We identified a
-number of tools that claimed to solve the CpG islands
-problem. However, we decided that source code for the original
-implementation was necessary in order to properly match the
-results. We were therefore able to narrow it down to three: the
-Sequence Manipulation Suite, second edition (SMS2), the European
-Molecular Biology Open Software Suite (EMBOSS), and the Perl script
-which accompanied and was published alongside the paper by Takai and
-Jones.
+number of tools that claimed to solve the CGI problem. However, we
+decided that source code for the original implementation was necessary
+in order to properly match the results. We were therefore able to
+narrow it down to three: the Sequence Manipulation Suite, second
+edition (SMS2), the European Molecular Biology Open Software Suite
+(EMBOSS), and the Perl script which accompanied and was published
+alongside the paper by Takai and Jones.
 
 \subsection{SMS2}
 
@@ -183,9 +181,9 @@ windows such as 304-504, 305-505, 306-606, etc. are rarely useful in
 practice. In addition, analysis of the source code found a so-called
 ``of-by-one'' error in the code. When calculating the CpG count for
 the first window, a CpG formed by a C inside the window and a G
-outside the window was included in the window's count. The offending
-code is as follows:
-\pagebreak
+outside the window was included in the window's count. The code which
+presents this is as follows:
+
 \begin{minted}[frame=single,label=cpg\_islands.js,linenos=true]{javascript}
 // ...
 //determine base counts for first window
@@ -206,10 +204,9 @@ for (var i = 0; i < windowSize; i++) {
 // ...
 \end{minted}
 
-The last time through the loop, \verb|i = windowSize - 1|.
-This means that in line 9,
-\verb|dnaSequence.charAt(i + 1)|
-retrieves a character which is \emph{outside} the window.
+The last time through the loop, \verb|i = windowSize - 1|.  This means
+that in line 9, \verb|dnaSequence.charAt(i + 1)| retrieves a character
+which is \emph{outside} the window.
 
 Given the fact that SMS2 uses fixed-size windows and errors were found
 in the code, we decided not to attempt to match its results.
@@ -220,7 +217,7 @@ EMBOSS is \textquote[\cite{emboss}]{a free Open Source software
   analysis package specially developed for the needs of the molecular
   biology user community}. EMBOSS is a professionally developed set of
 tools, and as such, we hoped its CGI reporting results would be very
-useful. EMBOSS is programmed in pure ANSI C, so its source code is
+useful. EMBOSS is programmed in pure ANSI C, so its source code can be
 cryptic at times. EMBOSS has four different tools devoted to locating
 CGIs with differing algorithms: \texttt{cpgplot}, \texttt{cpgreport},
 \texttt{newcpgseek}, and \texttt{newcpgreport}. According to the
@@ -253,10 +250,10 @@ avobsexp = sumobsexp/(float)avwindow;
 \end{minted}
 
 Some of the variables are not shown. However, after close observation
-(and debugging), it is apparent that the loop is executed 11 times,
-one for each \verb|i = pos| \emph{through} \verb|i = pos + 10|. The
-sums are subsequently divided by 10, which is not a calculation of a
-\emph{true} average.
+(and debugging), it is apparent that the \verb|for| loop is executed
+11 times, one for each \verb|i = pos| \emph{through}
+\verb|i = pos + 10|. The sums are subsequently divided by 10, which is
+not a calculation of a \emph{true} average.
 
 Given the complexity of the algorithm and the aforementioned potential
 error, we decided not to attempt to match the output of the EMBOSS
@@ -265,14 +262,14 @@ suite.
 \subsection{Takai-Jones Perl script}
 
 The script and website produced alongside of the seminal paper by
-Takai and Jones is probably the best known CGI finder. This Perl script was
-used to produce the results of their paper, and is available online as
-well. It uses a greedy sliding
-window approach, which is exactly the type of approach we wanted to
-take. The script which runs the web site appears to be different than
-the source code offered for download. However, since we could not obtain
-the code that runs the web site, we opted to attempt to base our
-algorithm on the Perl script available for download.
+Takai and Jones is probably the best known CGI finder. This Perl
+script was used to produce the results of their paper, and is
+available online as well. It uses a greedy sliding window approach,
+which is exactly the type of approach we wanted to take. The script
+which runs the web site appears to be different than the source code
+offered for download. However, since we could not obtain the code that
+runs the web site, we opted to attempt to base our algorithm on the
+Perl script available for download.
 
 We immediately encountered problems with this. The program itself is
 extremely complicated. In fact, drawing a control flow diagram of the
@@ -285,7 +282,10 @@ this code, we decided that it would be too difficult to replicate, and
 too difficult to test. \textit{Full disclosure: Our accumulating
   sliding window algorithm currently has a cyclomatic complexity of
   13. However, our simpler, ``regular'' sliding window algorithm has a
-  cyclomatic complexity of 8.}
+  cyclomatic complexity of 8. We do have the opinion that our code is
+  somewhat cleaner, and the fact that it is tested.}
+
+\subsection{Our Implementation}
 
 After investigating these possibilities, we decided to create an
 algorithm on our own, with two distinct goals:
@@ -297,10 +297,8 @@ algorithm on our own, with two distinct goals:
 \end{itemize}
 
 The latter goal was of particular importance because we believed that
-it could solve some of the problems encountered in the other
+it could solve some of the problems encountered in other
 implementations.
-
-\subsection{Our Implementation}
 
 Our algorithm has a very simple mode of operation:
 
@@ -383,85 +381,149 @@ logic and as simple as possible. Although these tests do not prove the
 more than can be said for other implementations with no tests
 whatsoever.
 
+\subsubsection{Results}
+
+Manual comparison of the results of analyzing a number of sequences
+showed that our results were very similar to the results produced by
+the Takai-Jones script. In addition to the tests, this was a
+verification of the correct behavior of the program.
+
 \subsubsection{Accelerating the Algorithm}
 
 Our original sliding window algorithm re-computes counts and ratios
 for each new window that it reads. This makes the algorithm very
-simple, but also very slow. In addition to this basic sliding window algorithm, we also developed
-an algorithm we called the ``accumulating sliding window.'' This
-algorithm keeps track of counts of C's, G's, and CpG's between
-windows. When the window is moved, deltas for each count are
-calculated based on the added or lost bases. This makes the algorithm
-much faster.
+simple, but also very slow. In addition to this basic sliding window
+algorithm, we also developed an algorithm we called the ``accumulating
+sliding window.'' This algorithm keeps track of counts of C's, G's,
+and CpG's between windows. When the window is moved, deltas for each
+count are calculated for each of the added or lost bases. This makes
+the algorithm much faster.
 
 Given that this algorithm is much faster, what was the point of
 creating the basic sliding window algorithm? First, the basic sliding
 window is much simpler and allowed us to get experience programming
-algorithms in this category. Furthermore, we were able to re-use the
-exact same tests from the basic sliding window for the accumulating
-sliding window. Not only does this verify the correctness of both
-algorithms, it also verifies that they are producing the exact same
-results.
+algorithms in this area. Furthermore, we were able to re-use the exact
+same tests from the basic sliding window for the accumulating sliding
+window. Not only does this verify the correctness of both algorithms,
+it also verifies that they are producing the exact same results.
 
 In the future, we hope duplicate these algorithms in Cython
-\citep{behnel2010cython}, a language generates efficient C code from
-Python-like code, for even faster execution.
+\citep{behnel2010cython}, a language which is able to generate
+efficient C code from Python-like code, for even faster execution.
 
 \section{Tools}
 
-This project was written using the Python programming language, along with several other tools and libraries.
+This project was written using the Python programming language, along
+with several other tools and libraries.
 
 \begin{itemize}
-\item Biopython for sequence fetching and parsing
-\item Qt for graphical user interface
-\item PySide for Python bindings to Qt
-\item git for version control system
-\item GitHub for git hosting
-\item pytest test framework
-\item mock for creating mock objects
-\item coverage.py and pytest-cov for test-coverage statistics
-\item flake8 as a lint tool: enforced pep8 compliance, running PyFlakes and McCabe complexity check
-\item Travis-CI for continuous integration
-\item Sphinx and docutils for documentation generation
-\item Read the Docs for documentation hosting
-\item shovel for running miscellaneous tasks
+\item Biopython - sequence fetching and parsing
+\item Q toolkit (Qt) - graphical user interface
+\item PySide - Python bindings to Qt
+\item git - decentralized version control system
+\item GitHub - git hosting
+\item pytest - test framework
+\item mock - creating mock objects
+\item coverage.py and pytest-cov - test-coverage statistics
+\item flake8 - lint tool for enforced PEP8 compliance, static code
+  analysis, and McCabe complexity check
+\item Travis-CI - continuous integration
+\item Sphinx and docutils - documentation generation
+\item Read the Docs - documentation hosting
+\item shovel - \texttt{make} replacement for running miscellaneous tasks
 \end{itemize}
 
-The combination of these tools allowed us to continuously integrate our working implementation while adding new features. By using these tools we were able to enforce strict design standards with minimal setup or logic overhead.
+The combination of these tools allowed us to continuously integrate
+our working implementation while adding new features. By using these
+tools, we were able to enforce strict coding standards with minimal
+setup or logic overhead.
 
 \paragraph{Biopython\textcolon}
-      Biopython is a set of open source scientific libraries for the Python programming language \citep{pmid19304878}. Biopython is especially well suited for analyzing genetic sequences. Complex functions like sequence annotation, parsing sequence files are supported. Biopython was used in this project for sequence representation, labeling CpG islands, loading sequences from GenBank files, and interfacing with the Entrez database.\\
+Biopython is a set of open source scientific libraries for the Python
+programming language \citep{pmid19304878}. Biopython is especially
+well suited for analysis of genetic sequences. Complex functions like
+sequence annotation, parsing sequence files are very
+well-supported. Biopython was used in this project for sequence
+representation, labeling CpG islands, loading sequences from GenBank
+files, and interfacing with the Entrez search engine and NCBI databases.
     
 \paragraph{Qt, PySide\textcolon}
-Qt is a cross-platform framework used primarily for creating graphical user interfaces. PySide is a library with bindings to the Qt framework, which allowed us to develop this program with one code base for multiple platforms.
+Qt is a cross-platform application framework used primarily for
+creating graphical user interfaces. PySide is a set of Python bindings
+to the Qt framework, which allowed us to develop this program with one
+code base for multiple platforms.
 
 \paragraph{git\textcolon} 
-git is a distributed version control tool for source code. A user can have local branches of a code repository without affecting any other repositiories. Using this tool allowed us to add new tests and features to the program without having to share a central repository.
+git is a distributed version control tool for source code. A user can
+have local branches of a code repository without affecting any other
+repositiories. Using this tool allowed us to add new tests and
+features to the program without having to share a central repository.
 
 \paragraph{GitHub\textcolon} 
-GitHub is an online software development community for hosting git repositories. Open source project hosting is free, which allowed us to make contributions to the build independently.
+GitHub is an online software development community for hosting git
+repositories. Open source project hosting is free, which allowed us to
+make contributions to the codebase independently.
     
 \paragraph{Travis-CI\textcolon}
-Travis-CI is a continuous integration service for open source projects. Travis-CI will integrate with any GitHub repository and run a test suite to verify a build has not broken.
+Travis-CI is a continuous integration service for open source
+projects. Travis-CI integrates with any GitHub repository to run tests
+in a clean environment to verify a build has not broken.
 
 \paragraph{pytest\textcolon} 
-pytest is a unit testing framework used to create test suites for Python programs. pytest was used to create coverage reports detailing our source code, and running the test suite.
+pytest is a unit testing framework used to create test suites for
+Python programs. pytest was used to create coverage reports detailing
+our source code, and for running the test suite.
 
 \paragraph{flake8\textcolon} 
-flake8 is a syntax checker for Python that uses the PyFlakes and pep8 modules. It will check any source files for runtime errors and ensure all code meets pep8 coding standards.
+flake8 is a syntax checker for Python that uses the PyFlakes and pep8
+modules. It will check any source files for syntax errors and ensure
+all code meets PEP8 coding standards.
     
 \paragraph{Sphinx, docutils\textcolon}
-Sphinx and docutils are documentation generators which will take source code documentation and convert it into many different formats. Using these tools created our documentation while we added new code to the repository automatically.
+Sphinx and docutils are documentation generatoion utilities which take
+source code documentation and convert it into many different
+formats. By using these tools, we created our documentation
+automatically while we added new code to the repository.
 
 \paragraph{Read the Docs\textcolon} 
-Read the Docs is a site that will host documentation for projects. We configured our GitHub repository with a post-commit hook, which would rebuild the documentation from our source code after each change to the online repository.
+Read the Docs is a site for hosting documentation for projects using
+Sphinx. We configured our GitHub repository with a post-commit hook,
+which would rebuild the documentation from our source code after each
+change to the online repository.
       
 \subsection{Entrez}
 
-While the program is able to find CpG islands, it did not address the problem of where to obtain sequences. NCBI hosts several different databases holding genomic information, so integrating the Entrez database search into our application seemed natural. Entrez has an API for many useful functions including keyword searches, query suggestions as well as the ability to download sequence data. Biopython provides an easy interface to these functionalities, allowing us to integrate all of the sequences hosted on the Entrez nucleotide database into our program without including additional libraries. Calls are made through a simple web API, allowing users to quickly find CpG islands without having to download sequence data separately. A suggested query will update as users type, allowing them to check for spelling errors. After submitting a query to Entrez, a list of identification numbers are returned along with the boolean search query that Entrez searched. A list of numbers is not particulary helpful after searching, but other data cannot be populated until a sequence is selected. After a user selects a sequence from the list, metadata about the sequence including the locus and length is pulled from Entrez. After a user has found a sequence they would like to analyze, they simply click the load button and the sequence is loaded into the sequence input view.
+While our program is able to find CGIs, it originally did not address
+the problem of where to obtain sequences. NCBI hosts several different
+databases holding genomic information, so integration with the Entrez
+database search into our application seemed natural. Entrez has an
+application programming interface (API) for many useful functions
+including keyword searches, query suggestions, and the ability to
+download sequence data. Biopython provides a simple interface to this
+API which allowed us to integrate all of the sequences hosted on the
+Entrez nucleotide database into our program without including
+additional libraries. Calls made through a simple HTTP interface allow
+users to quickly locate CGIs without having to download sequence data
+separately. A suggested query updates as user types, which allows them
+to check for spelling errors. After submitting a query to Entrez, a
+list of identification numbers is returned along with the search query
+used by Entrez. Although a list of numbers is not particulary helpful
+after searching, other data can be viewed when a sequence is
+selected. After a user selects a sequence from the list, metadata
+about the sequence, including the locus and sequence length, is pulled
+from Entrez. After a user has found a sequence they would like to
+analyze, they can simply load the the sequence into the sequence input view.
 
 \section{Conclusion}
-The goal of this project was to have a well-tested, usable program for finding CpG islands. Developing a graphical-user interface is far more usable for any biologists compared to a command line version. Using a greedy algorithm to determine islands compared to a fixed window size gives a biologist better information about the island. The program has a test suite of more than 80 tests checking program functionality, and hosted documentation for functions in the program. The development methodology and focusing on best practices has made this program an incredible success.
+The goal of this project was to have a well-tested, usable program for
+the location of CpG islands. By developing a graphical user interface,
+the program should be far more usable for any biologists compared to a
+command line version. By using a greedy algorithm to determine islands
+instead of a fixed size, a biologist is provided with more useful
+information. The program has a test suite of more than 80 tests
+verifying the correctness of its functionality. In summary, we believe
+that the focus on best practices has made this program an incredible
+success.
 
 % \bibliographystyle{natbib}
 % \bibliographystyle{achemnat}
