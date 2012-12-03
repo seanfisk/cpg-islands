@@ -1,3 +1,6 @@
+// This is a control flow graph of the Takai-Jones script taking
+// `last' commands (basically gotos) into account. It is the official
+// version produced by us.
 digraph CpGTakaiJones {
         // node [style=filled,fillcolor=lightgray];
         start [label="Start"];
@@ -27,7 +30,7 @@ digraph CpGTakaiJones {
         e2b [label="Else 2 Body"];
         i2e [label="If 2 End"];
 
-        endefinition [label="enddefinition label"];
+        enddefinition [label="enddefinition label"];
 
         i3p [label="If 3 Predicate"];
         i3b [label="If 3 Body"];
