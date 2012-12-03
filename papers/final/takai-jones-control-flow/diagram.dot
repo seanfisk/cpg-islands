@@ -1,0 +1,101 @@
+// This is a control flow graph of the Takai-Jones script taking
+// `last' commands (basically gotos) into account.
+digraph CpGTakaiJones {
+        node [style=filled,fillcolor=lightgray];
+        start [label="Start"];
+
+        w1p [label="While 1 Predicate"];
+        w1b [label="While 1 Body"];
+        w1e [label="While 1 End"];
+
+        w2p [label="While 2 Predicate"];
+        w2b [label="While 2 Body"];
+        w2e_enddefinition [label="While 2 End / enddefinition"];
+
+        w3p [label="While 3 Predicate"];
+        w3b [label="While 3 Body"];
+        w3e [label="While 3 End"];
+
+        w4p [label="While 4 Predicate"];
+        w4b [label="While 4 Body"];
+        w4e [label="While 4 End"];
+
+        i1p [label="If 1 Predicate"];
+        i1b [label="If 1 Body"];
+        i1e [label="If 1 End"];
+
+        i2p [label="If 2 Predicate"];
+        i2b [label="If 2 Body"];
+        e2b [label="Else 2 Body"];
+        i2e [label="If 2 End"];
+
+        i3p [label="If 3 Predicate"];
+        i3b [label="If 3 Body"];
+        i3e [label="If 3 End"];
+
+        i4p [label="If 4 Predicate"];
+        i4b [label="If 4 Body"];
+        i4e [label="If 4 End"];
+
+        i5p [label="If 5 Predicate"];
+        i5b [label="If 5 Body"];
+        ei5_1b [label="Else If 5-1 Body"];
+        ei5_2b [label="Else If 5-2 Body"];
+        e5b [label="Else 5 Body"];
+        i5e [label="If 5 End"];
+
+        i6p [label="If 2 Predicate"];
+        i2b [label="If 2 Body"];
+        e2b [label="Else 2 Body"];
+        i2e [label="If 2 End"];
+
+        end [label="End"];
+
+        start -> w1p;
+        w1p -> w1b;
+        w1b -> i1p
+        i1p -> i1b
+        i1p -> i1e
+        i1b -> i2p
+        i2p -> i2b
+        i2p -> e2b
+        i2b -> i2e
+        e2b -> i2e
+        i2e -> w2p
+        w2p -> w2b
+        w2p -> w2e_enddefinition
+        w2b -> i3p
+        i3p -> i3b
+        i3p -> i3e
+        i3b -> w3p
+        w3p -> w3b
+        w3p -> w3e
+        w3b -> i4p
+        i4p -> i4b
+        i4p -> i4e
+        i4b -> w4p
+        w4p -> w4b
+        w4p -> w4e
+        w4b -> i5p
+        i5p -> i5b
+        i5p -> ei5_1b
+        i5p -> ei5_2b
+        i5p -> e5b
+        i5b  -> w2e_enddefinition
+        ei5_1b -> w2e_enddefinition
+        ei5_2b -> i5e
+        e5b -> i5e
+        i5e -> w4e
+        w4e -> i4e
+        i4e -> w3e
+        w3e -> i3e
+        i3e -> i6p
+        i6p -> i6b
+        i6p -> e6b
+        i6b -> i6e
+        e6b -> i6e
+        i6e -> w2e_enddefinition
+        w2e_enddefinition -> i1e
+        i1e -> w1e
+        w1e -> end
+}

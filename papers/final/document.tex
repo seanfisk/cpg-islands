@@ -2,150 +2,552 @@
 \copyrightyear{2012}
 \pubyear{2012}
 
+\usepackage{tikz}
+\usetikzlibrary{decorations,arrows,shapes}
+\usepackage[autosize,outputdir={dot2tex_graphs/}]{dot2texi}
+\usepackage{csquotes}
+\usepackage{minted}
+\usepackage{natbib}
+\bibpunct{(}{)}{;}{a}{,}{,}
+\usepackage{fancyref}
+\usepackage{needspace}
+\usepackage{xcolor}
+% For unknown reasons, adding hyperref or bookmark pushes the
+% grayed-out text `BIOINFORMATICS' down into the title. Actually,
+% recently it is causing pdflatex to error out.
+% \usepackage[implicit=false]{hyperref}
+% \usepackage{bookmark}
+
+% Custom commands
+\newcommand{\dnaseq}[1]{\texttt{#1}}
+\newcommand{\match}[1]{\textcolor{green}{#1}}
+\newcommand{\nomatch}[1]{\textcolor{red}{#1}}
+
 \begin{document}
 \firstpage{1}
 
-\title[Applying Best Practices]{Applying Best Practices to BioInformatics Software}
-\author[Sample \textit{et~al}]{Sean Fisk\,$^{1,*}$, Gray Gwizdz\,$^{2}$ \footnote{to whom correspondence should be addressed}}
-\address{$^{1}$Grand Valley State University\\
-$^{2}$Grand Valley State University}
+\title[Applying Best Practices]{Applying Best Practices in Bioinformatics Software}
+\author[Fisk-Gwizdz]{Sean Fisk\,$^{1}$, Gray Gwizdz\,$^{1}$ \footnote{to whom correspondence should be addressed}}
+\address{$^{1}$Grand Valley State University\\}
 
-\history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
+\history{Received on unspecified; revised on unspecified; accepted on unspecified}
 
-\editor{Associate Editor: XXXXXXX}
+\editor{Associate Editor: unspecified}
 
 \maketitle
 
 \begin{abstract}
 
-\section{Summary}
-CpG islands are areas of a DNA sequence rich in the nucleotides Cytosine and Guanine. These islands are important because they are often observed in the promoter regions of DNA. The goal of this project to develop a program to analyze and visualize DNA for CpG islands. When provided with a DNA sequence, the program will provide a graphical visualization of CpG islands within sequence.
+  \section{Summary}
+  CpG islands are areas of a DNA sequence rich in the nucleotides
+  Cytosine and Guanine. These islands are important because they are
+  often observed in the promoter regions of DNA. The goal of this
+  project was to develop a program to analyze and visualize DNA for CpG
+  islands. When provided with a DNA sequence, the program provides a
+  graphical visualization of CpG islands within the sequence.
 
-\section{Availability}
-The software is hosted on \href{https://github.com/seanfisk/cpg-islands/}{GitHub}, while documentation is hosted on \href{https://cpg-islands.readthedocs.org/en/latest/}{ReadTheDocs}. CpG Islands is free software licensed under the \href{http://www.gnu.org/licenses/gpl.html#content}{GNU General Public License version 3}.
+  \section{Availability}
+  Source code and downloads are hosted on
+  \href{https://github.com/seanfisk/cpg-islands/}{GitHub}. Documentation
+  is hosted on
+  \href{https://cpg-islands.readthedocs.org/en/latest/}{ReadTheDocs}. CpG
+  Island Finder is free software licensed under the
+  \href{http://www.gnu.org/licenses/gpl.html#content}{GNU General
+    Public License version 3}.
 
-\section{Contact} \href{gwizdzg@mail.gvsu.edu}{gwizdzg@mail.gvsu.edu}, \href{fiskse@mail.gvsu.edu}{fiskse@mail.gvsu.edu}
+  \section{Contact} \href{gwizdzg@mail.gvsu.edu}{gwizdzg@mail.gvsu.edu}, \href{fiskse@mail.gvsu.edu}{fiskse@mail.gvsu.edu}
 \end{abstract}
 
 \section{Introduction}
 
-Finding CpG islands often serves as an introduction to programming in the health sciences. While many different implementations of programs that find CpG islands exist, it was difficult to find a valid implementation. After failing to find an suitable implementation to verify our implementation against, we decided to focus on the shortcomings of other projects. Many times there would be no source code or documentation, which prevented us from comparing our implementation to a previous paper. When comparable source code was obtainable, it was poorly maintained or unreadable. Our focus shifted to having a well tested and documented implementation of a CpG island finder, rather than just another forgotten program.
+Finding CpG islands (CGIs) often serves as an introduction to
+programming in the health sciences. While many different
+implementations of programs that find CGIs exist, it was difficult to
+find a completely valid and usable implementation. After failing to
+find an suitable implementation to against which to verify our
+implementation, we decided create our own, using knowledge of best
+practices we have learned through our education and and through our
+jobs. Our focus shifted to having a well-tested and documented
+implementation of a CGI finder, rather than just another forgotten
+program.
+    
+\section{Background}
+
+Before discussing best practices, an introduction to CGIs is
+necessary. A CGI is a portion of a genome with a large count of
+Cytosine and Guanine nucleotides. CGIs will have a much higher
+occurrence of Cytosine and Guanine nucleotides than other parts of the
+genome by their nature. A CpG is a Cytosine nucleotide followed
+immediately by a Guanine nucleotide. By counting the amount of CpGs
+and comparing them to an expected amount of CpGs based on the count of
+Cytosine nucleotides and Guanine nucleotides, we can determine if a
+portion of a sequence is a CGI. A high observed to expected ratio is
+usually the most important attribute in determining if a portion of a
+sequence is a CGI. The equation for calculating an observed to
+expected ratio for a can be seen in \fref{eq:01}.
 
 \begin{equation}
-\sum x+ y =Z\label{eq:01}
+    \textit{observed to expected} = \frac{\sum CpG}{(\frac{\sum G * \sum C}{\textit{window length}})} \label{eq:01}
 \end{equation}
-    
-\begin{equation}
-\sum x+ y =Z\label{eq:02}
-\end{equation}
+      
+CGIs are present in the promoter regions of approximately 40\% of
+mammalian genes \citep{pmid11891299}. Methylation of promoter CGIs
+have been associated with many interesting genomic attributes, such as
+gene silencing, X-chromosome inactivation, as well as
+carcinogenesis. By locating CGIs, scientists can spend less time
+mapping genes onto genomes by paying explicit attention to CGIs when
+observing changes in genes.
 
-\section{Methodology}
-    
-    Test-Driven Development served as a basic methodology when desiging our application. In order to add a new feature to the implementation, the first step is writing a test that described the new feature. By writing the test before adding the feature, the test is guaranteed to fail. This may seem like a problem, but it actually is quite helpful. It is often better to think about a program in terms of results, rather than how it should be designed. Once the test has been written, the new feature is added to the build to pass the test. Creating a test before writing any function may seem like overhead, but the test remains valid indefinitely. If a test breaks as a result of changes to an unrelated section of code, you will be alerted next time the test suite is ran.\\
-    
-    When creating a program with a graphical user interface, there are several different software development approaches that a developer can take. One of the most common paradigms is a Model-View-Controller architecture. The model holds the application logic and data, the controller is responsible for handling input from the user, and the view represents output from the program. While this paradigm is highly successful, it may not be the best approach for Test-Driven Development. A slight variation of the Model-View-Controller style, Model-View-Presenter, focuses on facilitating unit tests. Combining Test-Driven Development with a Model-View-Presenter design pattern leads to a software development approach known as Presenter First.\\
-    
-    Presenter First has proven to be an effective technique for scaling graphical applications with Test-Driven Development. With the Presenter-First methodology, program functionality is driven by user stories. The user stories are first designed as tests for the presenter, with features to implement them being added to the model. New features for the model require failing tests before creation, ensuring that the minimal solution to solve the problem is written.
-    
+\section{Development}
+
+Test-Driven Development served as a basic methodology when designing
+and developing our application. In order to add a new feature to the
+implementation, the first step was writing a test that described the
+new feature. By writing the test before adding the feature, the test
+is guaranteed to fail. This may seem like a problem, but it actually
+is quite helpful. It is often better to think about a program in terms
+of results, rather than how it should be designed. Once the test has
+been written, the new feature is added to the program in order to make
+the test pass. Creating a test before writing any function may seem like
+overhead, but the test remains valid indefinitely. If a test breaks as
+a result of changes to an unrelated section of code, the developer is
+notified as soon as the test suite is run again.
+
+When creating a program with a graphical user interface, one of
+several software approaches is usually taken. One of the most common
+paradigms is a Model-View-Controller (MVC) architecture. In MVC, the
+model holds the application logic and data, the controller is
+responsible for handling input from the user, and the view represents
+output from the program. While this paradigm is highly successful, it
+is not always perfect for the development of desktop applications. A
+slight variation of the Model-View-Controller architecture is the
+Model-View-Presenter (MVP) architecture. MVP focuses on even stricter
+separation between the display of information and business
+logic. Combining Test-Driven Development with a Model-View-Presenter
+design pattern leads to a software development approach known as
+Presenter First.
+
+Presenter First \citep{Alles:2006:PFO:1155439.1155482} has proven to
+be an effective technique for scaling graphical applications with
+Test-Driven Development. With the Presenter-First methodology, program
+functionality is driven by user stories. The user stories are first
+designed as tests for the presenter, with features to implement the
+user story being added to the model. New features for the model and
+presenter require failing tests before creation, ensuring that the
+minimal solution to solve the problem is written.
+
+\section{Algorithms}
+
+Choosing an algorithm to locate CGIs was a somewhat difficult
+task, as there is very little agreement as to the definition of
+CGIs. Two common definitions are provided. The first, defined by
+Gardiner and Frommer, defines a CGI as a region of at least 200 base
+pairs containing a GC ratio of at least 50\% and an observed to
+expected CpG ratio of at least 0.6. The second definition, revised by
+Takai and Jones, defines a CGI as a region of at least 500 base pairs containing a GC ratio of at least 55\% and an observed to
+expected CpG ratio of at least 0.65 \citep{pmid11891299}. These
+parameters are summarized in the following table: \\
+
+\begin{tabular}{ l | l | l}
+  \hline
+  \textbf{Parameter} & \textbf{Gardiner-Frommer} & \textbf{Takai-Jones} \\ \hline
+  \textbf{Island Length} & $ \geq 200 \mbox{ bases} $ & $ \geq 500 \mbox{ bases} $ \\ \hline
+  \textbf{GC Ratio} & $ \geq 50\% $ & $ \geq 55\% $ \\ \hline
+  \textbf{Obs/Exp CpG Ratio} & $ \geq 0.6 $ & $ \geq 0.65 $ \\ \hline
+\end{tabular} \\
+
+Another algorithm which can be used to identify CGIs is called
+CpGcluster. Instead of the using the traditional criteria, CpGcluster
+is \textquote[\cite{pmid17038168}]{based on the physical distance
+  between neighboring CpGs on the chromosome}. \citep{pmid19232104}
+later compared the relative accuracy of the Takai-Jones implementation
+versus CpGcluster, and determined that Takai-Jones was more
+accurate. For this reason, we decided to implement the Takai-Jones
+definition as well as giving the option to change the parameters.
+
+After settling on giving the option to choose between the
+Gardiner-Frommer and Takai-Jones parameters, choosing the specific way
+to implement these criteria was once again a challenge. Since location
+of CGIs is a commonly addressed problem, we decided to attempt to
+match our results with an existing implementation. We identified a
+number of tools that claimed to solve the CGI problem. However, we
+decided that source code for the original implementation was necessary
+in order to properly match the results. We were therefore able to
+narrow it down to three: the Sequence Manipulation Suite, second
+edition (SMS2), the European Molecular Biology Open Software Suite
+(EMBOSS), and the Perl script which accompanied and was published
+alongside the paper by Takai and Jones.
+
+\subsection{SMS2}
+
+SMS2 is a \textquote[\cite{sms2}]{collection of JavaScript programs
+  for generating, formatting, and analyzing short DNA and protein
+  sequences}. SMS2 provided a 200 base fixed-size sliding window
+implementation with accumulating counts. The fixed-size window is
+different than the typical greedy window implementation in that it
+will only find islands of a certain size, not greater to or equal than
+that size. This is a disadvantage from a practical standpoint because
+windows such as 304-504, 305-505, 306-606, etc. are rarely useful in
+practice. In addition, analysis of the source code found a so-called
+``of-by-one'' error in the code. When calculating the CpG count for
+the first window, a CpG formed by a C inside the window and a G
+outside the window was included in the window's count. The code which
+presents this is as follows:
+
+\needspace{17\baselineskip}
+\begin{minted}[frame=single,label=cpg\_islands.js,linenos=true]{javascript}
+// ...
+//determine base counts for first window
+for (var i = 0; i < windowSize; i++) {
+    if (dnaSequence.charAt(i) == "g") {
+        numG = numG + 1;
+    }
+    if (dnaSequence.charAt(i) == "c") {
+        numC = numC + 1;
+        if (dnaSequence.charAt(i + 1)
+            == "g") {
+            numCG = numCG + 1;
+            numG = numG + 1;
+            i = i + 1;
+        }
+    }
+}
+// ...
+\end{minted}
+
+The last time through the loop, \verb|i = windowSize - 1|.  This means
+that in line 9, \verb|dnaSequence.charAt(i + 1)| retrieves a character
+which is \emph{outside} the window.
+
+Given the fact that SMS2 uses fixed-size windows and errors were found
+in the code, we decided not to attempt to match its results.
+
+\subsection{EMBOSS}
+
+EMBOSS is \textquote[\cite{emboss}]{a free Open Source software
+  analysis package specially developed for the needs of the molecular
+  biology user community}. EMBOSS is a professionally developed set of
+tools, and as such, we hoped its CGI reporting results would be very
+useful. EMBOSS is programmed in pure ANSI C, so its source code can be
+cryptic at times. EMBOSS has four different tools devoted to locating
+CGIs with differing algorithms: \texttt{cpgplot}, \texttt{cpgreport},
+\texttt{newcpgseek}, and \texttt{newcpgreport}. According to the
+documentation, ``\texttt{cpgplot} and \texttt{newcpgreport} use a
+sliding window within which the Observed/Expected ratio of CpG is
+calculated.'' In addition, it is mentioned that
+\textquote[\cite{emboss64docs}]{For most purposes you should probably
+  use \texttt{newcpgreport} rather than \texttt{cpgreport}.}. With
+that, we decided to focus our efforts on duplicating
+\texttt{newcpgreport}.
+
+The algorithm used by \texttt{newcpgreport} uses averages over
+sub-windows and is quite complex. In addition, we identified another
+potential ``off-by-one error'' in the code. The potential error is
+shown in this snippet:
+
+\needspace{12\baselineskip}
+\begin{minted}[frame=single,label=newcpgreport.c,linenos=true]{c}
+static ajint avwindow = 10;
+// ...
+sumpc = sumobsexp = 0.0;
+// ...
+// `shift' is usually 1
+for(i=pos;i<=(pos+avwindow*shift);++i)
+{
+    sumpc += xypc[i];
+    sumobsexp += obsexp[i];
+}
+avpc = sumpc/(float)avwindow;
+avobsexp = sumobsexp/(float)avwindow;
+\end{minted}
+
+Some of the variables are not shown. However, after close observation
+(and debugging), it is apparent that the \verb|for| loop is executed
+11 times, one for each \verb|i = pos| \emph{through}
+\verb|i = pos + 10|. The sums are subsequently divided by 10, which is
+not a calculation of a \emph{true} average.
+
+Given the complexity of the algorithm and the aforementioned potential
+error, we decided not to attempt to match the output of the EMBOSS
+suite.
+
+\subsection{Takai-Jones Perl script}
+
+The script and website produced alongside of the seminal paper by
+Takai and Jones is probably the best known CGI finder. This Perl
+script was used to produce the results of their paper, and is
+available online as well. It uses a greedy sliding window approach,
+which is exactly the type of approach we wanted to take. The script
+which runs the web site appears to be different than the source code
+offered for download. However, since we could not obtain the code that
+runs the web site, we opted to attempt to base our algorithm on the
+Perl script available for download.
+
+We immediately encountered problems with this. The program itself is
+extremely complicated. In fact, drawing a control flow diagram of the
+script's main algorithm logic yields the diagram in
+\fref{fig:tj-control-flow}. The cyclomatic complexity of this program
+can be computed very simply from the diagram by counting the
+\textquote[\cite{McCabe:1976:CM:1313324.1313586}]{maximum number of
+  linearly independent circuits} in the diagram, which yields 12. This
+is two more than the max complexity of 10 recommended by McCabe. Due
+to the confusing nature of this code, we decided that it would be too
+difficult to replicate, and too difficult to test. \textit{Full
+  disclosure: Our accumulating sliding window algorithm currently has
+  a cyclomatic complexity of 13. However, our simpler, ``regular''
+  sliding window algorithm has a cyclomatic complexity of 8. We do
+  have the opinion that our code is somewhat cleaner, and the fact
+  that it is tested. For an unbiased measurement, please reference the
+  actual code.}
+
+\subsection{Our Implementation}
+
+After investigating these possibilities, we decided to create an
+algorithm on our own, with two distinct goals:
+
+\begin{itemize}
+\item \textbf{Simplicity} - the algorithm should be easy to understand
+\item \textbf{Testability} - the algorithm should be completely tested, and
+  developed using Test-Driven Development
+\end{itemize}
+
+The latter goal was of particular importance because we believed that
+it could solve some of the problems encountered in other
+implementations.
+
+Our algorithm has a very simple mode of operation:
+
+\begin{enumerate}
+\item Identify a subsequence meeting the minimum criteria of an island.
+\item Continue adding bases until the island no longer meets the
+  minimum criteria.
+\item Record the largest subsequence found that meets the minimum criteria.
+\item Continue from the beginning of the algorithm with a subsequence
+  starting at the first base not in the identified island.
+\end{enumerate}
+
+An example of the algorithm in action follows. We will analyze the
+sequence \dnaseq{ATTCGGTA} with the following parameters:
+
+\begin{eqnarray*}
+  \mbox{min\_island\_size} = 4 \\
+  \mbox{min\_gc\_ratio} = 0.5 \\
+  \mbox{min\_obs\_exp\_cpg\_ratio} = 0.6 \\
+\end{eqnarray*}
+
+\begin{enumerate}
+\item Begin by extracting the minimum island size:
+  \dnaseq{\nomatch{ATTC}GGTA}. Since the GC ratio is 25\%, there is
+  no need to computed anything else. It is not an island.
+\item Move both the start and end pointers ahead by one.
+\item The next subsequence, \dnaseq{A\match{TTCG}GTA}, is an island:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 1}{4} \\
+    \mbox{gc\_ratio} = 0.5 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 1}{4}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 4
+  \end{eqnarray*}
+\item Add one more base: \dnaseq{A\match{TTCGG}TA}. Still an island:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 2}{5} \\
+    \mbox{gc\_ratio} = 0.6 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 2}{5}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 2.5
+  \end{eqnarray*}
+\item Add another base: \dnaseq{A\match{TTCGGT}A}. Still an island,
+  but just barely:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 2}{6} \\
+    \mbox{gc\_ratio} = 0.5 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 2}{6}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 3
+  \end{eqnarray*}
+\item The next subsequence is no longer a match: \dnaseq{A\nomatch{TTCGGTA}}:
+  \begin{eqnarray*}
+    \mbox{gc\_ratio} = \frac{1 + 2}{7} \\
+    \mbox{gc\_ratio} \approx 0.43 \\
+    \mbox{obs\_exp\_cpg\_ratio} = \frac{1}{\frac{1 \times 2}{7}} \\
+    \mbox{obs\_exp\_cpg\_ratio} = 3.5
+  \end{eqnarray*}
+\item Therefore, we record \dnaseq{A\match{TTCGGT}A} as an island. The
+  rest of the sequence is not long enough to form another island, so
+  we are done.
+\end{enumerate}
+
+\begin{figure}
+  \label{fig:tj-control-flow}
+  \caption{Takai-Jones Perl script control flow diagram}
+  \begin{dot2tex}[scale=0.3]
+    \input{takai-jones-control-flow/diagram.dot}
+  \end{dot2tex}
+\end{figure}
+
+\subsubsection{Testing}
+
+Our sliding window implementation is tested with many test
+cases. These test cases test that the correct islands were found in
+addition to computation of the correct statistics for each
+island. Since the algorithm was developed with Test-Driven
+Development, only code which would cause the test cases to pass has
+been added to the algorithm. This keeps it free of any unnecessary
+logic and as simple as possible. Although these tests do not prove the
+\textit{usefulness} of the results, the do prove the
+\textit{correctness} of the results to our specifications, which is
+more than can be said for other implementations with no tests
+whatsoever.
+
+\subsubsection{Results}
+
+Manual comparison of the results of analyzing a number of sequences
+showed that our results were very similar to the results produced by
+the Takai-Jones script. In addition to the tests, this was a
+verification of the correct behavior of the program.
+
+\subsubsection{Accelerating the Algorithm}
+
+Our original sliding window algorithm re-computes counts and ratios
+for each new window that it reads. This makes the algorithm very
+simple, but also very slow. In addition to this basic sliding window
+algorithm, we also developed an algorithm we called the ``accumulating
+sliding window.'' This algorithm keeps track of counts of C's, G's,
+and CpG's between windows. When the window is moved, deltas for each
+count are calculated for each of the added or lost bases. This makes
+the algorithm much faster.
+
+Given that this algorithm is much faster, what was the point of
+creating the basic sliding window algorithm? First, the basic sliding
+window is much simpler and allowed us to get experience programming
+algorithms in this area. Furthermore, we were able to re-use the exact
+same tests from the basic sliding window for the accumulating sliding
+window. Not only does this verify the correctness of both algorithms,
+it also verifies that they are producing the exact same results.
+
+In the future, we hope duplicate these algorithms in Cython
+\citep{behnel2010cython}, a language which is able to generate
+efficient C code from Python-like code, for even faster execution.
 
 \section{Tools}
 
-This project was written using the Python programming language, along with several other tools and libraries.
+This project was written using the Python programming language, along
+with several other tools and libraries.
 
 \begin{itemize}
-\item Biopython for sequence fetching and parsing
-\item Qt for graphical user interface
-\item PySide for Python bindings to Qt
-\item git for version control system
-\item GitHub for git hosting
-\item pytest test framework
-\item mock for creating mock objects
-\item coverage.py and pytest-cov for test-coverage statistics
-\item flake8 as a lint tool: enforced pep8 compliance, running PyFlakes and McCabe complexity check
-\item Travis-CI for continuous integration
-\item Sphinx and docutils for documentation generation
-\item Read the Docs for documentation hosting
-\item shovel for running miscellaneous tasks
+\item Biopython - sequence fetching and parsing
+\item Q toolkit (Qt) - graphical user interface
+\item PySide - Python bindings to Qt
+\item git - decentralized version control system
+\item GitHub - git hosting
+\item pytest - test framework
+\item mock - creating mock objects
+\item coverage.py and pytest-cov - test-coverage statistics
+\item flake8 - lint tool for enforced PEP8 compliance, static code
+  analysis, and McCabe complexity check
+\item Travis-CI - continuous integration
+\item Sphinx and docutils - documentation generation
+\item Read the Docs - documentation hosting
+\item shovel - \texttt{make} replacement for running miscellaneous tasks
 \end{itemize}
-    
-    The combination of these tools allowed us to continuously integrate our working implementation while adding new features.
+
+The combination of these tools allowed us to continuously integrate
+our working implementation while adding new features. By using these
+tools, we were able to enforce strict coding standards with minimal
+setup or logic overhead.
 
 \paragraph{Biopython\textcolon}
-Biopython is a set of scientific libraries for the Python programming language. Biopython is especially 1
+Biopython is a set of open source scientific libraries for the Python
+programming language \citep{pmid19304878}. Biopython is especially
+well suited for analysis of genetic sequences. Complex functions like
+sequence annotation, parsing sequence files are very
+well-supported. Biopython was used in this project for sequence
+representation, labeling CpG islands, loading sequences from GenBank
+files, and interfacing with the Entrez search engine and NCBI databases.
+    
+\paragraph{Qt, PySide\textcolon}
+Qt is a cross-platform application framework used primarily for
+creating graphical user interfaces. PySide is a set of Python bindings
+to the Qt framework, which allowed us to develop this program with one
+code base for multiple platforms.
 
 \paragraph{git\textcolon} 
-Text Text Text Text Text Text  Text Text.
+git is a distributed version control tool for source code. A user can
+have local branches of a code repository without affecting any other
+repositiories. Using this tool allowed us to add new tests and
+features to the program without having to share a central repository.
 
 \paragraph{GitHub\textcolon} 
-Text Text Text Text Text Text  Text Text.
+GitHub is an online software development community for hosting git
+repositories. Open source project hosting is free, which allowed us to
+make contributions to the codebase independently.
+    
+\paragraph{Travis-CI\textcolon}
+Travis-CI is a continuous integration service for open source
+projects. Travis-CI integrates with any GitHub repository to run tests
+in a clean environment to verify a build has not broken.
 
 \paragraph{pytest\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{mock\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{coverage.py, pytest-cov\textcolon} 
-Text Text Text Text Text Text  Text Text.
+pytest is a unit testing framework used to create test suites for
+Python programs. pytest was used to create coverage reports detailing
+our source code, and for running the test suite.
 
 \paragraph{flake8\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{Travis-CI\textcolon} 
-Text Text Text Text Text Text  Text Text.
-
-\paragraph{Sphinx, docutils\textcolon} 
-Text Text Text Text Text Text  Text Text.
+flake8 is a syntax checker for Python that uses the PyFlakes and pep8
+modules. It will check any source files for syntax errors and ensure
+all code meets PEP8 coding standards.
+    
+\paragraph{Sphinx, docutils\textcolon}
+Sphinx and docutils are documentation generatoion utilities which take
+source code documentation and convert it into many different
+formats. By using these tools, we created our documentation
+automatically while we added new code to the repository.
 
 \paragraph{Read the Docs\textcolon} 
-Text Text Text Text Text Text  Text Text.
+Read the Docs is a site for hosting documentation for projects using
+Sphinx. We configured our GitHub repository with a post-commit hook,
+which would rebuild the documentation from our source code after each
+change to the online repository.
+      
+\subsection{Entrez}
 
-\section{Results}
-
-
+While our program is able to find CGIs, it originally did not address
+the problem of where to obtain sequences. NCBI hosts several different
+databases holding genomic information, so integration with the Entrez
+database search into our application seemed natural. Entrez has an
+application programming interface (API) for many useful functions
+including keyword searches, query suggestions, and the ability to
+download sequence data. Biopython provides a simple interface to this
+API which allowed us to integrate all of the sequences hosted on the
+Entrez nucleotide database into our program without including
+additional libraries. Calls made through a simple HTTP interface allow
+users to quickly locate CGIs without having to download sequence data
+separately. A suggested query updates as user types, which allows them
+to check for spelling errors. After submitting a query to Entrez, a
+list of identification numbers is returned along with the search query
+used by Entrez. Although a list of numbers is not particulary helpful
+after searching, other data can be viewed when a sequence is
+selected. After a user selects a sequence from the list, metadata
+about the sequence, including the locus and sequence length, is pulled
+from Entrez. After a user has found a sequence they would like to
+analyze, they can simply load the the sequence into the sequence input view.
 
 \section{Conclusion}
+The goal of this project was to have a well-tested, usable program for
+the location of CpG islands. By developing a graphical user interface,
+the program should be far more usable for any biologists compared to a
+command line version. By using a greedy algorithm to determine islands
+instead of a fixed size, a biologist is provided with more useful
+information. The program has a test suite of more than 80 tests
+verifying the correctness of its functionality. In summary, we believe
+that the focus on best practices has made this program an incredible
+success.
 
-%\bibliographystyle{natbib}
-%\bibliographystyle{achemnat}
-%\bibliographystyle{plainnat}
-%\bibliographystyle{abbrv}
-%\bibliographystyle{bioinformatics}
-%
-%\bibliographystyle{plain}
-%
-%\bibliography{Document}
+% \bibliographystyle{natbib}
+% \bibliographystyle{achemnat}
+\bibliographystyle{plainnat}
+% \bibliographystyle{abbrv}
+% \bibliographystyle{bioinformatics}
+% 
+% \bibliographystyle{plain}
+% 
+\bibliography{citations}
 
-
-\begin{thebibliography}{}
-\bibitem[Bofelli {\it et~al}., 2000]{Boffelli03} Bofelli,F., Name2, Name3 (2003) Article title, {\it Journal Name}, {\bf 199}, 133-154.
-
-\bibitem[Bag {\it et~al}., 2001]{Bag01} Bag,M., Name2, Name3 (2001) Article title, {\it Journal Name}, {\bf 99}, 33-54.
-
-\bibitem[Yoo \textit{et~al}., 2003]{Yoo03}
-Yoo,M.S. \textit{et~al}. (2003) Oxidative stress regulated genes
-in nigral dopaminergic neurnol cell: correlation with the known
-pathology in Parkinson's disease. \textit{Brain Res. Mol. Brain
-Res.}, \textbf{110}(Suppl. 1), 76--84.
-
-\bibitem[Lehmann, 1986]{Leh86}
-Lehmann,E.L. (1986) Chapter title. \textit{Book Title}. Vol.~1, 2nd edn. Springer-Verlag, New York.
-
-\bibitem[Crenshaw and Jones, 2003]{Cre03}
-Crenshaw, B.,III, and Jones, W.B.,Jr (2003) The future of clinical
-cancer management: one tumor, one chip. \textit{Bioinformatics},
-doi:10.1093/bioinformatics/btn000.
-
-\bibitem[Auhtor \textit{et~al}. (2000)]{Aut00}
-Auhtor,A.B. \textit{et~al}. (2000) Chapter title. In Smith, A.C.
-(ed.), \textit{Book Title}, 2nd edn. Publisher, Location, Vol. 1, pp.
-???--???.
-
-\bibitem[Bardet, 1920]{Bar20}
-Bardet, G. (1920) Sur un syndrome d'obesite infantile avec
-polydactylie et retinite pigmentaire (contribution a l'etude des
-formes cliniques de l'obesite hypophysaire). PhD Thesis, name of
-institution, Paris, France.
-
-\end{thebibliography}
 \end{document}

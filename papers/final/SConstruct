@@ -6,10 +6,13 @@
 
 import os
 
-env = Environment()
+env = Environment(ENV=os.environ)
 
-# Look in standard directory ~/texmf for .sty files
-env['ENV']['TEXMFHOME'] = os.path.join(os.environ['HOME'], 'texmf')
+# Look in standard directory ~/texmf for .sty files.
+env['TEXMFHOME'] = os.path.join(os.environ['HOME'], 'texmf')
+
+# Add shell escape for minted.
+env.AppendUnique(PDFLATEXFLAGS='-shell-escape')
 
 final_paper_pdf = env.PDF('document.tex')
 Default(final_paper_pdf)
