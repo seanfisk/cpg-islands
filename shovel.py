@@ -12,6 +12,8 @@ from pyfiglet import Figlet
 
 sys.path.append('.')
 
+from cpg_islands import metadata
+
 CODE_DIRECTORY = 'cpg_islands'
 TESTS_DIRECTORY = 'tests'
 CODE_FILES = [CODE_DIRECTORY,
@@ -180,3 +182,21 @@ def search(query):
     # Allow git_proc to receive a SIGPIPE if ack_proc exits.
     git_proc.stdout.close()
     ack_proc.communicate()
+
+
+@task
+def mac_app():
+    """Build an application bundle for Mac OS X."""
+    subprocess.check_call(['python', 'setup.py', 'py2app'])
+
+
+@task
+def mac_dmg():
+    """Build a disk image (installer) for Mac OS X."""
+    mac_app()
+    subprocess.check_call(['scripts/yoursway-create-dmg/create-dmg',
+                           '--window-size', '500', '300',
+                           '--volname', metadata.nice_title,
+                           '--app-drop-link', '380', '205',
+                           'dist/{0}.dmg'.format(metadata.nice_title),
+                           'dist/{0}.app'.format(metadata.nice_title)])

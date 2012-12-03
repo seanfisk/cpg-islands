@@ -18,6 +18,14 @@ Todo
 
 .. todo::
 
+   Make shovel file modular or switch to something else.
+
+.. todo::
+
+   Beautify created DMGs with all the bells and whistles.
+
+.. todo::
+
    When searching again on the Entrez view, or computing again on the
    Results view, stale data is left in the forms. They should be clear
    when a new search/analysis is performed.
