@@ -152,6 +152,21 @@ retrieves a character which is \emph{outside} the window.
 Given the fact that SMS2 uses fixed-size windows and errors were found
 in the code, we decided not to attempt to match its results.
 
+\subsubsection{EMBOSS}
+
+EMBOSS is \textquote[\cite{emboss}]{a free Open Source software
+  analysis package specially developed for the needs of the molecular
+  biology user community}. EMBOSS is a professionally developed set of
+tools, and as such, we hoped its CGI reporting results would be very
+useful. EMBOSS is programmed in pure ANSI C, so its source code is
+cryptic at times. EMBOSS has four different tools devoted to locating
+CGIs with differing algorithms: \verb|cpgplot|, \verb|cpgreport|,
+\verb|newcpgseek|, and \verb|newcpgreport|. According to the
+documentation, ``\textbf{cpgplot} and \textbf{newcpgreport} use a
+sliding window within which the Observed/Expected ratio of CpG is
+calculated.'' In addition, it is mentioned that
+\textquote[\cite{emboss64docs}]{For most purposes you should probably use newcpgreport rather than cpgreport.}.
+
 \section{Tools}
 
 This project was written using the Python programming language, along with several other tools and libraries.
