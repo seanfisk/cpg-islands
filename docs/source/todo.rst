@@ -9,6 +9,10 @@ Todo
 
 .. todo::
 
+   Fix control flow diagram.
+
+.. todo::
+
    Re-factor the Entrez model to something more elegant. It's sort of
    a mess.
 
