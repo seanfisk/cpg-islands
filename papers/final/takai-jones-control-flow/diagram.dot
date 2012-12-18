@@ -1,6 +1,6 @@
 // This is a control flow graph of the Takai-Jones script taking
 // `last' commands (basically gotos) into account.
-digraph CpGTakaiJones {
+strict digraph CpGTakaiJones {
         node [style=filled,fillcolor=lightgray];
         start [label="Start"];
 
@@ -18,7 +18,6 @@ digraph CpGTakaiJones {
         w4e [label="While 4 End"];
 
         i1p [label="If 1 Predicate"];
-        i1b [label="If 1 Body"];
         i1e [label="If 1 End"];
 
         i2p [label="If 2 Predicate"];
@@ -27,11 +26,9 @@ digraph CpGTakaiJones {
         i2e [label="If 2 End"];
 
         i3p [label="If 3 Predicate"];
-        i3b [label="If 3 Body"];
         i3e [label="If 3 End"];
 
         i4p [label="If 4 Predicate"];
-        i4b [label="If 4 Body"];
         i4e [label="If 4 End"];
 
         i5p [label="If 5 Predicate"];
@@ -51,22 +48,19 @@ digraph CpGTakaiJones {
         start -> w1p;
         w1p -> end;
         w1p -> i1p;
-        i1p -> i1b;
+        i1p -> i2p;
         i1p -> i1e;
-        i1b -> i2p;
         i2p -> i2b -> i2e;
         i2p -> e2b -> i2e;
         i2e -> w2p;
         w2p -> i3p;
         w2p -> enddefinition;
-        i3p -> i3b;
+        i3p -> w3p;
         i3p -> i3e;
-        i3b -> w3p;
         w3p -> i4p;
         w3p -> i3e;
-        i4p -> i4b;
+        i4p -> w4p;
         i4p -> i4e;
-        i4b -> w4p;
         w4p -> i5p;
         w4p -> i4e;
         i5p -> i5b -> enddefinition;
@@ -76,7 +70,7 @@ digraph CpGTakaiJones {
         i5e -> w4e;
         w4e -> w4p;
         i4e -> w3e;
-        w3e -> w3p;
+        w3e:e -> w3p:e;
         i3e -> i6p;
         i6p -> i6b -> i6e;
         i6p -> e6b -> i6e;
