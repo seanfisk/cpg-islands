@@ -1,15 +1,12 @@
+\RequirePackage[l2tabu,orthodox]{nag}
 \documentclass{bioinfo}
 \copyrightyear{2012}
 \pubyear{2012}
 
 \usepackage{microtype}
-\usepackage{tikz}
-\usetikzlibrary{decorations,arrows,shapes}
-\usepackage[autosize,outputdir={dot2tex_graphs/}]{dot2texi}
+\usepackage[backend=biber,style=authoryear]{biblatex}
+\addbibresource{citations.bib}
 \usepackage{csquotes}
-\usepackage{minted}
-\usepackage{natbib}
-\bibpunct{(}{)}{;}{a}{,}{,}
 \usepackage{fancyref}
 \usepackage{needspace}
 \usepackage{xcolor}
@@ -18,6 +15,10 @@
 % recently it is causing pdflatex to error out.
 % \usepackage[implicit=false]{hyperref}
 % \usepackage{bookmark}
+\usepackage{tikz}
+\usetikzlibrary{decorations,arrows,shapes}
+\usepackage[autosize,outputdir={dot2tex_graphs/}]{dot2texi}
+\usepackage{minted}
 
 % Custom commands
 \newcommand{\dnaseq}[1]{\texttt{#1}}
@@ -92,7 +93,7 @@ expected ratio for a can be seen in \fref{eq:01}.
 \end{equation}
       
 CGIs are present in the promoter regions of approximately 40\% of
-mammalian genes \citep{pmid11891299}. Methylation of promoter CGIs
+mammalian genes \autocite{pmid11891299}. Methylation of promoter CGIs
 have been associated with many interesting genomic attributes, such as
 gene silencing, X-chromosome inactivation, as well as
 carcinogenesis. By locating CGIs, scientists can spend less time
@@ -128,7 +129,7 @@ logic. Combining Test-Driven Development with a Model-View-Presenter
 design pattern leads to a software development approach known as
 Presenter First.
 
-Presenter First \citep{Alles:2006:PFO:1155439.1155482} has proven to
+Presenter First \autocite{Alles:2006:PFO:1155439.1155482} has proven to
 be an effective technique for scaling graphical applications with
 Test-Driven Development. With the Presenter-First methodology, program
 functionality is driven by user stories. The user stories are first
@@ -146,7 +147,7 @@ Gardiner and Frommer, defines a CGI as a region of at least 200 base
 pairs containing a GC ratio of at least 50\% and an observed to
 expected CpG ratio of at least 0.6. The second definition, revised by
 Takai and Jones, defines a CGI as a region of at least 500 base pairs containing a GC ratio of at least 55\% and an observed to
-expected CpG ratio of at least 0.65 \citep{pmid11891299}. These
+expected CpG ratio of at least 0.65 \autocite{pmid11891299}. These
 parameters are summarized in the following table: \\
 
 \begin{tabular}{ l | l | l}
@@ -160,7 +161,7 @@ parameters are summarized in the following table: \\
 Another algorithm which can be used to identify CGIs is called
 CpGcluster. Instead of the using the traditional criteria, CpGcluster
 is \textquote[\cite{pmid17038168}]{based on the physical distance
-  between neighboring CpGs on the chromosome}. \citep{pmid19232104}
+  between neighboring CpGs on the chromosome}. \autocite{pmid19232104}
 later compared the relative accuracy of the Takai-Jones implementation
 versus CpGcluster, and determined that Takai-Jones was more
 accurate. For this reason, we decided to implement the Takai-Jones
@@ -424,7 +425,7 @@ window. Not only does this verify the correctness of both algorithms,
 it also verifies that they are producing the exact same results.
 
 In the future, we hope duplicate these algorithms in Cython
-\citep{behnel2010cython}, a language which is able to generate
+\autocite{behnel2010cython}, a language which is able to generate
 efficient C code from Python-like code, for even faster execution.
 
 \section{Tools}
@@ -456,7 +457,7 @@ setup or logic overhead.
 
 \paragraph{Biopython\textcolon}
 Biopython is a set of open source scientific libraries for the Python
-programming language \citep{pmid19304878}. Biopython is especially
+programming language \autocite{pmid19304878}. Biopython is especially
 well suited for analysis of genetic sequences. Complex functions like
 sequence annotation, parsing sequence files are very
 well-supported. Biopython was used in this project for sequence
@@ -541,14 +542,6 @@ verifying the correctness of its functionality. In summary, we believe
 that the focus on best practices has made this program an incredible
 success.
 
-% \bibliographystyle{natbib}
-% \bibliographystyle{achemnat}
-\bibliographystyle{plainnat}
-% \bibliographystyle{abbrv}
-% \bibliographystyle{bioinformatics}
-% 
-% \bibliographystyle{plain}
-% 
-\bibliography{citations}
+\printbibliography
 
 \end{document}

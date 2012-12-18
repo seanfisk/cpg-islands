@@ -12,6 +12,9 @@ env = Environment(ENV=os.environ)
 # Use LuaTeX instead of pdfTeX.
 env.Replace(PDFLATEX='lualatex')
 
+# Use Biber instead of BiBTeX
+env.Replace(BIBTEX='biber')
+
 # Crash immediately on error.
 env.AppendUnique(PDFLATEXFLAGS='-halt-on-error')
 
