@@ -9,10 +9,6 @@ Todo
 
 .. todo::
 
-   Fix lowercase letters in references.
-
-.. todo::
-
    Re-factor the Entrez model to something more elegant. It's sort of
    a mess.
 
