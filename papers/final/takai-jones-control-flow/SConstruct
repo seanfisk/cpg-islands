@@ -3,16 +3,21 @@
 import os
 
 
-# Create Graphviz dot builder.
-graphviz_dot_png_builder = Builder(
-    action='dot -Tpng $SOURCE -o $TARGET',
-    suffix='.png',
-    src_suffix='.dot')
+# Create Graphviz dot builders.
+dot_builders = {}
+for ext in ['png', 'svg']:
+    builder = Builder(
+        action='dot -T{0} $SOURCE -o $TARGET'.format(ext),
+        suffix='.{0}'.format(ext),
+        src_suffix='.dot')
+    dot_builders['GraphvizDot{0}'.format(ext.upper())] = builder
 
 # Inherit the current environment.
 env = Environment(ENV=os.environ)
 
-# Add dot builder to environment.
-env.Append(BUILDERS={'GraphvizDotPNG': graphviz_dot_png_builder})
+# Add dot builders to environment.
+env.Append(BUILDERS=dot_builders)
 
-env.GraphvizDotPNG('diagram')
+png = env.GraphvizDotPNG('diagram')
+svg = env.GraphvizDotSVG('diagram')
+env.Default(svg)
