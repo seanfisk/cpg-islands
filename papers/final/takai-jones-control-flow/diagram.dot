@@ -46,7 +46,7 @@ strict digraph CpGTakaiJones {
         end [label="End"]
 
         start -> w1p
-        w1p -> end
+        w1p -> end [minlen=24]
         w1p -> i1p
         i1p -> i2p
         i1p -> i1e
@@ -56,35 +56,35 @@ strict digraph CpGTakaiJones {
         e2b -> i2e
         i2e -> w2p
         w2p -> i3p
-        w2p -> enddefinition
+        w2p -> enddefinition [minlen=16]
         i3p -> w3p
-        i3p -> i3e
+        i3p -> i3e [minlen=10]
         w3p -> i4p
         w3p -> i3e
         i4p -> w4p
-        i4p -> i4e
+        i4p -> i4e [minlen=6]
         w4p -> i5p
         w4p -> i4e
-        i5p -> i5b
-        i5b -> enddefinition
-        i5p -> ei5_1b
-        ei5_1b -> enddefinition
-        i5p -> ei5_2b
-        i5p -> e5b
+        i5p:w -> i5b
+        i5b -> enddefinition [minlen=10]
+        i5p:sw -> ei5_1b
+        ei5_1b -> enddefinition [minlen=10]
+        i5p:s -> ei5_2b
+        i5p:se -> e5b
         ei5_2b -> i5e
         e5b -> i5e
         i5e -> w4e
-        w4e:ne -> w4p:s
+        w4e -> w4p [minlen=4]
         i4e -> w3e
-        w3e:ne -> w3p:se
+        w3e -> w3p [minlen=8]
         i3e -> i6p
         i6p -> i6b
         i6p -> e6b
         i6b -> i6e
         e6b -> i6e
         i6e -> w2e
-        w2e:ne -> w2p:e
+        w2e -> w2p [minlen=15]
         enddefinition -> i1e
         i1e -> w1e
-        w1e:ne -> w1p:e
+        w1e -> w1p
 }
