@@ -9,10 +9,6 @@ Todo
 
 .. todo::
 
-   Switch to biblatex for bibliography.
-
-.. todo::
-
    Fix lowercase letters in references.
 
 .. todo::
