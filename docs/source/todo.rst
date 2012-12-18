@@ -9,15 +9,7 @@ Todo
 
 .. todo::
 
-   Fix control flow diagram.
-
-.. todo::
-
    Switch to biblatex for bibliography.
-
-.. todo::
-
-   Switch to LuaTeX for generation.
 
 .. todo::
 
