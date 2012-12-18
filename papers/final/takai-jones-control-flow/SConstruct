@@ -1,0 +1,18 @@
+# -*- mode: python -*-
+
+import os
+
+
+# Create Graphviz dot builder.
+graphviz_dot_png_builder = Builder(
+    action='dot -Tpng $SOURCE -o $TARGET',
+    suffix='.png',
+    src_suffix='.dot')
+
+# Inherit the current environment.
+env = Environment(ENV=os.environ)
+
+# Add dot builder to environment.
+env.Append(BUILDERS={'GraphvizDotPNG': graphviz_dot_png_builder})
+
+env.GraphvizDotPNG('diagram')
