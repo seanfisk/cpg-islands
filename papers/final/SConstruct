@@ -6,13 +6,20 @@
 
 import os
 
+# Inherit the current environment.
 env = Environment(ENV=os.environ)
 
-# Look in standard directory ~/texmf for .sty files.
-env['TEXMFHOME'] = os.path.join(os.environ['HOME'], 'texmf')
+# Use LuaTeX instead of pdfTeX.
+env.Replace(PDFLATEX='lualatex')
+
+# Crash immediately on error.
+env.AppendUnique(PDFLATEXFLAGS='-halt-on-error')
 
 # Add shell escape for minted and dot2tex.
 env.AppendUnique(PDFLATEXFLAGS='-shell-escape')
 
-final_paper_pdf = env.PDF('document.tex')
-Default(final_paper_pdf)
+# Look in standard directory ~/texmf for .sty files.
+env.SetDefault(TEXMFHOME=os.path.join(os.environ['HOME'], 'texmf'))
+
+pdf = env.PDF('document.tex')
+Default(pdf)
