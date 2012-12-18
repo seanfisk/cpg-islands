@@ -289,16 +289,16 @@ script's main algorithm logic yields the diagram in
 \fref{fig:tj-control-flow}. The cyclomatic complexity of this program
 can be computed very simply from the diagram by counting the
 \textquote[\cite{McCabe:1976:CM:1313324.1313586}]{maximum number of
-  linearly independent circuits} in the diagram, which yields 12. This
-is two more than the max complexity of 10 recommended by McCabe. Due
+  linearly independent circuits} in the diagram, which yields 13. This
+is three more than the max complexity of 10 recommended by McCabe. Due
 to the confusing nature of this code, we decided that it would be too
 difficult to replicate, and too difficult to test. \textit{Full
   disclosure: Our accumulating sliding window algorithm currently has
   a cyclomatic complexity of 13. However, our simpler, ``regular''
   sliding window algorithm has a cyclomatic complexity of 8. We do
   have the opinion that our code is somewhat cleaner, and the fact
-  that it is tested. For an unbiased measurement, please reference the
-  actual code.}
+  that it is well-tested. For an unbiased measurement, please
+  reference the actual code.}
 
 \subsection{Our Implementation}
 
@@ -377,7 +377,7 @@ sequence \dnaseq{ATTCGGTA} with the following parameters:
 \begin{figure}
   \label{fig:tj-control-flow}
   \caption{Takai-Jones Perl script control flow diagram}
-  \begin{dot2tex}[scale=0.3]
+  \begin{dot2tex}[scale=0.25]
     \input{takai-jones-control-flow/diagram.dot}
   \end{dot2tex}
 \end{figure}
