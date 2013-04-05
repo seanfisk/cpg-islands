@@ -37,7 +37,7 @@ bindings to the `Qt`_ libraries. Install this first.
 
 .. _PySide: http://www.pyside.org
 .. _Qt: http://www.qt-project.org/
-    
+
 -----------
 Development
 -----------
@@ -85,22 +85,6 @@ Test Coverage
 To view the test coverage report, run::
 
     shovel coverage
-
-Emacs Tags File
-===============
-
-Sean uses Emacs_ to edit code. To easily generate a tags file for
-Emacs, run::
-
-    shovel emacs_tags
-
-This command uses `Exuberant Ctags`_ to generate a ``TAGS``
-file. Within Emacs, run ``M-x visit-tags-table`` to load the generate
-tags file. Then use ido-find-file-in-tag-files_ to find project files.
-
-.. _Exuberant Ctags: http://ctags.sourceforge.net/
-.. _Emacs: http://www.gnu.org/software/emacs/
-.. _ido-find-file-in-tag-files: http://emacswiki.org/emacs/InteractivelyDoThings#toc11
 
 -------
 License

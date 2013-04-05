@@ -147,16 +147,6 @@ def commit():
 
 
 @task
-def emacs_tags():
-    """Generate TAGS file for Emacs with exuberant ctags."""
-    args = ['ctags',
-            '-e',  # emacs tags
-            '--recurse']
-    args += CODE_FILES
-    subprocess.check_call(args)
-
-
-@task
 def coverage():
     """Run tests and show test coverage report."""
     pytest.main(['--cov', CODE_DIRECTORY,
